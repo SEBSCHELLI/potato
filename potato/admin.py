@@ -136,8 +136,10 @@ class AdminDashboard:
             bool: True if admin access is granted, False otherwise
         """
         api_key = request.headers.get('X-API-Key')
+        logger.info(f"Debug: in check_admin_access api_key (X-API-Key) is '{api_key}'")
 
         configured_api_key = os.environ.get("POTATO_ADMIN_API_KEY")
+        logger.info(f"Debug: in check_admin_access configured_api_key is '{configured_api_key}'")
 
         # In debug mode, allow access without API key
         if config.get("debug", False):
@@ -148,6 +150,8 @@ class AdminDashboard:
             return False
 
         # Check if the provided API key matches the configured one
+        logger.info(f"Debug: in check_admin_access api_key == configured_api_key is '{api_key == configured_api_key}'")
+
         return api_key == configured_api_key
 
     def get_dashboard_overview(self) -> Dict[str, Any]:
