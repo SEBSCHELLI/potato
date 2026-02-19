@@ -39,6 +39,7 @@ Access Control:
 - All admin endpoints require proper authentication
 """
 
+import os
 import json
 import logging
 import datetime
