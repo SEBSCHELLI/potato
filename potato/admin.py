@@ -136,7 +136,8 @@ class AdminDashboard:
             bool: True if admin access is granted, False otherwise
         """
         api_key = request.headers.get('X-API-Key')
-        configured_api_key = config.get("admin_api_key")
+
+        configured_api_key = os.environ.get("POTATO_ADMIN_API_KEY")
 
         # In debug mode, allow access without API key
         if config.get("debug", False):
