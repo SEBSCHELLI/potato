@@ -837,7 +837,13 @@ def init_prolific_study(config: dict) -> None:
             max_concurrent_sessions=max_concurrent_sessions,
             workload_checker_period=workload_checker_period
         )
+
         logger.info(f"Initialized Prolific study: {study_id}")
+
+        keys = ['id', 'name', 'internal_name', 'reward', 'average_reward_per_hour', 'external_study_url', 'status', 'total_available_places', 'places_taken']
+        for k in keys:
+            logger.info(f"PROLIFIC_STUDY_INSTANCE[{k}]: {PROLIFIC_STUDY_INSTANCE.study_info.get(k, 'UNK')}")
+        
         logger.info(f"Study info: {PROLIFIC_STUDY_INSTANCE.get_basic_study_info()}")
 
     except Exception as e:
