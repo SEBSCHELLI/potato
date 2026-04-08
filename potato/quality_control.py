@@ -185,7 +185,7 @@ class QualityControlManager:
                     ac_state = user_state.attention_check_state
                     if ac_state:
                         self.user_session_to_attention_results[username][session_id] = list(ac_state.attention_instance_id_to_attention_check_result.values())
-                        logger.debug(f"user_session_to_attention_results: {self.user_session_to_attention_results}")
+                        logger.debug(f"Loaded Attention Check results for User {username} (Session ID {session_id})")
 
     # =========================================================================
     # Attention Check Methods
