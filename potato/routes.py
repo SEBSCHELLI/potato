@@ -4,10 +4,10 @@ import os
 from datetime import timedelta
 from flask import session, render_template, request, redirect, url_for, jsonify
 
+from potato.flask_server import app
 from potato.phase import UserPhase
 from potato.user_state_management import get_user_state_manager
 from potato.logging_config import get_logger
-
 logger = get_logger(__name__)
 
 from potato.routing.training import training_bp
