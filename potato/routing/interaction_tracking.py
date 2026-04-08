@@ -286,7 +286,7 @@ def track_annotation_change():
                     user_state.attention_check_state.n_items_since_last_check = 0 # reset counter
                 else:
                     if annotation_action_type == "add_annotation":
-                        user_state.attention_check_state.record_non_attention_check_annotation(instance_id)
+                        user_state.attention_check_state.record_non_attention_check_annotation()
 
         # Register Annotator
         if phase == UserPhase.TRAINING:
