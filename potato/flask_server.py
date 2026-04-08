@@ -42,25 +42,13 @@ import os
 import sys
 import random
 import json
-import re
-from collections import deque, defaultdict, Counter, OrderedDict
-from itertools import zip_longest
-import string
-import threading
+from collections import deque, defaultdict
 import yaml
-from datetime import datetime, timedelta
-from typing import List, Dict, Any
+from datetime import timedelta
 
-import numpy as np
 import pandas as pd
-from tqdm import tqdm
 
-import flask
-from flask import Flask, session, render_template, request, redirect, url_for, jsonify, make_response
-from bs4 import BeautifulSoup
-import shutil
-
-from dataclasses import dataclass
+from flask import Flask
 
 # Get current working directory and program directory
 cur_working_dir = os.getcwd() #get the current working dir
@@ -73,21 +61,16 @@ base_html_dir = os.path.join(cur_program_dir,'base_htmls') #get the dir where th
 #insert the current program dir into sys path
 sys.path.insert(0, cur_program_dir)
 
-from potato.item_state_management import ItemStateManager, Item, Label
 from potato.item_state_management import get_item_state_manager, init_item_state_manager, get_training_item_state_manager, init_training_item_state_manager
-from potato.user_state_management import UserStateManager, UserState, get_user_state_manager, init_user_state_manager
+from potato.user_state_management import get_user_state_manager, init_user_state_manager
 from potato.authentication import UserAuthenticator
 from potato.phase import UserPhase
-from potato.quality_control import init_quality_control_manager, get_quality_control_manager, clear_quality_control_manager
+from potato.quality_control import init_quality_control_manager, get_quality_control_manager
 
-from potato.create_task_cli import create_task_cli, yes_or_no
 from potato.server_utils.arg_utils import arguments
 from potato.server_utils.config_module import init_config, config
 from potato.server_utils.cli_utlis import get_project_from_hub, show_project_hub
 from potato.server_utils.prolific_apis import ProlificStudy
-from potato.server_utils.mturk_apis import init_mturk_hit, get_mturk_hit
-from potato.server_utils.json import easy_json
-from potato.server_utils.instance_display import InstanceDisplayRenderer, get_instance_display_renderer
 
 # Initialize Flask app
 app = Flask(__name__)

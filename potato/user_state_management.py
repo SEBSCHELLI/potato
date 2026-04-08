@@ -37,19 +37,15 @@ from collections import defaultdict, OrderedDict
 import logging
 import os
 import threading
-from typing import Optional, Dict, Any, List, Tuple, Set
+from typing import Optional, Dict, Any, List
 
-from potato.authentication import UserAuthenticator
 from potato.phase import UserPhase
 from potato.item_state_management import get_item_state_manager, Item, Label, get_training_item_state_manager
-from potato.annotation_history import AnnotationAction, AnnotationHistoryManager
 from potato.interaction_tracking import BehavioralData
 from potato.quality_control import AttentionCheckResult
-
 from potato.server_utils.date_handler import DateHandler
 
-from dataclasses import dataclass, field, asdict
-
+from dataclasses import dataclass, asdict
 
 
 @dataclass
@@ -62,7 +58,7 @@ class AttentionCheckState:
     attention_instance_ids = List[str]
     attention_instance_id_to_attention_check_result: Dict[str, AttentionCheckResult]
 
-    def __init__(self, total_checks=0, passed_checks=0, failed_checks=0, n_items_since_last_check=0, items_since_last_check=[], attention_instance_ids=[], attention_instance_id_to_attention_check_result={}):
+    def __init__(self, total_checks=0, passed_checks=0, failed_checks=0, n_items_since_last_check=0, attention_instance_ids=[], attention_instance_id_to_attention_check_result={}):
         self.total_checks = total_checks
         self.passed_checks = passed_checks
         self.failed_checks = failed_checks
@@ -94,7 +90,7 @@ class AttentionCheckState:
         else:
             self.failed_checks += 1
 
-    def record_non_attention_check_annotation(self, instance_id):
+    def record_non_attention_check_annotation(self):
         self.n_items_since_last_check += 1
 
     def to_dict(self) -> Dict[str, Any]:
@@ -892,33 +888,6 @@ class UserStateManager:
         logger.debug("=== END LOAD USER STATE ===")
 
         return user_state
-
-    def load_all_user_states(self, user_id: str) -> UserState:
-        '''Loads all user states for the given user ID'''
-
-        # Figure out where this user's data would be stored on disk
-        output_annotation_dir = self.config["output_annotation_dir"]
-
-        logger.debug(f'=== LOAD ALL USER STATES STARTS ===')
-        logger.debug(f'User "{user_id}"')
-
-        # TODO: make the user state type configurable between in-memory and DB-backed.
-        if user_id in os.listdir(output_annotation_dir):
-            for fn in os.listdir(f"{output_annotation_dir}/{user_id}"):
-                session_id = fn.split("_")[0]
-                user_state = InMemoryUserState.load(user_dir, session_id)
-
-                if user_id in self.user_to_annotation_state:
-                    if session_id in self.user_to_annotation_state.get(user_id, {}):
-                        logger.warning(f'User "{user_id}" (Session ID: {session_id}) already exists in the user state manager, but is being overwritten by load_state()')
-                    else:
-                        self.user_to_annotation_state[user_id][session_id] = user_state
-                        logger.debug(f'User "{user_id}" (Session ID: {session_id}) added')
-                else:
-                    self.user_to_annotation_state[user_id] = {session_id: user_state}
-                    logger.debug(f'User "{user_id}" (Session ID: {session_id}) added')
-
-        logger.debug(f'=== LOAD ALL USER STATES ENDS ===')
 
     def clear(self):
         """Clear all user state (for testing/debugging)."""

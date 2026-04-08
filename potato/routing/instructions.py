@@ -1,18 +1,12 @@
-import json
-import logging
-import datetime
-from datetime import timedelta
-from flask import Flask, session, render_template, request, redirect, url_for, jsonify, make_response, Blueprint
-import time
-import uuid
+from flask import session, render_template, redirect, url_for, Blueprint
 from functools import wraps
 
-from potato.flask_server import (
-    config, logger,
-    get_user_state_manager,
-    UserPhase
-)
+from potato.flask_server import config
+from potato.phase import UserPhase
+from potato.user_state_management import get_user_state_manager
+from potato.logging_config import get_logger
 
+logger = get_logger(__name__)
 
 def phase_required(required_phase):
     """

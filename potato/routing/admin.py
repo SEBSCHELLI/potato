@@ -1,10 +1,12 @@
 import os
-from flask import Flask, session, render_template, request, redirect, url_for, jsonify, Blueprint
+from flask import session, render_template, request, redirect, url_for, jsonify, Blueprint
 from functools import wraps
 import dash
-from potato.flask_server import config, logger
+from potato.flask_server import config
 from potato.admin import admin_dashboard
+from potato.logging_config import get_logger
 
+logger = get_logger(__name__)
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 

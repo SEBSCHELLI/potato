@@ -1,18 +1,13 @@
-import json
-import logging
 import datetime
-from datetime import timedelta
-from flask import Flask, session, render_template, request, redirect, url_for, jsonify, make_response, Blueprint
-import time
-import uuid
-from functools import wraps
+from flask import session, render_template, request, redirect, url_for, jsonify, Blueprint
 
-from potato.flask_server import (
-    config, logger,
-    get_user_state_manager,
-    UserPhase,
-    UserAuthenticator
-)
+from potato.flask_server import config
+from potato.authentication import UserAuthenticator
+from potato.phase import UserPhase
+from potato.user_state_management import get_user_state_manager
+from potato.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 loginout_bp = Blueprint("loginout", __name__)
 

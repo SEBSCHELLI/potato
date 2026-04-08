@@ -39,22 +39,14 @@ Access Control:
 - All admin endpoints require proper authentication
 """
 
-import os
-import json
 import logging
 import datetime
 from typing import Dict, List, Optional, Tuple, Any
 from collections import defaultdict, Counter
 from dataclasses import dataclass
-from flask import request, jsonify, session
-import dash
 from dash import html, dash_table
-import pandas as pd
 
-from potato.flask_server import (
-    config, logger, get_user_state_manager, get_item_state_manager,
-    get_users, UserPhase, test_setup
-)
+from potato.flask_server import config, logger, get_user_state_manager, get_item_state_manager, UserPhase, test_setup
 from potato.annotation_history import AnnotationHistoryManager, AnnotationAction
 from potato.quality_control import get_quality_control_manager
 

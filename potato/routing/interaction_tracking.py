@@ -1,18 +1,15 @@
-from flask import Flask, session, render_template, request, redirect, url_for, jsonify, make_response, Blueprint
-import logging
-import time as time_module
-import datetime
+from flask import session, request, jsonify, Blueprint
 from functools import wraps
 
-from potato.flask_server import (
-    config, logger,
-    get_user_state_manager, get_item_state_manager, get_training_item_state_manager, get_quality_control_manager,
-    UserPhase, Label
-)
-
-from potato.interaction_tracking import get_or_create_behavioral_data, AnnotationChange
-from potato.annotation_history import AnnotationHistoryManager
+from potato.phase import UserPhase
+from potato.user_state_management import get_user_state_manager, get_training_item_state_manager
+from potato.item_state_management import get_item_state_manager, Label
+from potato.interaction_tracking import get_or_create_behavioral_data
+from potato.quality_control import get_quality_control_manager
 from potato.server_utils.date_handler import DateHandler
+from potato.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 track_interactions_bp = Blueprint("interaction", __name__)
 

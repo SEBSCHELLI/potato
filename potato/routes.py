@@ -1,31 +1,14 @@
-"""
-Flask Routes Module
-
-"""
 from __future__ import annotations
 
 import os
-import json
-import logging
-import datetime
 from datetime import timedelta
-from flask import Flask, session, render_template, request, redirect, url_for, jsonify, make_response
-import time
-import uuid
+from flask import session, render_template, request, redirect, url_for, jsonify
 
-# Import from the main flask_server.py module
-from potato.flask_server import (
-    app, config, logger,
-    get_user_state_manager, get_item_state_manager, get_training_item_state_manager,
-    UserPhase, Label
-)
+from potato.phase import UserPhase
+from potato.user_state_management import get_user_state_manager
+from potato.logging_config import get_logger
 
-# Import annotation history
-from potato.annotation_history import AnnotationHistoryManager
-from potato.logging_config import is_ui_debug_enabled, get_debug_log_settings
-
-# Import quality control
-from potato.quality_control import get_quality_control_manager
+logger = get_logger(__name__)
 
 from potato.routing.training import training_bp
 from potato.routing.interaction_tracking import track_interactions_bp
@@ -66,7 +49,7 @@ def home():
 
     if not username or not session_id:
         # User not logged in
-        logger.warning(f'Session info missing: User {username} (Session ID {session_id})')
+        logger.warning(f'User {username} (Session ID {session_id}) - Session info missing')
         return render_template("error.html", error_message="Not logged in.")
 
     usm = get_user_state_manager()
@@ -94,7 +77,7 @@ def home():
     elif phase == UserPhase.DONE:
         return done()
 
-    logger.error(f"Invalid phase for user {user_id}: {phase}")
+    logger.error(f'User {username} (Session ID {session_id}) - Invalid phase')
     return render_template("error.html", message="Invalid application state")
 
 

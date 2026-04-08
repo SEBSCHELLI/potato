@@ -19,15 +19,14 @@ active learning, and diversity-based assignment to optimize annotation efficienc
 from __future__ import annotations
 
 # Need to import UserState as a type hint for the ItemStateManager
-from typing import TYPE_CHECKING, Dict, Set, List, Optional
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from potato.user_state_management import UserState
 
 from enum import Enum
-from collections import OrderedDict, deque, Counter, defaultdict
+from collections import OrderedDict, deque, defaultdict
 import random
-import uuid
 import logging
 import threading
 
@@ -299,14 +298,12 @@ class ItemStateManager:
         # This data structure keeps the ordering of the items that are being annotated
         # and a mapping from item ID to the Item object
         self.item_id_to_item = OrderedDict()
-        self.gold_item_id_to_gold_item = OrderedDict()
 
         # Load max annotations per item from config
         self.max_annotations_per_item = config.get('max_annotations_per_item', -1)
 
         # Track which annotators have worked on each item
         self.item_annotators = defaultdict(set)
-        self.gold_item_annotators = defaultdict(set)
 
         # Queue of remaining items to be assigned
         self.remaining_item_ids = deque()
@@ -317,8 +314,7 @@ class ItemStateManager:
 
         # Initialize item annotation counts for tracking
         self.item_annotation_counts = defaultdict(int)
-        self.gold_item_annotation_counts = defaultdict(int)
-        
+
         # Load how we want to assign items to users
         if 'assignment_strategy' in config:
             strat = config['assignment_strategy']
@@ -451,7 +447,7 @@ class ItemStateManager:
             # No maximum, assign one at a time
             num_items_to_assign = 1
 
-        if self.assignment_strategy == AssignmentStrategy.RANDOM:
+        if self.assignment_strategy == AssignmentStrategy.RANDOM or self.assignment_strategy == AssignmentStrategy.FIXED_ORDER:
             # Random assignment strategy
             unlabeled_items = []
             for iid in self.remaining_item_ids:
@@ -459,8 +455,9 @@ class ItemStateManager:
                 # self.logger.debug(f"[ASSIGNMENT] Considering {iid}: annotation_count={annotation_count}, cap={self.max_annotations_per_item}")
                 # Always skip items that have reached max annotations, but do not remove here
                 if self.max_annotations_per_item >= 0 and annotation_count >= self.max_annotations_per_item:
-                    self.remaining_item_ids.remove(iid)
-                    self.logger.debug(f"[ASSIGNMENT] Skipping {iid}: reached annotation cap. Remove from remaining_item_ids")
+                    if iid in self.remaining_item_ids:
+                        self.remaining_item_ids.remove(iid)
+                        self.logger.debug(f"[ASSIGNMENT] Skipping {iid}: reached annotation cap. Remove from remaining_item_ids")
                     continue
 
                 already_labeled = False
@@ -479,29 +476,19 @@ class ItemStateManager:
                 self.logger.info(f"User {user_state.user_id} (Session ID {iter_session_id}) - No unlabeled items available")
                 return 0
 
-            to_assign = self.random.sample(unlabeled_items, min(num_items_to_assign, len(unlabeled_items)))
-            #self.logger.debug(f"Randomly assigning items {to_assign} to user {getattr(user_state, 'user_id', None)}")
+            if self.assignment_strategy == AssignmentStrategy.RANDOM:
+                to_assign = self.random.sample(unlabeled_items, min(num_items_to_assign, len(unlabeled_items)))
+            else:
+                to_assign = unlabeled_items[:min(num_items_to_assign, len(unlabeled_items))]
+
             for item_id in to_assign:
                 user_state.assign_instance(self.item_id_to_item[item_id])
             return len(to_assign)
-        elif self.assignment_strategy == AssignmentStrategy.FIXED_ORDER:
-            # Fixed order assignment strategy
-            assigned = 0
-            for iid in list(self.remaining_item_ids):
-                if self.max_annotations_per_item >= 0 and len(self.item_annotators[iid]) >= self.max_annotations_per_item:
-                    if iid in self.remaining_item_ids:
-                        self.remaining_item_ids.remove(iid)
-                    continue
-                if iid not in user_state.get_assigned_item_ids():
-                    user_state.assign_item(self.item_id_to_item[iid])
-                    assigned += 1
-                    if assigned >= items_to_assign:
-                        break
-            return assigned
         else:
             # Default fallback to fixed order
             self.logger.warning(f"Unknown assignment strategy: {self.assignment_strategy}, falling back to fixed order")
-            return self.assign_items_to_user_fixed_order(user_state, items_to_assign)
+            self.assignment_strategy = AssignmentStrategy.FIXED_ORDER
+            return self.assign_items_to_user(user_state, user_states)
 
     def get_item_ids(self) -> list[str]:
         """Get all item IDs in the manager"""
@@ -595,34 +582,6 @@ class ItemStateManager:
             # Mark as completed
             self.completed_item_ids.add(item_id)
 
-    # Methods for gold items
-    def has_gold_item(self, gold_item_id: str) -> bool:
-        """Returns True if the gold_item is in the state manager"""
-        return gold_item_id in self.gold_item_id_to_gold_item
-
-    def get_gold_item_ids(self) -> list[str]:
-        """Get all gold_item IDs in the manager"""
-        return list(self.gold_item_id_to_gold_item.keys())
-
-    def get_gold_items(self) -> list[Item]:
-        """Get all gold_items in the manager"""
-        return list(self.gold_item_id_to_gold_item.values())
-
-    def get_gold_item(self, gold_item_id: str) -> Item:
-        """Get an gold_item by its ID"""
-        return self.gold_item_id_to_gold_item[gold_item_id]
-    
-    def get_annotators_for_gold_item(self, gold_item_id: str) -> set[str]:
-        """Get the set of annotators who have worked on this gold_item"""
-        return self.gold_item_annotators[gold_item_id]
-
-    def register_annotator_for_gold_item(self, gold_item_id: str, user_id: str):
-        # Add user to the set of annotators for this gold_item
-        self.gold_item_annotators[gold_item_id].add(user_id)
-
-        # Update annotation count
-        self.gold_item_annotation_counts[gold_item_id] += 1
-    
     def clear(self):
         """Clear all data from the manager (for testing)"""
         self.item_id_to_item.clear()
@@ -630,10 +589,6 @@ class ItemStateManager:
         self.completed_item_ids.clear()
         self.item_annotators.clear()
         self.item_annotation_counts.clear()
-
-        self.gold_item_id_to_gold_item.clear()
-        self.gold_item_annotators.clear()
-        self.gold_item_annotation_counts.clear()
 
 
 # Singleton item of the ItemStateManager with thread-safe lock

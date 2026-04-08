@@ -7,7 +7,6 @@ All data is designed to be serializable for persistence and later analysis.
 """
 from dataclasses import dataclass, field, asdict
 from typing import Dict, List, Any, Optional
-import time
 import datetime
 
 from potato.server_utils.date_handler import DateHandler

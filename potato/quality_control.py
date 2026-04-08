@@ -15,8 +15,8 @@ import logging
 import random
 import threading
 from datetime import datetime
-from typing import Dict, List, Optional, Any, Tuple, Set
-from dataclasses import dataclass, field, asdict
+from typing import Dict, List, Optional, Any
+from dataclasses import dataclass, asdict
 from pathlib import Path
 from collections import defaultdict
 from potato.server_utils.date_handler import DateHandler
@@ -419,47 +419,8 @@ class QualityControlManager:
                     "pass_rate": passed / (passed + failed) if (passed + failed) > 0 else 0
                 }
 
-            # Per-item accuracy
-            item_results = defaultdict(lambda: {"correct": 0, "total": 0})
-            for results in self.gold_results.values():
-                for r in results:
-                    item_results[r.item_id]["total"] += 1
-                    if r.correct:
-                        item_results[r.item_id]["correct"] += 1
-
-            for item_id, counts in item_results.items():
-                gold_metrics["by_item"][item_id] = {
-                    "correct": counts["correct"],
-                    "total": counts["total"],
-                    "accuracy": counts["correct"] / counts["total"] if counts["total"] > 0 else 0
-                }
-
-            # Auto-promotion metrics
-            auto_promotion_metrics = {
-                "enabled": self.qc_config.gold_auto_promote_enabled,
-                "min_annotators": self.qc_config.gold_auto_promote_min_annotators,
-                "agreement_threshold": self.qc_config.gold_auto_promote_agreement,
-                "promoted_count": len(self.promoted_gold_items),
-                "promoted_items": [
-                    {
-                        "item_id": item["id"],
-                        "consensus_label": item["gold_label"],
-                        "annotator_count": item["annotator_count"],
-                        "promoted_at": item["promoted_at"]
-                    }
-                    for item in self.promoted_gold_items
-                ],
-                "candidates": self.get_promotion_candidates()[:20]  # Top 20 candidates
-            }
-
             return {
-                "attention_checks": attention_metrics,
-                "gold_standards": gold_metrics,
-                "auto_promotion": auto_promotion_metrics,
-                "pre_annotation": {
-                    "enabled": self.qc_config.pre_annotation_enabled,
-                    "items_with_predictions": len(self.pre_annotations)
-                }
+                "attention_checks": attention_metrics
             }
 
 
