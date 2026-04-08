@@ -883,11 +883,12 @@
     }
 
     // Initialize when DOM is ready
-    if (document.readyState === 'loading') {
+    /*if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
         init();
     }
+     */
 
     // Also initialize when span overlays are added to the page
     const observer = new MutationObserver((mutations) => {

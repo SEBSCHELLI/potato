@@ -1,0 +1,104 @@
+port: 8946
+server_name: localhost
+task_name: "Negative Citation Annotation"
+annotation_task_name: "Negative Citation Annotation"
+
+# Task directory (current directory)
+task_dir: "."
+site_dir: "templates"
+# Data configuration
+data_files:
+  - "twitter_data.json"
+
+item_properties:
+  id_key: tweetid
+  text_key: text
+  kwargs:
+    - paper_title
+    - paper_abstract
+    - paper_url
+
+# Output configuration
+output_annotation_dir: "output/"
+output_annotation_format: "json"
+
+# Annotation scheme
+annotation_schemes:
+  - annotation_type: radio
+    name: stance
+    description: "What is the stance?"
+    labels:
+      - Negative
+      - Non-Negative
+      - Can't decide. There are reasons for both options
+    sequential_key_binding: true
+    horizontal: true
+
+# Allow anyone to annotate
+allow_all_users: true
+
+# Prolific integration
+login:
+  type: prolific  # Enables both URL-direct login and API integration
+
+prolific:
+  config_file_path: configs/prolific_config.yaml
+
+completion_code: "POTATO2026"
+
+# Automatic task assignment for crowdsourcing
+assignment_strategy: random
+random_seed: 0
+max_annotations_per_user: 7
+max_annotations_per_item: 5
+
+jumping_to_id_disabled: true
+hide_navbar: true
+
+# Quality control
+#attention_checks:
+#  enabled: true
+#  frequency: 10
+
+phases:
+  order:
+  #- welcome
+  #- instructions
+  #- training
+  - annotation
+  #welcome:
+  #  type: instructions
+  #  file: "potato/templates/welcome.html"
+  #instructions:
+  #  type: instructions
+  #  file: "potato/templates/instructions.html"
+  #training:
+  #  type: training
+  #  task_layout: "layouts/task_layout.html"
+  annotation:
+    type: annotation
+    task_layout: "layouts/task_layout.html"
+
+
+training:
+  enabled: true
+  data_file: "twitter_training_data.json"
+  annotation_schemes: ["stance"]
+  passing_criteria:
+    min_correct: 5
+    require_all_correct: true
+  allow_retry: true
+  failure_action: "move_to_done"  # or "advance"
+
+attention_checks:
+  enabled: true
+
+  # Path to JSON file containing attention check items
+  items_file: "gold_data.json"
+
+  # How often to inject attention checks
+  #frequency: 2
+  probability: 0.33
+
+  # Flag suspiciously fast responses
+  min_response_time: 3.0

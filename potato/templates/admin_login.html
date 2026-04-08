@@ -80,7 +80,6 @@
             border-radius: var(--radius);
             padding: 0.75rem;
             margin-top: 1rem;
-            display: none;
         }
 
         .admin-login-error.show {
@@ -96,12 +95,12 @@
                 This area requires administrator privileges. Please enter your API key to access the admin dashboard.
             </p>
 
-            <form class="admin-login-form" id="adminLoginForm">
+            <form method="POST" action="/admin/login" class="admin-login-form" id="adminLoginForm">
                 <input
                     type="password"
-                    id="apiKey"
-                    name="apiKey"
-                    placeholder="Enter API Key"
+                    id="api_key"
+                    name="api_key"
+                    placeholder="Enter Admin API Key"
                     class="admin-login-input"
                     required
                 >
@@ -109,44 +108,45 @@
                     Access Dashboard
                 </button>
             </form>
-
+            {% if error %}
             <div class="admin-login-error" id="errorMessage">
-                Invalid API key. Please try again.
+                {{ error }}
             </div>
+            {% endif %}
         </div>
     </div>
 
-    <script>
-        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+<!--    <script>-->
+<!--        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {-->
+<!--            e.preventDefault();-->
 
-            const apiKey = document.getElementById('apiKey').value;
-            const errorMessage = document.getElementById('errorMessage');
+<!--            const apiKey = document.getElementById('apiKey').value;-->
+<!--            const errorMessage = document.getElementById('errorMessage');-->
 
-            // Clear previous error
-            errorMessage.classList.remove('show');
+<!--            // Clear previous error-->
+<!--            errorMessage.classList.remove('show');-->
 
-            // Make request to admin endpoint with API key
-            fetch('/admin', {
-                method: 'GET',
-                headers: {
-                    'X-API-Key': apiKey
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Success - redirect to admin dashboard
-                    window.location.href = '/admin';
-                } else {
-                    // Show error message
-                    errorMessage.classList.add('show');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                errorMessage.classList.add('show');
-            });
-        });
-    </script>
+<!--            // Make request to admin endpoint with API key-->
+<!--            fetch('/admin', {-->
+<!--                method: 'GET',-->
+<!--                headers: {-->
+<!--                    'X-API-Key': apiKey-->
+<!--                }-->
+<!--            })-->
+<!--            .then(response => {-->
+<!--                if (response.ok) {-->
+<!--                    // Success - redirect to admin dashboard-->
+<!--                    window.location.href = '/admin';-->
+<!--                } else {-->
+<!--                    // Show error message-->
+<!--                    errorMessage.classList.add('show');-->
+<!--                }-->
+<!--            })-->
+<!--            .catch(error => {-->
+<!--                console.error('Error:', error);-->
+<!--                errorMessage.classList.add('show');-->
+<!--            });-->
+<!--        });-->
+<!--    </script>-->
 </body>
 </html>

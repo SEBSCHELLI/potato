@@ -14,246 +14,355 @@
     <!-- Custom Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
-    <!-- Span Annotation Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='span-styles.css') }}">
-
-    <!-- Image Annotation Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='image-annotation.css') }}?v=2">
-
-    <!-- Audio Annotation Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='audio-annotation.css') }}?v=2">
-
-    <!-- Video Annotation Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='video-annotation.css') }}">
-
-    <!-- Span Link Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='span-link-styles.css') }}">
-
-    <!-- Spreadsheet Display Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='spreadsheet-display.css') }}">
-
     <!-- Format Display Styles (document, code, etc.) -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/format-displays.css') }}">
-
-    <!-- Document Bounding Box Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='document-bbox.css') }}">
-
-    <!-- PDF Annotation Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='pdf-annotation.css') }}">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/format-displays.css') }}"> -->
 
     <!-- Display Logic Styles (conditional schema branching) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='display-logic.css') }}">
 
-    <!-- Coreference Chain Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/coreference.css') }}">
+    <style>
+        body {
+            background-color: var(--primary-bg-color);
+        }
 
-    <!-- Segmentation Tool Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/segmentation.css') }}">
+        .navbar {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+        }
 
-    <!-- Conversation Tree Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/conversation-tree.css') }}">
+        .button {
+            background-color: var(--light-color);
+            color: var(--secondary-color);
+            height: auto;
+            padding: 0.25rem 0.75rem;
+            font-size: 1rem;
+            min-width: 60px;
+            text-align: center;
+            border: none;
+            border-radius: 0.2rem;
+            text-decoration: none;
+        }
 
-    <!-- Video Tracking Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/tracking.css') }}">
+        .button:hover {
+            background-color: var(--interact-color);
+            color: white;
+        }
 
-    <!-- Triage Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/triage.css') }}">
+        .prev-button {
+            background-color: var(--light-color);
+            color: var(--secondary-color);
+        }
 
-    <!-- Entity Linking Styles (knowledge base linking) -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/entity-linking.css') }}">
+        .prev-button:hover {
+            background-color: var(--interact-color);
+            color: white;
+        }
+
+        .next-button {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .next-button:hover {
+            background-color: var(--interact-color);
+            color: white;
+        }
+
+        .text-box {
+            background-color: #fff;
+            margin-left: 2rem;
+            margin-right: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            padding-top: 1rem;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.16);
+        }
+
+        .task-image {
+            border-radius: 0.5rem;
+            border: 2px solid white;
+            display: block;
+            margin: 0rem;
+        }
+
+        .criteria-box {
+            background-color: #fff;
+            margin-left: 2rem;
+            margin-right: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.16);
+        }
+
+        .criteria-headline {
+            font-size: 18px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+        }
+
+        .criteria-text {
+            color: black;
+            font-size: 16px;
+            margin-bottom: 0rem;
+            margin-left: 2rem;
+            margin-right: 0rem;
+        }
+
+        .criteria-box ul {
+            font-size: 16px;
+            list-style-type: square; /* or circle, square */
+            margin-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .criteria-box li {
+            margin-bottom: 0.5em;
+        }
+
+        .instructions-instance h5 {
+            color: #495057;
+            margin-bottom: 1rem;
+        }
+
+        #left {
+            width: 40%;
+            padding: 10px;
+        }
+
+        #divider {
+            width: 2px;
+            cursor: col-resize;
+            background: #888;
+        }
+
+        #right {
+            flex: 1;
+            padding: 10px;
+        }
+
+
+    </style>
 
     <!-- jQuery (required for span annotation) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 </head>
 
 <body>
-    <!-- Header navigation bar -->
-    <nav class="navbar sticky-top shadow-sm" style="background-color: var(--primary-color); padding: 0.75rem 1rem; margin-bottom: 0.75rem;">
-        <div class="container-fluid d-flex align-items-center">
-            <!-- Task name (left aligned) -->
-            <div class="navbar-brand">
-                <span class="fw-bold" style="color: var(--light-color); font-size: 1.25rem">{{annotation_task_name}}</span>
-            </div>
+<!-- Header navigation bar -->
+<nav class="navbar sticky-top shadow-sm">
+    <div class="container-fluid d-flex align-items-center">
+        <!-- Task name (left aligned) -->
+        <div class="navbar-brand">
+            <span class="fw-bold" style="color: var(--light-color); font-size: 1.25rem">{{annotation_task_name}}</span>
+        </div>
 
-            <!-- Middle section with progress and navigation -->
-            <div class="d-flex align-items-center justify-content-center flex-grow-1 gap-4">
-                <!-- Annotation status indicator -->
-                <div class="annotation-status-indicator" id="annotation-status">
+        <!-- Middle section with progress and navigation -->
+        <div class="d-flex align-items-center justify-content-center flex-grow-1 gap-4">
+            <!-- Annotation status indicator -->
+            <div class="annotation-status-indicator" id="annotation-status" style="color: var(--light-color);">
                     <span class="status-badge {{ 'labeled' if instance_has_annotations else 'unlabeled' }}">
                         {{ 'Labeled' if instance_has_annotations else 'Not labeled' }}
                     </span>
+            </div>
+
+            <!-- Progress counter -->
+            <div class="d-flex align-items-center" style="color: var(--light-color); margin-right: 10px">
+                <span>Annotated: <span class="fw-medium" id="progress-counter">{{finished_count}}/{{total_count}}</span></span>
+            </div>
+
+            <!-- Passed Attention Checks counter -->
+            <div class="d-flex align-items-center" style="color: var(--light-color); margin-right: 40px">
+                <span>Coins: <span class="fw-medium" id="ac-counter">{{totals_acs_passed}} <i class="fa-solid fa-coins"></i></span></span>
+            </div>
+
+        </div>
+
+        <!-- User info and logout (right aligned) -->
+        <div class="d-flex align-items-center" style="padding: 0.5rem 1rem;">
+            <div class="me-3" style="color: var(--light-color)">
+                <span>Logged in as <span class="fw-medium">{{username}}</span></span>
+            </div>
+            <div class="border-start" style="padding-left: 20px; height: 24px; display: flex; align-items: center;">
+                <form action="/logout" method="POST">
+                    <button type="submit" class="button">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div id="content" style="display: flex;">
+        <div id="left">
+            <h2 style="margin-left: 2rem; color: var(--secondary-color); font-weight: bold;">Annotation Protocol</h2>
+            <div class="text-box">
+                <p style="margin-left: 1rem; color: var(--secondary-color); font-weight: bold; font-size: 18px;">A Negative Citation occurs when a social media post encourages readers to partially or
+                    fully question, doubt, or dismiss the conclusions of the referenced study.</p>
+            </div>
+
+            <h4 style="margin-top: 2rem; margin-left: 2rem; color: var(--secondary-color); font-weight: bold;">Criteria for Negative Citations:</h4>
+
+
+            <div style="margin-left: 0rem;">
+                <div class="criteria-box">
+                    <p class="criteria-headline">Post criticizes the study’s data, methodology, or interpretations, etc., and/or proposes better study design choices</p>
+                    <p class="criteria-text" style="margin-top: 10px;">Examples:</p>
+                    <ul class="criteria-text">
+                        <li>Flaws in the study’s design (sample too small, wrong method, claims too strong)</li>
+                        <li>Proposes a more realistic study design instead (better method, different sample)</li>
+                    </ul>
                 </div>
 
-                <!-- Progress counter -->
-                <div class="d-flex align-items-center" style="color: var(--light-color); margin-right: 40px">
-                    <span>Progress: <span class="fw-medium" id="progress-counter">{{finished}}/{{total_count}}</span></span>
+                <div class="criteria-box">
+                    <p class="criteria-headline">Post criticizes the study’s authors or source</p>
+                    <p class="criteria-text" style="margin-top: 10px;">Examples:</p>
+                    <ul class="criteria-text">
+                        <li>Conflicts of interest, author’s questionable track of record</li>
+                        <li>Not peer-reviewed, questionable journal / venue</li>
+                    </ul>
                 </div>
 
-                <!-- Jump to item form -->
-                <div style="margin-left: 40px">
-                    <div class="d-flex align-items-center">
-                        <label for="go_to" class="me-2" style="color: var(--light-color); margin-bottom: 0">Go to:</label>
-                        <input type="number" id="go_to" class="form-control form-control-sm me-2"
-                               style="width: 70px; height: 31px; border: none; border-radius: var(--radius);"
-                               value="" min="0" required>
-                        <button type="button" class="shadcn-button" id="go-to-btn"
-                                style="height: 31px; line-height: 1; padding: 0 0.75rem; background-color: var(--light-color); color: var(--primary-color); border: none;">
-                            Go
+                <div class="criteria-box">
+                    <p class="criteria-headline">Post provides counter-evidence and/or implies the existence of more recent evidence</p>
+                    <p class="criteria-text" style="margin-top: 10px;">Examples:</p>
+                    <ul class="criteria-text">
+                        <li>Counter-evidence (studies with contrary findings, anecdotal counter-evidence)</li>
+                        <li>Calling the study outdated or old, implying more recent studies exist, which could be both in line or contrary to the study’s
+                            conclusions
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="criteria-box">
+                    <p class="criteria-headline">Post questions the study’s relevance or applicability</p>
+                    <p class="criteria-text" style="margin-top: 10px;">Examples:</p>
+                    <ul class="criteria-text">
+                        <li>Findings in basic research might not apply to real-world scenarios or scenarios readers care about</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="divider"></div>
+
+        <div id="right">
+            <!-- Main annotation area -->
+            <div id="task_layout"
+                 class="shadcn-card mb-2 text-annotation"
+                 style="margin-left: 2rem; margin-right: 2rem;">
+                <div class="shadcn-card-content" style="background-color: #f8f9fa; padding: 1.5rem;">
+                    <!-- Loading state -->
+                    <div id="loading-state" class="text-center py-5">
+                        <div class="loading-spinner mb-3"></div>
+                        <p>Loading Instance...</p>
+                    </div>
+
+                    <!-- Error state -->
+                    <div id="error-state" class="error-message" style="display: none;">
+                        <h5><i class="fas fa-exclamation-triangle me-2"></i>Error</h5>
+                        <p id="error-message-text"></p>
+                        <button class="shadcn-button shadcn-button-primary" onclick="loadCurrentInstance()">
+                            <i class="fas fa-redo me-2"></i>Retry
+                        </button>
+                    </div>
+
+                    <!-- Main content area -->
+                    <div id="main-content" style="display: none;">
+                        <!-- Instance display area -->
+                        <div class="mb-4" style="margin-bottom: 0rem !important;">
+                            <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Post:</h5>
+                            <div id="instance-text" class="p-3 border rounded instance-text-container"
+                                 style="background-color: var(--light-bg); min-height: 50px; position: relative;">
+                                <!-- Text content layer for span annotation -->
+                                <!-- Note: sanitize_html filter allows safe span annotation HTML while blocking XSS -->
+                                <!-- data-original-text uses plain text (no span HTML) for correct position calculations -->
+                                <!-- DOM content uses rendered HTML with span tags for visual display -->
+                                <div id="text-content" data-original-text="{{instance_plain_text | sanitize_html}}" style="position: relative; z-index: 1; pointer-events: auto;">
+                                    {{instance_text | sanitize_html}}
+                                </div>
+                                <!-- Span overlays layer for span annotation -->
+                                <div id="span-overlays" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 2;">
+                                    <!-- Individual overlays will have pointer-events: auto -->
+                                </div>
+                            </div>
+
+                            <br>
+                            <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Paper:</h5>
+                            <h6 data-original-text="{{paper_title | sanitize_html}}">Title: {{paper_title | sanitize_html}}</h6>
+                            <!--- <h6 style="display: inline;" data-original-text="Link:">Link:</h6> <a href={{paper_url}} id="publicationlink" target='_blank'>Link to publication</a>-->
+                            <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                            <div id="instance-text" class="p-3 border rounded instance-text-container"
+                                 style="background-color: var(--light-bg); min-height: 0px; position: relative;">
+                                <div id="text-content" data-original-text="{{paper_abstract | sanitize_html}}" style="position: relative; z-index: 1; pointer-events: auto;">
+                                    {{paper_abstract | sanitize_html}}
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="task_layout"
+                 class="shadcn-card mb-2 text-annotation"
+                 style="margin-left: 2rem; margin-right: 2rem; min-height: 0px;">
+                <div class="shadcn-card-content" style="background-color: #f8f9fa; padding: 1.5rem;">
+                    <!-- Main content area -->
+                    <div id="main-content">
+                        <!-- Status messages -->
+                        <div id="status" class="status" style="display: none;"></div>
+                        <!-- Hidden input for instance_id -->
+                        <input type="hidden" id="instance_id" name="instance_id" value="{{instance_id}}">
+
+                        <!-- Annotation forms -->
+                        <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Annotation:</h5>
+                        <div id="annotation-forms">
+                            {{ TASK_LAYOUT }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation buttons -->
+            <div class="my-2" style="margin-left: 2rem; margin-right: 2rem;">
+                <div class="d-flex justify-content-end align-items-center">
+                    <!-- Previous button -->
+                    <!--<div>
+                        <button class="shadcn-button shadcn-button-outline me-2 prev-button" id="prev-btn" onclick="navigateToPrevious()">
+                            <i class="fas fa-arrow-left me-2"></i>Previous
+                        </button>
+                    </div>-->
+
+                    <!-- Next button -->
+                    <div>
+                        <button class="shadcn-button shadcn-button-primary next-button" id="next-btn" onclick="navigateToNext()">
+                            {% if finished_count == total_count-1 %}
+                                Finish
+                            {% else %}
+                                Next
+                            {% endif %}<i class="fas fa-arrow-right ms-2"></i>
                         </button>
                     </div>
                 </div>
-
-                <!-- Skip to unannotated buttons -->
-                <div class="d-flex align-items-center" style="margin-left: 20px; gap: 8px;">
-                    <button type="button" class="shadcn-button" id="jump-unannotated-prev-btn"
-                            onclick="jumpToUnannotatedPrev()"
-                            style="height: 31px; line-height: 1; padding: 0 0.75rem; background-color: rgba(255,255,255,0.2); color: var(--light-color); border: 1px solid rgba(255,255,255,0.3);"
-                            title="Skip to previous unannotated item">
-                        <i class="fas fa-backward"></i>
-                    </button>
-                    <button type="button" class="shadcn-button" id="jump-unannotated-btn"
-                            onclick="jumpToUnannotated()"
-                            style="height: 31px; line-height: 1; padding: 0 0.75rem; background-color: rgba(255,255,255,0.2); color: var(--light-color); border: 1px solid rgba(255,255,255,0.3);"
-                            title="Skip to next unannotated item">
-                        <i class="fas fa-forward"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- User info and logout (right aligned) -->
-            <div class="d-flex align-items-center"
-                 style="background-color: rgba(255, 255, 255, 0.15); padding: 0.5rem 1rem; border-radius: var(--radius);">
-                <div class="me-3" style="color: var(--light-color)">
-                    <span>Logged in as <span class="fw-medium" id="username-display">{{username}}</span></span>
-                </div>
-                {% if is_adjudicator %}
-                <div class="border-start me-2" style="padding-left: 20px; height: 24px; display: flex; align-items: center;">
-                    <a href="/adjudicate" class="shadcn-button"
-                       style="background-color: rgba(255,255,255,0.25); color: var(--light-color); height: auto; padding: 0.25rem 0.75rem !important; font-size: 0.875rem; min-width: 60px; text-align: center; border: none; text-decoration: none;"
-                       title="Adjudication Mode">
-                        <i class="fas fa-gavel"></i> Adjudicate
-                    </a>
-                </div>
-                {% endif %}
-                <div class="border-start" style="padding-left: 20px; height: 24px; display: flex; align-items: center;">
-                    <a href="/logout" class="shadcn-button"
-                       style="background-color: var(--light-color); color: var(--primary-color); height: auto; padding: 0.25rem 0.75rem !important; font-size: 0.875rem; min-width: 60px; text-align: center; border: none; text-decoration: none;">
-                        Logout
-                    </a>
-                </div>
             </div>
         </div>
-    </nav>
-
-    <div class="container-fluid">
-        <!-- Main annotation area -->
-        <div id="task_layout" class="shadcn-card mb-2 {% if has_image_annotation or has_video_annotation or has_audio_annotation %}media-annotation{% else %}text-annotation{% endif %}">
-            <div class="shadcn-card-content">
-                <!-- Loading state -->
-                <div id="loading-state" class="text-center py-5">
-                    <div class="loading-spinner mb-3"></div>
-                    <p>Loading annotation interface...</p>
-                </div>
-
-                <!-- Error state -->
-                <div id="error-state" class="error-message" style="display: none;">
-                    <h5><i class="fas fa-exclamation-triangle me-2"></i>Error</h5>
-                    <p id="error-message-text"></p>
-                    <button class="shadcn-button shadcn-button-primary" onclick="loadCurrentInstance()">
-                        <i class="fas fa-redo me-2"></i>Retry
-                    </button>
-                </div>
-
-                <!-- Main content area -->
-                <div id="main-content" style="display: none;">
-                    <!-- Instance display area -->
-                    <div class="mb-4">
-                        {% if has_instance_display | default(false) %}
-                        <!-- New instance_display mode: explicit content display configuration -->
-                        {{ display_html | safe }}
-                        <!-- Hidden element for legacy JS compatibility -->
-                        <div id="instance-text" style="display: none;">
-                            <div id="text-content" data-original-text="{{instance_plain_text | sanitize_html}}">{{instance | sanitize_html}}</div>
-                        </div>
-                        {% elif has_video_annotation | default(false) %}
-                        <h5 class="mb-3">Video to Annotate:</h5>
-                        <!-- For video annotation, keep the text-content element accessible for JS but visually hidden -->
-                        <div id="instance-text" class="instance-text-container" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0);">
-                            <div id="text-content" data-original-text="{{instance_plain_text | sanitize_html}}">{{instance | sanitize_html}}</div>
-                        </div>
-                        {% elif has_audio_annotation | default(false) %}
-                        <h5 class="mb-3">Audio to Annotate:</h5>
-                        <!-- For audio annotation, keep the text-content element accessible for JS but visually hidden -->
-                        <div id="instance-text" class="instance-text-container" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0);">
-                            <div id="text-content" data-original-text="{{instance_plain_text | sanitize_html}}">{{instance | sanitize_html}}</div>
-                        </div>
-                        {% elif has_image_annotation | default(false) %}
-                        <!-- For image annotation, hide this section - the image is loaded directly into the annotation canvas -->
-                        <!-- Store the image URL in a hidden element for JavaScript to access -->
-                        <div id="instance-text" style="display: none;">
-                            <div id="text-content" data-original-text="{{instance_plain_text | sanitize_html}}" data-image-url="{{instance | sanitize_html}}">{{instance | sanitize_html}}</div>
-                        </div>
-                        {% else %}
-                        <h5 class="mb-3">Text to Annotate:</h5>
-                        <div id="instance-text" class="p-3 border rounded instance-text-container" style="background-color: var(--light-bg); min-height: 100px; position: relative;">
-                            <!-- Text content layer for span annotation -->
-                            <!-- Note: sanitize_html filter allows safe span annotation HTML while blocking XSS -->
-                            <!-- data-original-text uses plain text (no span HTML) for correct position calculations -->
-                            <!-- DOM content uses rendered HTML with span tags for visual display -->
-                            <div id="text-content" data-original-text="{{instance_plain_text | sanitize_html}}" style="position: relative; z-index: 1; pointer-events: auto;">{{instance | sanitize_html}}</div>
-                            <!-- Span overlays layer for span annotation -->
-                            <div id="span-overlays" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 2;">
-                                <!-- Individual overlays will have pointer-events: auto -->
-                            </div>
-                        </div>
-                        {% endif %}
-                    </div>
-
-
-
-                    <!-- Status messages -->
-                    <div id="status" class="status" style="display: none;"></div>
-                    <!-- Hidden input for instance_id -->
-                    <input type="hidden" id="instance_id" name="instance_id" value="{{instance_id}}">
-
-                    <!-- Annotation forms -->
-                    <div id="annotation-forms">
-                        {{ TASK_LAYOUT }}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Navigation buttons -->
-        <div class="my-2">
-            <div class="d-flex justify-content-between align-items-center">
-                <!-- Previous button -->
-                <div>
-                    <button class="shadcn-button shadcn-button-outline me-2" id="prev-btn" onclick="navigateToPrevious()">
-                        <i class="fas fa-arrow-left me-2"></i>Previous
-                    </button>
-                </div>
-
-                <!-- Next button -->
-                <div>
-                    <button class="shadcn-button shadcn-button-primary" id="next-btn" onclick="navigateToNext()">
-                        Next<i class="fas fa-arrow-right ms-2"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <hr style="color: var(--border)">
-        <footer class="py-2 text-center" style="font-size: 0.75rem; color: var(--muted-foreground)">
-            Copyright &copy; 2025
-            <a href="https://blablablab.si.umich.edu/" style="color: var(--primary); text-decoration: none">Blablablab</a>
-            <span class="mx-2">|</span>
-            <a href="https://github.com/davidjurgens/potato" style="color: var(--primary); text-decoration: none">Chat with us on GitHub</a>
-            <span class="mx-2">|</span>
-            <a href="https://github.com/davidjurgens/potato#cite-us" style="color: var(--primary); text-decoration: none">Cite Us</a>
-        </footer>
     </div>
+
+
+    <!-- Footer -->
+    <hr style="color: var(--footer-border)">
+    <footer class="py-2 text-center" style="font-size: 0.75rem">
+        <a href="https://www.gesis.org/en/institute/about-us/staff/person/Sebastian.Schellhammer/" style="color: var(--primary); text-decoration: none">Contact</a>
+        <span class="mx-2">|</span>
+        <a href="https://github.com/davidjurgens/potato" style="color: var(--primary); text-decoration: none">Powered by POTATO</a>
+    </footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -267,8 +376,7 @@
             server_debug: {{ 'true' if server_debug else 'false' }},
             debug_phase: {{ debug_phase | tojson if debug_phase else 'null' }},
             api_key: "test_api_key",
-            username: {{ username | tojson }},
-            ui_config: {}
+            username: {{ username | tojson }}
         };
 
         // Conditionally enable/disable console logging based on ui_debug setting
@@ -298,101 +406,39 @@
             }
         };
     </script>
-    <script id="ui-config" type="application/json">{% if ui_config %}{{ ui_config | tojson | safe }}{% else %}{}{% endif %}</script>
-    <script>
-        (function(){
-            try {
-                var el = document.getElementById('ui-config');
-                if (el && el.textContent && el.textContent.trim().length > 0) {
-                    window.config.ui_config = JSON.parse(el.textContent);
-                }
-            } catch (e) { console.warn('Failed to parse ui_config', e); }
-        })();
-    </script>
 
     <!-- Load annotation JavaScript -->
     <script src="{{ url_for('static', filename='interaction_tracker.js') }}?v=1"></script>
-    <script src="{{ url_for('static', filename='span-core.js') }}?v=7"></script>
-    <script src="{{ url_for('static', filename='ai_assistant_manager.js') }}?v=1"></script>
     <!-- Display Logic Manager (conditional schema branching) - must load before annotation.js -->
     <script src="{{ url_for('static', filename='display-logic.js') }}?v=1"></script>
-    <!-- Instance display manager (for new instance_display configuration) -->
-    {% if has_instance_display | default(false) %}
-    <script src="{{ url_for('static', filename='instance-display.js') }}?v=2"></script>
-    {% endif %}
     <script src="{{ url_for('static', filename='annotation.js') }}?v=15"></script>
-
-    <!-- Fabric.js for image annotation (loaded from CDN) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
-    <!-- Image annotation manager -->
-    <script src="{{ url_for('static', filename='image-annotation.js') }}?v=2"></script>
-    <!-- Visual AI Assistant for image/video annotation (loaded conditionally) -->
-    {% if ai_enabled %}
-    <script src="{{ url_for('static', filename='visual_ai_assistant.js') }}?v=1"></script>
-    <!-- Option Highlight Manager for dimming less-likely options -->
-    <script src="{{ url_for('static', filename='option_highlight_manager.js') }}?v=2"></script>
-    {% endif %}
-
-    <!-- Peaks.js for audio/video annotation (stored locally for reliability) -->
-    <script src="{{ url_for('static', filename='peaks.min.js') }}"></script>
-    <!-- Audio annotation manager -->
-    <script src="{{ url_for('static', filename='audio-annotation.js') }}?v=2"></script>
-    <!-- Video annotation manager -->
-    <script src="{{ url_for('static', filename='video-annotation.js') }}?v=10"></script>
-
-    <!-- Span link manager -->
-    <script src="{{ url_for('static', filename='span-link-manager.js') }}?v=1"></script>
-
-    <!-- Entity linking for knowledge bases (Wikidata, UMLS) -->
-    <script src="{{ url_for('static', filename='entity-linking.js') }}?v=1"></script>
-
-    <!-- Coreference chain manager -->
-    <script src="{{ url_for('static', filename='coreference-manager.js') }}?v=1"></script>
-
-    <!-- Segmentation tools -->
-    <script src="{{ url_for('static', filename='segmentation-tools.js') }}?v=1"></script>
-
-    <!-- Conversation tree interaction -->
-    <script src="{{ url_for('static', filename='conversation-tree.js') }}?v=1"></script>
-
-    <!-- Video tracking interpolation and UI -->
-    <script src="{{ url_for('static', filename='tracking-interpolation.js') }}?v=1"></script>
-    <script src="{{ url_for('static', filename='tracking-ui.js') }}?v=1"></script>
-
-    <!-- Triage annotation manager -->
-    <script src="{{ url_for('static', filename='triage.js') }}?v=1"></script>
-
-    <!-- Document bounding box annotation -->
-    <script src="{{ url_for('static', filename='document-bbox.js') }}?v=2"></script>
-
-    <!-- PDF bounding box annotation -->
-    <script src="{{ url_for('static', filename='pdf-bbox.js') }}?v=2"></script>
 
     <!-- Global keyboard debug (temporary) -->
     <script>
-        window.addEventListener('keydown', function(e) {
+        window.addEventListener('keydown', function (e) {
             console.log('[GLOBAL DEBUG] keydown:', e.key, 'code:', e.code, 'target:', e.target.tagName);
         }, true);
     </script>
 
-    <!-- Instance height limit functionality -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Apply maximum instance height if configured
-            if (window.config && window.config.ui_config && window.config.ui_config.max_instance_height) {
-                const maxHeight = window.config.ui_config.max_instance_height;
-                const instanceTextContainer = document.getElementById('instance-text');
+        const divider = document.getElementById("divider");
+        const left = document.getElementById("left");
 
-                if (instanceTextContainer) {
-                    // Set CSS custom property for max height
-                    instanceTextContainer.style.setProperty('--max-instance-height', maxHeight + 'px');
+        let isDragging = false;
 
-                    // Add the max-height-limited class to enable scrolling
-                    instanceTextContainer.classList.add('max-height-limited');
+        divider.addEventListener("mousedown", () => {
+            isDragging = true;
+        });
 
-                    console.log('Applied maximum instance height:', maxHeight + 'px');
-                }
-            }
+        document.addEventListener("mousemove", (e) => {
+            if (!isDragging) return;
+
+            // Set new width of left panel
+            left.style.width = e.clientX + "px";
+        });
+
+        document.addEventListener("mouseup", () => {
+            isDragging = false;
         });
     </script>
 </body>

@@ -72,7 +72,7 @@ class SchemaRegistry:
             raise ValueError(f"Schema '{schema.name}' is already registered")
 
         self._schemas[schema.name] = schema
-        logger.debug(f"Registered schema: {schema.name}")
+        #logger.debug(f"Registered schema: {schema.name}")
 
     def get(self, name: str) -> Optional[SchemaDefinition]:
         """

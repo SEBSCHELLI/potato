@@ -20,6 +20,7 @@ from __future__ import annotations
 
 # Need to import UserState as a type hint for the ItemStateManager
 from typing import TYPE_CHECKING, Dict, Set, List, Optional
+
 if TYPE_CHECKING:
     from potato.user_state_management import UserState
 
@@ -30,13 +31,14 @@ import uuid
 import logging
 import threading
 
-# Singleton instance of the ItemStateManager with thread-safe lock
+# Singleton item of the ItemStateManager with thread-safe lock
 ITEM_STATE_MANAGER = None
 _ITEM_STATE_MANAGER_LOCK = threading.Lock()
 
+
 def init_item_state_manager(config: dict) -> ItemStateManager:
     """
-    Initialize the singleton ItemStateManager instance.
+    Initialize the singleton ItemStateManager item.
 
     This function creates the global ItemStateManager that will be shared
     across all users. It's designed to be called once during application startup.
@@ -46,7 +48,7 @@ def init_item_state_manager(config: dict) -> ItemStateManager:
         config: Configuration dictionary containing item management settings
 
     Returns:
-        ItemStateManager: The initialized singleton instance
+        ItemStateManager: The initialized singleton item
 
     Note:
         TODO: make the manager type configurable between in-memory and DB-backed.
@@ -64,9 +66,10 @@ def init_item_state_manager(config: dict) -> ItemStateManager:
 
     return ITEM_STATE_MANAGER
 
+
 def clear_item_state_manager():
     """
-    Clear the singleton item state manager instance (for testing).
+    Clear the singleton item state manager item (for testing).
 
     This function is primarily used for testing purposes to reset the
     global state between test runs. Thread-safe.
@@ -75,12 +78,13 @@ def clear_item_state_manager():
     with _ITEM_STATE_MANAGER_LOCK:
         ITEM_STATE_MANAGER = None
 
+
 def get_item_state_manager() -> ItemStateManager:
     """
-    Get the singleton ItemStateManager instance.
+    Get the singleton ItemStateManager item.
 
     Returns:
-        ItemStateManager: The singleton instance
+        ItemStateManager: The singleton item
 
     Raises:
         ValueError: If the manager has not been initialized
@@ -96,6 +100,7 @@ def get_item_state_manager() -> ItemStateManager:
         raise ValueError("Item State Manager has not been initialized yet!")
 
     return ITEM_STATE_MANAGER
+
 
 class Item:
     """
@@ -171,6 +176,7 @@ class Item:
     def __str__(self):
         return f"Item(id:{self.item_id}, data:{self.item_data}, metadata:{self.metadata})"
 
+
 class Label:
     """
     A utility class for representing a single label in any annotation scheme.
@@ -178,6 +184,7 @@ class Label:
     Labels may have a integer value (likert), a string value (text), or a boolean value (binary).
     Span annotations are represented with a different class.
     """
+
     def __init__(self, schema: str, name: str):
         """
         Initialize a label.
@@ -207,350 +214,6 @@ class Label:
     def __hash__(self):
         """Generate hash for label (enables use in sets/dicts)"""
         return hash((self.schema, self.name))
-
-class SpanAnnotation:
-    """
-    A utility class for representing a single span annotation in any annotation scheme.
-
-    Spans are represented by a start and end index, as well as a label.
-    Optionally includes format-specific coordinates (e.g., PDF page/bbox, spreadsheet row/col).
-
-    Discontinuous spans are supported via the additional_parts parameter, which stores
-    a list of non-contiguous text ranges that are all part of the same annotation.
-    For example, "New" and "York" in "New and exciting York" can be annotated as
-    a single LOCATION entity with additional_parts.
-    """
-    def __init__(self, schema: str, name: str, title: str, start: int, end: int,
-                 id: str = None, annotation_id: str = None, target_field: str = None,
-                 format_coords: dict = None, additional_parts: list = None,
-                 kb_id: str = None, kb_source: str = None, kb_label: str = None):
-        """
-        Initialize a span annotation.
-
-        Args:
-            schema: The annotation scheme this span belongs to
-            name: The span label name
-            title: The span title/description
-            start: Start character index (inclusive)
-            end: End character index (exclusive)
-            id: Optional custom ID for the span
-            annotation_id: Alternative parameter name for ID (for compatibility)
-            target_field: The display field this span targets (for multi-span mode)
-            format_coords: Optional format-specific coordinates (e.g., PDF page/bbox,
-                          spreadsheet row/col). Structure depends on source format:
-                          - PDF: {"format": "pdf", "page": 1, "bbox": [x0, y0, x1, y1]}
-                          - Spreadsheet: {"format": "spreadsheet", "row": 1, "col": 2, "cell_ref": "B1"}
-                          - Code: {"format": "code", "line": 10, "column": 5}
-                          - Document: {"format": "document", "paragraph_id": "p_0", "local_offset": 0}
-            additional_parts: Optional list of additional text ranges for discontinuous spans.
-                             Each part is a dict with {"start": int, "end": int, "text": str}.
-                             Used for entities that span non-contiguous text, e.g.,
-                             "New" and "York" in "New and exciting York".
-            kb_id: Optional knowledge base entity ID (e.g., "Q937" for Wikidata)
-            kb_source: Optional knowledge base source name (e.g., "wikidata", "umls")
-            kb_label: Optional human-readable label from the knowledge base
-        """
-        self.schema = schema
-        self.start = start
-        self.title = title
-        self.end = end
-        self.name = name
-        self.target_field = target_field  # For multi-span support
-        self.format_coords = format_coords  # Format-specific coordinates
-        self.additional_parts = additional_parts or []  # For discontinuous spans
-        self.kb_id = kb_id  # Knowledge base entity ID
-        self.kb_source = kb_source  # Knowledge base source (e.g., "wikidata", "umls")
-        self.kb_label = kb_label  # Human-readable KB entity label
-        # Accept both id and annotation_id for compatibility
-        _id = id if id is not None else annotation_id
-        if _id is not None:
-            self._id = _id
-        else:
-            # Generate a unique ID if none provided
-            self._id = f"span_{uuid.uuid4().hex}"
-
-    def get_schema(self):
-        """Get the schema this span belongs to"""
-        return self.schema
-
-    def get_start(self):
-        """Get the start character index"""
-        return self.start
-
-    def get_end(self):
-        """Get the end character index"""
-        return self.end
-
-    def get_name(self):
-        """Get the span label name"""
-        return self.name
-
-    def get_title(self):
-        """Get the span title/description"""
-        return self.title
-
-    def get_id(self):
-        """Get the span's unique identifier"""
-        return self._id
-
-    def get_target_field(self):
-        """Get the target field key (for multi-span mode)"""
-        return self.target_field
-
-    def get_format_coords(self):
-        """Get format-specific coordinates (for document format support)"""
-        return self.format_coords
-
-    def set_format_coords(self, coords: dict):
-        """Set format-specific coordinates"""
-        self.format_coords = coords
-
-    def get_kb_id(self):
-        """Get the knowledge base entity ID"""
-        return self.kb_id
-
-    def set_kb_id(self, kb_id: str):
-        """Set the knowledge base entity ID"""
-        self.kb_id = kb_id
-
-    def get_kb_source(self):
-        """Get the knowledge base source name"""
-        return self.kb_source
-
-    def set_kb_source(self, kb_source: str):
-        """Set the knowledge base source name"""
-        self.kb_source = kb_source
-
-    def get_kb_label(self):
-        """Get the knowledge base entity label"""
-        return self.kb_label
-
-    def set_kb_label(self, kb_label: str):
-        """Set the knowledge base entity label"""
-        self.kb_label = kb_label
-
-    def has_entity_link(self) -> bool:
-        """Check if this span has a knowledge base entity link"""
-        return bool(self.kb_id and self.kb_source)
-
-    def set_entity_link(self, kb_id: str, kb_source: str, kb_label: str = None):
-        """
-        Set the knowledge base entity link for this span.
-
-        Args:
-            kb_id: Knowledge base entity ID (e.g., "Q937")
-            kb_source: Knowledge base source (e.g., "wikidata")
-            kb_label: Optional human-readable label
-        """
-        self.kb_id = kb_id
-        self.kb_source = kb_source
-        self.kb_label = kb_label
-
-    def clear_entity_link(self):
-        """Remove the knowledge base entity link from this span"""
-        self.kb_id = None
-        self.kb_source = None
-        self.kb_label = None
-
-    def get_additional_parts(self):
-        """Get additional parts for discontinuous spans"""
-        return self.additional_parts
-
-    def add_part(self, start: int, end: int, text: str = None):
-        """
-        Add an additional part to this discontinuous span.
-
-        Args:
-            start: Start character index (inclusive)
-            end: End character index (exclusive)
-            text: Optional text content of this part
-        """
-        part = {"start": start, "end": end}
-        if text is not None:
-            part["text"] = text
-        self.additional_parts.append(part)
-        # Keep parts sorted by start position
-        self.additional_parts.sort(key=lambda p: p["start"])
-
-    def remove_part(self, start: int, end: int):
-        """
-        Remove a part from this discontinuous span.
-
-        Args:
-            start: Start character index of the part to remove
-            end: End character index of the part to remove
-        """
-        self.additional_parts = [
-            p for p in self.additional_parts
-            if not (p["start"] == start and p["end"] == end)
-        ]
-
-    def is_discontinuous(self) -> bool:
-        """Check if this span has multiple parts (is discontinuous)"""
-        return len(self.additional_parts) > 0
-
-    def get_all_parts(self) -> list:
-        """
-        Get all parts of this span (primary + additional) as a sorted list.
-
-        Returns:
-            List of dicts with {"start": int, "end": int, "text": str (optional)}
-        """
-        primary = {"start": self.start, "end": self.end}
-        all_parts = [primary] + self.additional_parts
-        return sorted(all_parts, key=lambda p: p["start"])
-
-    def to_dict(self) -> dict:
-        """Convert span annotation to dictionary for serialization."""
-        result = {
-            "schema": self.schema,
-            "name": self.name,
-            "title": self.title,
-            "start": self.start,
-            "end": self.end,
-            "id": self._id,
-        }
-        if self.target_field:
-            result["target_field"] = self.target_field
-        if self.format_coords:
-            result["format_coords"] = self.format_coords
-        if self.additional_parts:
-            result["additional_parts"] = self.additional_parts
-        if self.kb_id:
-            result["kb_id"] = self.kb_id
-        if self.kb_source:
-            result["kb_source"] = self.kb_source
-        if self.kb_label:
-            result["kb_label"] = self.kb_label
-        return result
-
-    def __str__(self):
-        field_str = f", target_field:{self.target_field}" if self.target_field else ""
-        coords_str = f", format_coords:{self.format_coords}" if self.format_coords else ""
-        parts_str = f", additional_parts:{len(self.additional_parts)}" if self.additional_parts else ""
-        kb_str = f", kb:{self.kb_source}:{self.kb_id}" if self.kb_id else ""
-        return f"SpanAnnotation(schema:{self.schema}, name:{self.name}, start:{self.start}, end:{self.end}, id:{self._id}{field_str}{coords_str}{parts_str}{kb_str})"
-
-    def __eq__(self, other):
-        """Check if two span annotations are equal"""
-        if not isinstance(other, SpanAnnotation):
-            return False
-        # Convert additional_parts to comparable format (list of tuples)
-        self_parts = tuple((p["start"], p["end"]) for p in self.additional_parts)
-        other_parts = tuple((p["start"], p["end"]) for p in other.additional_parts)
-        return (
-            self.schema == other.schema
-            and self.name == other.name
-            and self.title == other.title
-            and self.start == other.start
-            and self.end == other.end
-            and self.target_field == other.target_field
-            and self_parts == other_parts
-            # Note: format_coords not included in equality check
-            # as they are derived from position, not essential identity
-        )
-
-    def __hash__(self):
-        """Generate hash for span annotation (enables use in sets/dicts)"""
-        # Include additional_parts in hash for discontinuous spans
-        parts_hash = tuple((p["start"], p["end"]) for p in self.additional_parts)
-        return hash((self.schema, self.name, self.title, self.start, self.end, self.target_field, parts_hash))
-
-
-class SpanLink:
-    """
-    A utility class for representing a link/relationship between spans.
-
-    SpanLinks connect two or more spans to represent relationships like
-    "PERSON works_for ORGANIZATION" or multi-way relationships.
-    """
-    def __init__(self, schema: str, link_type: str, span_ids: List[str],
-                 direction: str = "undirected", id: str = None, properties: dict = None):
-        """
-        Initialize a span link.
-
-        Args:
-            schema: The annotation scheme this link belongs to
-            link_type: The type of relationship (e.g., "WORKS_FOR", "KNOWS")
-            span_ids: Ordered list of span IDs that are connected by this link
-            direction: "directed" or "undirected" - for directed links, order matters
-            id: Optional custom ID for the link
-            properties: Optional dictionary of additional properties
-        """
-        self.schema = schema
-        self.link_type = link_type
-        self.span_ids = span_ids  # Ordered list for directed links
-        self.direction = direction  # "directed", "undirected"
-        self.properties = properties or {}
-        self._id = id if id else f"link_{uuid.uuid4().hex}"
-
-    def get_schema(self) -> str:
-        """Get the schema this link belongs to"""
-        return self.schema
-
-    def get_link_type(self) -> str:
-        """Get the link type/relationship name"""
-        return self.link_type
-
-    def get_span_ids(self) -> List[str]:
-        """Get the ordered list of span IDs connected by this link"""
-        return self.span_ids
-
-    def get_direction(self) -> str:
-        """Get whether this link is directed or undirected"""
-        return self.direction
-
-    def get_id(self) -> str:
-        """Get the link's unique identifier"""
-        return self._id
-
-    def get_properties(self) -> dict:
-        """Get additional properties for this link"""
-        return self.properties
-
-    def is_directed(self) -> bool:
-        """Check if this link is directed"""
-        return self.direction == "directed"
-
-    def to_dict(self) -> dict:
-        """Convert the span link to a dictionary for serialization"""
-        return {
-            "id": self._id,
-            "schema": self.schema,
-            "link_type": self.link_type,
-            "span_ids": self.span_ids,
-            "direction": self.direction,
-            "properties": self.properties
-        }
-
-    @classmethod
-    def from_dict(cls, data: dict) -> 'SpanLink':
-        """Create a SpanLink from a dictionary"""
-        return cls(
-            schema=data["schema"],
-            link_type=data["link_type"],
-            span_ids=data["span_ids"],
-            direction=data.get("direction", "undirected"),
-            id=data.get("id"),
-            properties=data.get("properties", {})
-        )
-
-    def __str__(self):
-        return f"SpanLink(schema:{self.schema}, type:{self.link_type}, spans:{self.span_ids}, direction:{self.direction}, id:{self._id})"
-
-    def __eq__(self, other):
-        """Check if two span links are equal"""
-        return (
-            isinstance(other, SpanLink)
-            and self.schema == other.schema
-            and self.link_type == other.link_type
-            and self.span_ids == other.span_ids
-            and self.direction == other.direction
-        )
-
-    def __hash__(self):
-        """Generate hash for span link (enables use in sets/dicts)"""
-        return hash((self.schema, self.link_type, tuple(self.span_ids), self.direction))
 
 
 class AssignmentStrategy(Enum):
@@ -635,26 +298,27 @@ class ItemStateManager:
 
         # This data structure keeps the ordering of the items that are being annotated
         # and a mapping from item ID to the Item object
-        self.instance_id_to_instance = OrderedDict()
-
-        self.instance_id_ordering = []
+        self.item_id_to_item = OrderedDict()
+        self.gold_item_id_to_gold_item = OrderedDict()
 
         # Load max annotations per item from config
         self.max_annotations_per_item = config.get('max_annotations_per_item', -1)
 
         # Track which annotators have worked on each item
-        self.instance_annotators = defaultdict(set)
+        self.item_annotators = defaultdict(set)
+        self.gold_item_annotators = defaultdict(set)
 
-        # Queue of remaining instances to be assigned
-        self.remaining_instance_ids = deque()
+        # Queue of remaining items to be assigned
+        self.remaining_item_ids = deque()
 
-        # NOTE: We use an extra set to keep track of completed instances to allow for
+        # NOTE: We use an extra set to keep track of completed items to allow for
         # O(1) tests of whether an item needs to be removed from the remaining list
-        self.completed_instance_ids = set()
+        self.completed_item_ids = set()
 
         # Initialize item annotation counts for tracking
         self.item_annotation_counts = defaultdict(int)
-
+        self.gold_item_annotation_counts = defaultdict(int)
+        
         # Load how we want to assign items to users
         if 'assignment_strategy' in config:
             strat = config['assignment_strategy']
@@ -672,228 +336,66 @@ class ItemStateManager:
         self.random = random.Random(self.random_seed)
         self.logger.info(f"ItemStateManager initialized with random_seed={self.random_seed}")
 
-        # Category-based assignment support
-        item_properties = config.get('item_properties', {})
-        self.category_key = item_properties.get('category_key', None)
-
-        # Maps category name to set of instance IDs in that category
-        self.category_to_instance_ids: Dict[str, Set[str]] = defaultdict(set)
-
-        # Maps instance ID to its set of categories
-        self.instance_id_to_categories: Dict[str, Set[str]] = {}
-
-        # Instances with no category
-        self.uncategorized_instance_ids: Set[str] = set()
-
-        # Category assignment fallback behavior (loaded from category_assignment config)
-        category_assignment_config = config.get('category_assignment', {})
-        self.category_fallback = category_assignment_config.get('fallback', 'uncategorized')
-
-        # Dynamic expertise mode - uses probabilistic routing based on annotator agreement
-        dynamic_config = category_assignment_config.get('dynamic', {})
-        self.dynamic_expertise_enabled = dynamic_config.get('enabled', False)
-
-    def has_item(self, instance_id: str) -> bool:
+    def has_item(self, item_id: str) -> bool:
         """Returns True if the item is in the state manager"""
-        return instance_id in self.instance_id_to_instance
+        return item_id in self.item_id_to_item
 
-    def add_item(self, instance_id: str, instance_data: dict):
+    def add_item(self, item_id: str, item_data: dict):
         """
-        Adds a new instance to be annotated to the state manager (thread-safe).
+        Adds a new item to be annotated to the state manager (thread-safe).
 
         Args:
-            instance_id: Unique identifier for the item
-            instance_data: Dictionary containing the item's data
+            item_id: Unique identifier for the item
+            item_data: Dictionary containing the item's data
 
         Raises:
             ValueError: If an item with the same ID already exists
         """
         with self._lock:
-            item = Item(instance_id, instance_data)
-            if instance_id in self.instance_id_to_instance:
-                raise ValueError(f"Duplicate Item ID! Item with ID {instance_id} already exists in the state manager")
+            item = Item(item_id, item_data)
+            if item_id in self.item_id_to_item:
+                raise ValueError(f"Duplicate Item ID! Item with ID {item_id} already exists in the state manager")
 
-            self.instance_id_to_instance[instance_id] = item
-            self.instance_id_ordering.append(instance_id)
-            self.remaining_instance_ids.append(instance_id)
+            self.item_id_to_item[item_id] = item
+            self.remaining_item_ids.append(item_id)
 
-            # Index categories for this item
-            self._index_item_categories(instance_id, instance_data)
-
-    def update_item(self, instance_id: str, instance_data: dict) -> bool:
+    def add_gold_item(self, gold_item_id: str, gold_item_data: dict):
         """
-        Update an existing instance's data (thread-safe).
-
-        This method updates the item_data for an existing instance while preserving
-        all existing annotations (labels, span_annotations) and metadata. This is
-        useful for dynamic data loading scenarios where file contents change.
+        Adds a new gold_item to be annotated to the state manager (thread-safe).
 
         Args:
-            instance_id: Unique identifier for the item to update
-            instance_data: New data dictionary for the item
+            gold_item_id: Unique identifier for the gold_item
+            gold_item_data: Dictionary containing the gold_item's data
 
-        Returns:
-            bool: True if the item was updated, False if the item doesn't exist
+        Raises:
+            ValueError: If an gold_item with the same ID already exists
         """
         with self._lock:
-            if instance_id not in self.instance_id_to_instance:
-                return False
-            item = self.instance_id_to_instance[instance_id]
-            # Update item_data while preserving labels, span_annotations, and metadata
-            item.item_data = instance_data
-            return True
+            gold_item = Item(gold_item_id, gold_item_data)
+            if gold_item_id in self.item_id_to_item:
+                raise ValueError(f"Duplicate Gold Item ID! Gold Item with ID {gold_item_id} already exists in the state manager")
 
-    def add_items(self, instances: dict[str, dict]):
+            self.item_id_to_item[gold_item_id] = gold_item
+            # do not add to remaining_item_ids
+
+    def add_items(self, items: dict[str, dict]):
         """
-        Given a dictionary of instance IDs to instance data, add them to the state manager.
+        Given a dictionary of item IDs to item data, add them to the state manager.
 
         Args:
-            instances: Dictionary mapping instance IDs to instance data dictionaries
+            items: Dictionary mapping item IDs to item data dictionaries
         """
-        for iid, instance_data in instances.items():
-            self.add_item(iid, instance_data)
-
-    # =========================================================================
-    # Category Indexing Methods
-    # =========================================================================
-
-    def _index_item_categories(self, instance_id: str, instance_data: dict) -> None:
-        """
-        Extract and index categories for an item.
-
-        Categories can be specified as a string or list of strings in the data.
-        If no category_key is configured or the item has no category, it is
-        added to uncategorized_instance_ids.
-
-        Args:
-            instance_id: The ID of the item
-            instance_data: The item's data dictionary
-        """
-        if not self.category_key:
-            # No category key configured, all items are uncategorized
-            self.uncategorized_instance_ids.add(instance_id)
-            self.instance_id_to_categories[instance_id] = set()
-            return
-
-        category_value = instance_data.get(self.category_key)
-
-        if category_value is None:
-            # Item has no category
-            self.uncategorized_instance_ids.add(instance_id)
-            self.instance_id_to_categories[instance_id] = set()
-            return
-
-        # Normalize to list
-        if isinstance(category_value, str):
-            # Treat empty/whitespace-only strings as uncategorized
-            if category_value.strip():
-                categories = [category_value]
-            else:
-                categories = []
-        elif isinstance(category_value, list):
-            categories = [c for c in category_value if isinstance(c, str) and c.strip()]
-        else:
-            self.logger.warning(
-                f"Item {instance_id} has invalid category value type: {type(category_value)}. "
-                f"Expected string or list of strings."
-            )
-            self.uncategorized_instance_ids.add(instance_id)
-            self.instance_id_to_categories[instance_id] = set()
-            return
-
-        if not categories:
-            # Empty category list
-            self.uncategorized_instance_ids.add(instance_id)
-            self.instance_id_to_categories[instance_id] = set()
-            return
-
-        # Index the categories
-        category_set = set(categories)
-        self.instance_id_to_categories[instance_id] = category_set
-
-        for category in category_set:
-            self.category_to_instance_ids[category].add(instance_id)
-
-    def get_instances_by_category(self, category: str) -> Set[str]:
-        """
-        Get all instance IDs that belong to a specific category.
-
-        Args:
-            category: The category name
-
-        Returns:
-            Set of instance IDs in that category
-        """
-        with self._lock:
-            return self.category_to_instance_ids.get(category, set()).copy()
-
-    def get_instances_by_categories(self, categories: Set[str]) -> Set[str]:
-        """
-        Get all instance IDs that belong to any of the specified categories.
-
-        Args:
-            categories: Set of category names
-
-        Returns:
-            Set of instance IDs in any of those categories
-        """
-        with self._lock:
-            result = set()
-            for category in categories:
-                result.update(self.category_to_instance_ids.get(category, set()))
-            return result
-
-    def get_categories_for_instance(self, instance_id: str) -> Set[str]:
-        """
-        Get all categories that an instance belongs to.
-
-        Args:
-            instance_id: The instance ID
-
-        Returns:
-            Set of category names (empty set if uncategorized)
-        """
-        with self._lock:
-            return self.instance_id_to_categories.get(instance_id, set()).copy()
-
-    def get_uncategorized_instances(self) -> Set[str]:
-        """
-        Get all instance IDs that have no category.
-
-        Returns:
-            Set of uncategorized instance IDs
-        """
-        with self._lock:
-            return self.uncategorized_instance_ids.copy()
-
-    def get_all_categories(self) -> Set[str]:
-        """
-        Get all unique category names in the system.
-
-        Returns:
-            Set of all category names
-        """
-        with self._lock:
-            return set(self.category_to_instance_ids.keys())
-
-    def get_category_counts(self) -> Dict[str, int]:
-        """
-        Get the count of instances per category.
-
-        Returns:
-            Dictionary mapping category names to instance counts
-        """
-        with self._lock:
-            return {cat: len(ids) for cat, ids in self.category_to_instance_ids.items()}
+        for iid, item_data in items.items():
+            self.add_item(iid, item_data)
 
     # =========================================================================
     # Assignment Methods
     # =========================================================================
 
-    def assign_instances_to_user(self, user_state: UserState) -> int:
+    def assign_items_to_user(self, user_state: UserState, user_states: list(UserState)) -> int:
         """
-        Assigns a set of instances to a user based on the current state of the system
-        and returns the number of instances assigned.
+        Assigns a set of items to a user based on the current state of the system
+        and returns the number of items assigned.
 
         This method implements various assignment strategies to optimize annotation
         efficiency and quality. The strategy used depends on the configuration.
@@ -904,504 +406,120 @@ class ItemStateManager:
         LLM predictions.
 
         Args:
-            user_state: The user state object to assign instances to
+            user_state: The user state object to assign items to
 
         Returns:
-            int: Number of instances assigned to the user
+            int: Number of items assigned to the user
 
         Side Effects:
-            - Updates user_state with new instance assignments
+            - Updates user_state with new item assignments
             - Updates internal tracking of item assignments
-            - May modify remaining_instance_ids queue
+            - May modify remaining_item_ids queue
         """
-        self.logger.debug(f"Assigning instances to user {getattr(user_state, 'user_id', None)} with strategy {self.assignment_strategy} and random_seed={self.random_seed}")
-
-        # Check if we should assign a verification task from ICL labeling
-        verification_assigned = self._maybe_assign_icl_verification(user_state)
-        if verification_assigned:
-            # Return early if we assigned a verification task
-            return verification_assigned
+        #self.logger.debug("=== START item ASSIGNMENT ===")
+        #self.logger.debug(f"Assigning items to user {user_state.user_id} (Session ID {user_state.session_id}) with strategy {self.assignment_strategy} and random_seed={self.random_seed}")
 
         # Decline to assign new items to users that have completed the maximum
-        if not user_state.has_remaining_assignments():
+        if not user_state.is_allowed_remaining_assignments():
+            self.logger.debug(f"User {user_state.user_id} (Session ID {user_state.get_session_id()}) does not have remaining assignments.")
             return 0
 
-        # Determine how many instances to assign
-        current_assignments = user_state.get_assigned_instance_count()
+        # Determine how many items to assign
+        num_current_assignments = user_state.get_assigned_instances_count()
         max_assignments = user_state.get_max_assignments()
 
         if max_assignments > 0:
-            remaining_capacity = max_assignments - current_assignments
+            remaining_capacity = max_assignments - num_current_assignments
+
             if remaining_capacity <= 0:
                 return 0
+
             # For fixed_order strategy, assign all remaining capacity at once
             # For other strategies, use the original incremental logic
             if self.assignment_strategy == AssignmentStrategy.FIXED_ORDER:
-                instances_to_assign = remaining_capacity
+                num_items_to_assign = remaining_capacity
+            #elif self.assignment_strategy == AssignmentStrategy.RANDOM:
+            #    num_items_to_assign = remaining_capacity
             else:
                 # If user has less than 3 assignments, assign up to 3 more (or remaining capacity)
-                if current_assignments < 3:
-                    instances_to_assign = min(3, remaining_capacity)
+                if num_current_assignments < 3:
+                    num_items_to_assign = min(3, remaining_capacity)
                 else:
                     # Otherwise, assign one at a time
-                    instances_to_assign = 1
+                    num_items_to_assign = 1
         else:
             # No maximum, assign one at a time
-            instances_to_assign = 1
+            num_items_to_assign = 1
 
-        # TODO: add strategy for assigning instances to users:
-        #
-        # 1) Random assignment (up to max per item/user)
-        # 2) Dynamic assignment based on user performance
-        # 3) Dynamic assignment based on item difficulty
-        # 4) Dynamic assignment based on item diversity
-        # 5) Dynamic assignment based on active learning model uncertainty
-        #
-        # NOTE: This method should probably be where we periodically
-        # check for item re-assignment where some items are assigned
-        # for a long time but never get annotated
-        #
-        # FOR NOW, just assign all instances to the user
         if self.assignment_strategy == AssignmentStrategy.RANDOM:
             # Random assignment strategy
             unlabeled_items = []
-            for iid in self.remaining_instance_ids:
-                annotation_count = len(self.instance_annotators[iid])
-                self.logger.debug(f"[ASSIGNMENT] Considering {iid}: annotation_count={annotation_count}, cap={self.max_annotations_per_item}")
+            for iid in self.remaining_item_ids:
+                annotation_count = len(self.item_annotators[iid])
+                # self.logger.debug(f"[ASSIGNMENT] Considering {iid}: annotation_count={annotation_count}, cap={self.max_annotations_per_item}")
                 # Always skip items that have reached max annotations, but do not remove here
                 if self.max_annotations_per_item >= 0 and annotation_count >= self.max_annotations_per_item:
-                    self.logger.debug(f"[ASSIGNMENT] Skipping {iid}: reached annotation cap")
+                    self.remaining_item_ids.remove(iid)
+                    self.logger.debug(f"[ASSIGNMENT] Skipping {iid}: reached annotation cap. Remove from remaining_item_ids")
                     continue
-                if not user_state.has_annotated(iid):
+
+                already_labeled = False
+
+                for iter_session_id, iter_user_state in user_states.items():
+                    if iter_user_state.has_annotated(iid):
+                        already_labeled = True
+                        self.logger.debug(f"User {user_state.user_id} (Session ID {iter_session_id}) - Instance {iid} already annotated, skipping.")
+                        break
+
+                if not already_labeled:
                     unlabeled_items.append(iid)
-                else:
-                    self.logger.debug(f"User {getattr(user_state, 'user_id', None)} already annotated {iid}, skipping.")
-            self.logger.debug(f"Unlabeled items for user: {unlabeled_items}")
+
+            self.logger.debug(f"User {user_state.user_id} (Session ID {iter_session_id}) - Number unlabeled items: {len(unlabeled_items)}")
             if not unlabeled_items:
-                self.logger.info(f"No unlabeled items available for user {getattr(user_state, 'user_id', None)}")
+                self.logger.info(f"User {user_state.user_id} (Session ID {iter_session_id}) - No unlabeled items available")
                 return 0
-            to_assign = self.random.sample(unlabeled_items, min(instances_to_assign, len(unlabeled_items)))
-            self.logger.debug(f"Randomly assigning items {to_assign} to user {getattr(user_state, 'user_id', None)}")
+
+            to_assign = self.random.sample(unlabeled_items, min(num_items_to_assign, len(unlabeled_items)))
+            #self.logger.debug(f"Randomly assigning items {to_assign} to user {getattr(user_state, 'user_id', None)}")
             for item_id in to_assign:
-                user_state.assign_instance(self.instance_id_to_instance[item_id])
+                user_state.assign_instance(self.item_id_to_item[item_id])
             return len(to_assign)
         elif self.assignment_strategy == AssignmentStrategy.FIXED_ORDER:
             # Fixed order assignment strategy
             assigned = 0
-            for iid in list(self.remaining_instance_ids):
-                if self.max_annotations_per_item >= 0 and len(self.instance_annotators[iid]) >= self.max_annotations_per_item:
-                    if iid in self.remaining_instance_ids:
-                        self.remaining_instance_ids.remove(iid)
+            for iid in list(self.remaining_item_ids):
+                if self.max_annotations_per_item >= 0 and len(self.item_annotators[iid]) >= self.max_annotations_per_item:
+                    if iid in self.remaining_item_ids:
+                        self.remaining_item_ids.remove(iid)
                     continue
-                if iid not in user_state.get_assigned_instance_ids():
-                    user_state.assign_instance(self.instance_id_to_instance[iid])
+                if iid not in user_state.get_assigned_item_ids():
+                    user_state.assign_item(self.item_id_to_item[iid])
                     assigned += 1
-                    if assigned >= instances_to_assign:
+                    if assigned >= items_to_assign:
                         break
             return assigned
-        elif self.assignment_strategy == AssignmentStrategy.MAX_DIVERSITY:
-            # Maximum diversity assignment strategy
-            unlabeled_items = []
-            for iid in list(self.remaining_instance_ids):
-                if self.max_annotations_per_item >= 0 and len(self.instance_annotators[iid]) >= self.max_annotations_per_item:
-                    if iid in self.remaining_instance_ids:
-                        self.remaining_instance_ids.remove(iid)
-                    continue
-                if not user_state.has_annotated(iid):
-                    unlabeled_items.append(iid)
-            if not unlabeled_items:
-                return 0
-            # Calculate disagreement scores for each item
-            item_disagreement_scores = {}
-            for iid in unlabeled_items:
-                disagreement_score = self._calculate_disagreement_score(iid)
-                item_disagreement_scores[iid] = disagreement_score
-            # Sort by disagreement score (highest first)
-            sorted_items = sorted(item_disagreement_scores.keys(), key=lambda x: item_disagreement_scores[x], reverse=True)
-            assigned = 0
-            for item_id in sorted_items[:instances_to_assign]:
-                user_state.assign_instance(self.instance_id_to_instance[item_id])
-                assigned += 1
-            return assigned
-        elif self.assignment_strategy == AssignmentStrategy.ACTIVE_LEARNING:
-            # Active learning assignment strategy (currently falls back to random)
-            unlabeled_items = []
-            for iid in list(self.remaining_instance_ids):
-                if self.max_annotations_per_item >= 0 and len(self.instance_annotators[iid]) >= self.max_annotations_per_item:
-                    if iid in self.remaining_instance_ids:
-                        self.remaining_instance_ids.remove(iid)
-                    continue
-                if not user_state.has_annotated(iid):
-                    unlabeled_items.append(iid)
-            if not unlabeled_items:
-                return 0
-            to_assign = self.random.sample(unlabeled_items, min(instances_to_assign, len(unlabeled_items)))
-            self.logger.debug(f"Active learning (random fallback): assigning items {to_assign} to user {getattr(user_state, 'user_id', None)}")
-            for item_id in to_assign:
-                user_state.assign_instance(self.instance_id_to_instance[item_id])
-            return len(to_assign)
-        elif self.assignment_strategy == AssignmentStrategy.LLM_CONFIDENCE:
-            # LLM confidence assignment strategy (currently falls back to random)
-            unlabeled_items = []
-            for iid in list(self.remaining_instance_ids):
-                if self.max_annotations_per_item >= 0 and len(self.instance_annotators[iid]) >= self.max_annotations_per_item:
-                    if iid in self.remaining_instance_ids:
-                        self.remaining_instance_ids.remove(iid)
-                    continue
-                if not user_state.has_annotated(iid):
-                    unlabeled_items.append(iid)
-            if not unlabeled_items:
-                return 0
-            to_assign = self.random.sample(unlabeled_items, min(instances_to_assign, len(unlabeled_items)))
-            self.logger.debug(f"LLM confidence (random fallback): assigning items {to_assign} to user {getattr(user_state, 'user_id', None)}")
-            for item_id in to_assign:
-                user_state.assign_instance(self.instance_id_to_instance[item_id])
-            return len(to_assign)
-        elif self.assignment_strategy == AssignmentStrategy.CATEGORY_BASED:
-            # Category-based assignment strategy
-            user_id = getattr(user_state, 'user_id', None)
-
-            # Check if dynamic expertise mode is enabled
-            if self.dynamic_expertise_enabled:
-                return self._assign_category_based_dynamic(user_state, instances_to_assign)
-
-            # Standard category-based assignment using qualification
-            # Assigns instances from categories the user has qualified for
-            qualified_categories = user_state.get_qualified_categories()
-
-            self.logger.debug(f"Category-based assignment for user {user_id}, qualified categories: {qualified_categories}")
-
-            # Get candidate instances from qualified categories
-            candidate_ids = set()
-            if qualified_categories:
-                for category in qualified_categories:
-                    candidate_ids.update(self.category_to_instance_ids.get(category, set()))
-
-            # If no candidates from categories, apply fallback behavior
-            if not candidate_ids:
-                self.logger.debug(f"No category matches for user {user_id}, using fallback: {self.category_fallback}")
-                if self.category_fallback == 'uncategorized':
-                    candidate_ids = self.uncategorized_instance_ids.copy()
-                elif self.category_fallback == 'random':
-                    candidate_ids = set(self.remaining_instance_ids)
-                # 'none' fallback means no assignment
-
-            # Filter candidates: not already annotated by user, not completed
-            unlabeled_items = []
-            for iid in candidate_ids:
-                # Skip if item is not in remaining (already completed)
-                if iid not in self.remaining_instance_ids:
-                    continue
-                # Skip if item has reached max annotations
-                if self.max_annotations_per_item >= 0 and len(self.instance_annotators[iid]) >= self.max_annotations_per_item:
-                    continue
-                # Skip if user already annotated this item
-                if not user_state.has_annotated(iid):
-                    unlabeled_items.append(iid)
-
-            self.logger.debug(f"Category-based: {len(unlabeled_items)} unlabeled items available for user {user_id}")
-
-            if not unlabeled_items:
-                return 0
-
-            # Randomly sample from eligible items (can be combined with other sub-strategies in future)
-            to_assign = self.random.sample(unlabeled_items, min(instances_to_assign, len(unlabeled_items)))
-            self.logger.debug(f"Category-based: assigning items {to_assign} to user {user_id}")
-
-            for item_id in to_assign:
-                user_state.assign_instance(self.instance_id_to_instance[item_id])
-
-            return len(to_assign)
-        elif self.assignment_strategy == AssignmentStrategy.DIVERSITY_CLUSTERING:
-            # Diversity clustering assignment strategy
-            from potato.diversity_manager import get_diversity_manager
-            dm = get_diversity_manager()
-
-            if dm and dm.enabled:
-                # Get user's annotated items for preservation
-                annotated_ids = set(user_state.get_annotated_instance_ids()) if hasattr(user_state, 'get_annotated_instance_ids') else set()
-
-                # Get available items (respecting max_annotations_per_item)
-                available_ids = []
-                for iid in self.remaining_instance_ids:
-                    # Skip if item has reached annotation limit
-                    if self.max_annotations_per_item >= 0 and len(self.instance_annotators[iid]) >= self.max_annotations_per_item:
-                        continue
-                    # Skip if user already annotated
-                    if user_state.has_annotated(iid):
-                        continue
-                    available_ids.append(iid)
-
-                if not available_ids:
-                    return 0
-
-                # Get user_id for diversity manager
-                user_id = getattr(user_state, 'user_id', 'anonymous')
-
-                # Generate diverse ordering with preserved positions
-                diverse_order = dm.apply_to_user_ordering(
-                    user_id, available_ids, annotated_ids
-                )
-
-                # Assign items from diverse order
-                assigned = 0
-                for item_id in diverse_order[:instances_to_assign]:
-                    user_state.assign_instance(self.instance_id_to_instance[item_id])
-                    assigned += 1
-
-                return assigned
-            else:
-                # Fallback to random if diversity manager unavailable
-                self.logger.debug("Diversity manager not available, falling back to random")
-                return self._assign_random_fallback(user_state, instances_to_assign)
         else:
             # Default fallback to fixed order
             self.logger.warning(f"Unknown assignment strategy: {self.assignment_strategy}, falling back to fixed order")
-            return self.assign_instances_to_user_fixed_order(user_state, instances_to_assign)
+            return self.assign_items_to_user_fixed_order(user_state, items_to_assign)
 
-    def _assign_category_based_dynamic(self, user_state: 'UserState', instances_to_assign: int) -> int:
-        """
-        Dynamic category-based assignment using probabilistic routing.
+    def get_item_ids(self) -> list[str]:
+        """Get all item IDs in the manager"""
+        return list(self.item_id_to_item.keys())
 
-        In dynamic mode, users can receive instances from ALL categories, but are
-        more likely to get instances from categories they have demonstrated expertise
-        in (based on agreement with other annotators).
+    def get_items(self) -> list[Item]:
+        """Get all items in the manager"""
+        return list(self.item_id_to_item.values())
 
-        Args:
-            user_state: The user state to assign instances to
-            instances_to_assign: Number of instances to assign
-
-        Returns:
-            int: Number of instances actually assigned
-        """
-        from potato.expertise_manager import get_expertise_manager
-
-        user_id = getattr(user_state, 'user_id', None)
-        expertise_manager = get_expertise_manager()
-
-        if not expertise_manager:
-            # Fallback to random if expertise manager not available
-            self.logger.warning("ExpertiseManager not available, falling back to random assignment")
-            return self._assign_random_fallback(user_state, instances_to_assign)
-
-        assigned_count = 0
-
-        for _ in range(instances_to_assign):
-            # Find categories with available (unlabeled) instances for this user
-            available_categories = set()
-            category_to_eligible_items: Dict[str, List[str]] = {}
-
-            for category, instance_ids in self.category_to_instance_ids.items():
-                eligible_items = []
-                for iid in instance_ids:
-                    # Skip if item is not in remaining (already completed)
-                    if iid not in self.remaining_instance_ids:
-                        continue
-                    # Skip if item has reached max annotations
-                    if self.max_annotations_per_item >= 0 and len(self.instance_annotators[iid]) >= self.max_annotations_per_item:
-                        continue
-                    # Skip if user already annotated this item
-                    if not user_state.has_annotated(iid):
-                        eligible_items.append(iid)
-
-                if eligible_items:
-                    available_categories.add(category)
-                    category_to_eligible_items[category] = eligible_items
-
-            # Also check uncategorized instances
-            uncategorized_eligible = []
-            for iid in self.uncategorized_instance_ids:
-                if iid not in self.remaining_instance_ids:
-                    continue
-                if self.max_annotations_per_item >= 0 and len(self.instance_annotators[iid]) >= self.max_annotations_per_item:
-                    continue
-                if not user_state.has_annotated(iid):
-                    uncategorized_eligible.append(iid)
-
-            if not available_categories and not uncategorized_eligible:
-                # No more instances available
-                break
-
-            # Use ExpertiseManager to probabilistically select a category
-            if available_categories:
-                selected_category = expertise_manager.select_category_probabilistically(
-                    user_id,
-                    available_categories,
-                    random_instance=self.random
-                )
-            else:
-                selected_category = None
-
-            # Get an instance from the selected category (or uncategorized)
-            if selected_category and selected_category in category_to_eligible_items:
-                eligible_items = category_to_eligible_items[selected_category]
-                selected_item = self.random.choice(eligible_items)
-            elif uncategorized_eligible:
-                selected_item = self.random.choice(uncategorized_eligible)
-            else:
-                break
-
-            # Assign the selected instance
-            user_state.assign_instance(self.instance_id_to_instance[selected_item])
-            assigned_count += 1
-
-            self.logger.debug(
-                f"Dynamic category assignment: assigned {selected_item} "
-                f"(category={selected_category}) to user {user_id}"
-            )
-
-        return assigned_count
-
-    def _assign_random_fallback(self, user_state: 'UserState', instances_to_assign: int) -> int:
-        """Fallback to random assignment when expertise manager is not available."""
-        unlabeled_items = []
-        for iid in self.remaining_instance_ids:
-            if self.max_annotations_per_item >= 0 and len(self.instance_annotators[iid]) >= self.max_annotations_per_item:
-                continue
-            if not user_state.has_annotated(iid):
-                unlabeled_items.append(iid)
-
-        if not unlabeled_items:
-            return 0
-
-        to_assign = self.random.sample(unlabeled_items, min(instances_to_assign, len(unlabeled_items)))
-        for item_id in to_assign:
-            user_state.assign_instance(self.instance_id_to_instance[item_id])
-
-        return len(to_assign)
-
-    def _calculate_disagreement_score(self, instance_id: str) -> float:
-        """
-        Calculate a disagreement score for an instance based on existing annotations.
-
-        This method analyzes the annotations for a given instance and calculates
-        a score indicating how much disagreement exists among annotators.
-        Higher scores indicate more disagreement, which suggests the item
-        might be more difficult or ambiguous to annotate.
-
-        Args:
-            instance_id: The ID of the instance to calculate disagreement for
-
-        Returns:
-            float: Disagreement score (higher = more disagreement)
-        """
-        # This is a placeholder implementation
-        # In a real implementation, you would:
-        # 1. Get all annotations for this instance
-        # 2. Calculate disagreement metrics (e.g., Krippendorff's alpha)
-        # 3. Return a normalized score
-
-        # For now, return a random score as placeholder
-        return self.random.random()
-
-    def _maybe_assign_icl_verification(self, user_state: 'UserState') -> int:
-        """
-        Maybe assign an ICL verification task to the user.
-
-        This implements "blind labeling" - the user receives an instance that was
-        already labeled by the LLM, but they don't know it's a verification task.
-        After they annotate it, we compare their label to the LLM's prediction.
-
-        Args:
-            user_state: The user state to potentially assign to
-
-        Returns:
-            int: Number of verification instances assigned (0 or 1)
-        """
-        # Check if ICL labeling is enabled
-        icl_config = self.config.get('icl_labeling', {})
-        if not icl_config.get('enabled', False):
-            return 0
-
-        # Check if verification is enabled with mixed assignments
-        verification_config = icl_config.get('verification', {})
-        if not verification_config.get('enabled', True):
-            return 0
-        if not verification_config.get('mix_with_regular_assignments', True):
-            return 0
-
-        # Probabilistic check - only assign verification ~20% of the time
-        # This ensures users still get regular tasks most of the time
-        verification_mix_rate = verification_config.get('assignment_mix_rate', 0.2)
-        if self.random.random() > verification_mix_rate:
-            return 0
-
-        try:
-            from potato.ai.icl_labeler import get_icl_labeler
-            icl_labeler = get_icl_labeler()
-            if icl_labeler is None:
-                return 0
-
-            # Get pending verifications that this user hasn't already annotated
-            pending = icl_labeler.get_pending_verifications(count=5)
-            user_id = getattr(user_state, 'user_id', None)
-
-            for instance_id, schema_name in pending:
-                # Skip if user already annotated this instance
-                if user_state.has_annotated(instance_id):
-                    continue
-
-                # Skip if instance is already assigned to user
-                if instance_id in user_state.get_assigned_instance_ids():
-                    continue
-
-                # Check if instance exists in our manager
-                if instance_id not in self.instance_id_to_instance:
-                    continue
-
-                # Assign the verification instance
-                item = self.instance_id_to_instance[instance_id]
-                user_state.assign_instance(item)
-
-                # Mark this as a verification task in the user's metadata
-                # This is stored privately so we can record verification after annotation
-                user_state.mark_instance_as_verification(instance_id, schema_name)
-
-                self.logger.info(
-                    f"Assigned ICL verification task {instance_id} to user {user_id}"
-                )
-                return 1
-
-        except ImportError:
-            # ICL labeler module not available
-            pass
-        except Exception as e:
-            self.logger.warning(f"Error assigning ICL verification: {e}")
-
-        return 0
-
-    def generate_id_order_mapping(self):
-        """Generate a mapping from instance IDs to their order"""
-        return {iid: idx for idx, iid in enumerate(self.instance_id_ordering)}
-
-    def get_next_instance_id(self, user_state: UserState) -> str:
-        """
-        Get the next instance ID for a user based on the assignment strategy.
-
-        Args:
-            user_state: The user state to get the next instance for
-
-        Returns:
-            str: The next instance ID, or None if no more instances available
-        """
-        # This method would implement the logic to determine which instance
-        # should be next for a given user based on the assignment strategy
-        # For now, it's a placeholder
-        return None
-
-    def get_instance_ids(self) -> list[str]:
-        """Get all instance IDs in the manager"""
-        return list(self.instance_id_to_instance.keys())
-
-    def get_item(self, instance_id: str) -> Item:
+    def get_item(self, item_id: str) -> Item:
         """Get an item by its ID"""
-        return self.instance_id_to_instance[instance_id]
+        return self.item_id_to_item[item_id]
 
-    def get_annotators_for_item(self, instance_id: str) -> set[str]:
+    def get_annotators_for_item(self, item_id: str) -> set[str]:
         """Get the set of annotators who have worked on this item"""
-        return self.instance_annotators[instance_id]
+        return self.item_annotators[item_id]
 
-    def get_total_assignable_items_for_user(self, user_state: UserState) -> int:
+    def get_total_assignable_items_for_user(self, user_states: list(UserState)) -> int:
         """
         Get the total number of items that can be assigned to a user.
 
@@ -1416,97 +534,262 @@ class ItemStateManager:
         Returns:
             int: Number of items that can be assigned
         """
+        #self.logger.debug("=== GET TOTAL ASSIGNABLE ITEMS FOR USER ===")
+
+        if len(user_states) == 0:
+            return 0
+
         count = 0
-        for iid in self.remaining_instance_ids:
+        for iid in self.remaining_item_ids:
+            # self.logger.debug(f"count: {count}")
+
             # Check if item has reached annotation limit
-            if self.max_annotations_per_item >= 0 and len(self.instance_annotators[iid]) >= self.max_annotations_per_item:
+            annotation_count = len(self.item_annotators[iid])
+            if 0 <= self.max_annotations_per_item <= annotation_count:
+                self.remaining_item_ids.remove(iid)
+                #self.logger.debug(f"Item {iid} reached annotation limit")
                 continue
+
             # Check if user has already annotated this item
-            if user_state.has_annotated(iid):
-                continue
-            count += 1
+            already_labeled = False
+
+            for iter_session_id, iter_user_state in user_states.items():
+                if iter_user_state.has_annotated(iid):
+                    already_labeled = True
+                    #self.logger.debug(f"User {iter_user_state.user_id} (Session ID {iter_session_id}) already annotated {iid}, skipping.")
+                    break
+
+            if not already_labeled:
+                count += 1
+
+        #self.logger.debug(f"Number of items that could still be assigned to User {iter_user_state.user_id}: {count}")
         return count
 
-    def items(self) -> list[Item]:
-        """Get all items in the manager"""
-        return list(self.instance_id_to_instance.values())
-
-    def register_annotator(self, instance_id: str, user_id: str):
+    def register_annotator(self, item_id: str, user_id: str):
         """
-        Register that a user has annotated an instance.
+        Register that a user has annotated an item.
 
         This method updates the tracking of which users have worked on which
         items, and may trigger cleanup of completed items.
 
         Args:
-            instance_id: The ID of the instance that was annotated
+            item_id: The ID of the item that was annotated
             user_id: The ID of the user who did the annotation
 
         Side Effects:
-            - Updates instance_annotators tracking
-            - May remove items from remaining_instance_ids if they reach limits
+            - Updates item_annotators tracking
+            - May remove items from remaining_item_ids if they reach limits
             - Updates item_annotation_counts
         """
         # Add user to the set of annotators for this item
-        self.instance_annotators[instance_id].add(user_id)
+        self.item_annotators[item_id].add(user_id)
 
         # Update annotation count
-        self.item_annotation_counts[instance_id] += 1
+        self.item_annotation_counts[item_id] += 1
 
         # Check if this item has reached its annotation limit
-        if self.max_annotations_per_item >= 0 and len(self.instance_annotators[instance_id]) >= self.max_annotations_per_item:
-            # Remove from remaining instances if it's there
-            if instance_id in self.remaining_instance_ids:
-                self.remaining_instance_ids.remove(instance_id)
+        if self.max_annotations_per_item >= 0 and len(self.item_annotators[item_id]) >= self.max_annotations_per_item:
+            # Remove from remaining items if it's there
+            if item_id in self.remaining_item_ids:
+                self.remaining_item_ids.remove(item_id)
             # Mark as completed
-            self.completed_instance_ids.add(instance_id)
+            self.completed_item_ids.add(item_id)
 
-    def update_annotation_count(self, instance_id: str, delta=1):
+    # Methods for gold items
+    def has_gold_item(self, gold_item_id: str) -> bool:
+        """Returns True if the gold_item is in the state manager"""
+        return gold_item_id in self.gold_item_id_to_gold_item
+
+    def get_gold_item_ids(self) -> list[str]:
+        """Get all gold_item IDs in the manager"""
+        return list(self.gold_item_id_to_gold_item.keys())
+
+    def get_gold_items(self) -> list[Item]:
+        """Get all gold_items in the manager"""
+        return list(self.gold_item_id_to_gold_item.values())
+
+    def get_gold_item(self, gold_item_id: str) -> Item:
+        """Get an gold_item by its ID"""
+        return self.gold_item_id_to_gold_item[gold_item_id]
+    
+    def get_annotators_for_gold_item(self, gold_item_id: str) -> set[str]:
+        """Get the set of annotators who have worked on this gold_item"""
+        return self.gold_item_annotators[gold_item_id]
+
+    def register_annotator_for_gold_item(self, gold_item_id: str, user_id: str):
+        # Add user to the set of annotators for this gold_item
+        self.gold_item_annotators[gold_item_id].add(user_id)
+
+        # Update annotation count
+        self.gold_item_annotation_counts[gold_item_id] += 1
+    
+    def clear(self):
+        """Clear all data from the manager (for testing)"""
+        self.item_id_to_item.clear()
+        self.remaining_item_ids.clear()
+        self.completed_item_ids.clear()
+        self.item_annotators.clear()
+        self.item_annotation_counts.clear()
+
+        self.gold_item_id_to_gold_item.clear()
+        self.gold_item_annotators.clear()
+        self.gold_item_annotation_counts.clear()
+
+
+# Singleton item of the ItemStateManager with thread-safe lock
+TRAINING_ITEM_STATE_MANAGER = None
+_TRAINING_ITEM_STATE_MANAGER_LOCK = threading.Lock()
+
+
+def init_training_item_state_manager(config: dict) -> TRAINING_ITEM_STATE_MANAGER:
+    global TRAINING_ITEM_STATE_MANAGER
+
+    # Double-checked locking for thread safety
+    if TRAINING_ITEM_STATE_MANAGER is None:
+        with _TRAINING_ITEM_STATE_MANAGER_LOCK:
+            # Check again inside the lock
+            if TRAINING_ITEM_STATE_MANAGER is None:
+                TRAINING_ITEM_STATE_MANAGER = TrainingItemStateManager(config)
+
+    return TRAINING_ITEM_STATE_MANAGER
+
+
+def clear_training_item_state_manager():
+    global TRAINING_ITEM_STATE_MANAGER
+    with _TRAINING_ITEM_STATE_MANAGER_LOCK:
+        TRAINING_ITEM_STATE_MANAGER = None
+
+
+def get_training_item_state_manager() -> TRAINING_ITEM_STATE_MANAGER:
+    global TRAINING_ITEM_STATE_MANAGER
+
+    if TRAINING_ITEM_STATE_MANAGER is None:
+        raise ValueError("Training Item State Manager has not been initialized yet!")
+
+    return TRAINING_ITEM_STATE_MANAGER
+
+
+class TrainingItemStateManager:
+    """
+    A class for maintaining state on the metadata of training training_items that are being annotated.
+
+    This class aims to be a singleton that is shared across all users and provides the functionality
+    of determining which training training_item is next to be annotated.
+    The state of the annotations themselves are stored in the UserState class.
+    """
+
+    def __init__(self, config: dict):
         """
-        Update the annotation count for an instance.
+        Initialize the training training_item state manager.
 
         Args:
-            instance_id: The ID of the instance to update
-            delta: The change in annotation count (default: +1)
+            config: Configuration dictionary containing training_item management settings
         """
-        self.item_annotation_counts[instance_id] += delta
+        # Cache the config for later
+        self.config = config
+        self.logger = logging.getLogger(__name__)
 
-    def reorder_instances(self, new_order: List[str]):
+        # Thread-safe lock for concurrent access to training training_item data
+        self._lock = threading.RLock()
+
+        # This data structure keeps the ordering of the training_items that are being annotated
+        # and a mapping from training_item ID to the Item object
+        self.training_item_id_to_training_item = OrderedDict()
+
+        # Track which annotators have worked on each training_item
+        self.training_item_annotators = defaultdict(set)
+
+        self.logger.info(f"TrainingItemStateManager initialized")
+
+    def has_training_item(self, training_item_id: str) -> bool:
+        """Returns True if the training_item is in the state manager"""
+        return training_item_id in self.training_item_id_to_training_item
+
+    def add_training_item(self, training_item_id: str, training_item_data: dict):
         """
-        Reorder instances based on active learning predictions.
+        Adds a new training_item to be annotated to the state manager (thread-safe).
 
         Args:
-            new_order: List of instance IDs in the new desired order
+            training_item_id: Unique identifier for the training_item
+            training_item_data: Dictionary containing the training_item's data
 
-        Note:
-            This method preserves instances that are not in the new_order list
-            by appending them to the end of the ordering.
+        Raises:
+            ValueError: If an training_item with the same ID already exists
         """
-        # Create a set of instances in the new order for efficient lookup
-        new_order_set = set(new_order)
+        with self._lock:
+            training_item = Item(training_item_id, training_item_data)
+            if training_item_id in self.training_item_id_to_training_item:
+                raise ValueError(f"Duplicate Item ID! Item with ID {training_item_id} already exists in the state manager")
 
-        # Filter out instances that don't exist in our manager
-        valid_new_order = [instance_id for instance_id in new_order if instance_id in self.instance_id_to_instance]
+            self.training_item_id_to_training_item[training_item_id] = training_item
 
-        # Find instances that are not in the new order
-        remaining_instances = [instance_id for instance_id in self.instance_id_ordering if instance_id not in new_order_set]
+    def add_training_items(self, training_items: dict[str, dict]):
+        """
+        Given a dictionary of training_item IDs to training_item data, add them to the state manager.
 
-        # Combine the new order with remaining instances
-        self.instance_id_ordering = valid_new_order + remaining_instances
+        Args:
+            training_items: Dictionary mapping training_item IDs to training_item data dictionaries
+        """
+        for iid, training_item_data in training_items.training_items():
+            self.add_training_item(iid, training_item_data)
 
-        # Update the remaining_instance_ids queue to match the new ordering
-        self.remaining_instance_ids.clear()
-        for instance_id in self.instance_id_ordering:
-            if instance_id not in self.completed_instance_ids:
-                self.remaining_instance_ids.append(instance_id)
+    # =========================================================================
+    # Assignment Methods
+    # =========================================================================
 
-        self.logger.info(f"Reordered {len(valid_new_order)} instances, {len(remaining_instances)} instances preserved")
+    def assign_training_items_to_user(self, user_state: UserState) -> int:
+        """
+        Assigns a set of training_items to a user based on the current state of the system
+        and returns the number of training_items assigned.
+
+        This method implements various assignment strategies to optimize annotation
+        efficiency and quality. The strategy used depends on the configuration.
+
+        If ICL verification is enabled with mix_with_regular_assignments, this method
+        may include verification tasks from the ICL labeler's queue. These appear as
+        regular annotation tasks (blind labeling) so users don't know they're verifying
+        LLM predictions.
+
+        Args:
+            user_state: The user state object to assign training_items to
+
+        Returns:
+            int: Number of training_items assigned to the user
+
+        Side Effects:
+            - Updates user_state with new training_item assignments
+            - Updates internal tracking of training_item assignments
+            - May modify remaining_training_item_ids queue
+        """
+        self.logger.debug("=== START training_item ASSIGNMENT ===")
+        training_state = user_state.get_training_state()
+        training_state.set_training_instances(list(self.training_item_id_to_training_item.keys()))
+        self.logger.debug("=== FINISH training_item ASSIGNMENT ===")
+
+    def get_training_item_ids(self) -> list[str]:
+        """Get all training_item IDs in the manager"""
+        return list(self.training_item_id_to_training_item.keys())
+
+    def get_training_items(self) -> list[Item]:
+        """Get all training_items in the manager"""
+        return list(self.training_item_id_to_training_item.values())
+
+    def get_training_item(self, training_item_id: str) -> Item:
+        """Get an training_item by its ID"""
+        return self.training_item_id_to_training_item[training_item_id]
+
+    def get_annotators_for_training_item(self, training_item_id: str) -> set[str]:
+        """Get the set of annotators who have worked on this training_item"""
+        return self.training_item_annotators[training_item_id]
+
+    def register_annotator(self, training_item_id: str, user_id: str):
+        # Add user to the set of annotators for this training_item
+        self.training_item_annotators[training_item_id].add(user_id)
 
     def clear(self):
         """Clear all data from the manager (for testing)"""
-        self.instance_id_to_instance.clear()
-        self.instance_id_ordering.clear()
-        self.remaining_instance_ids.clear()
-        self.completed_instance_ids.clear()
-        self.instance_annotators.clear()
-        self.item_annotation_counts.clear()
+        self.training_item_id_to_training_item.clear()
+        self.remaining_training_item_ids.clear()
+        self.completed_training_item_ids.clear()
+        self.training_item_annotators.clear()
+        self.training_item_annotation_counts.clear()

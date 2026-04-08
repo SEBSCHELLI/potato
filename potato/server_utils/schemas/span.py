@@ -16,9 +16,6 @@ from .identifier_utils import (
     generate_layout_attributes
 )
 
-
-from item_state_management import SpanAnnotation
-
 logger = logging.getLogger(__name__)
 
 SPAN_COLOR_PALETTE = [

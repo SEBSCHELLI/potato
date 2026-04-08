@@ -169,7 +169,7 @@
     cursor: text;
     user-select: text;
     line-height: 1.8;
-    font-size: 18px;
+    /*font-size: 18px;*/
 }
 
 #instance-text:focus {

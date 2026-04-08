@@ -46,7 +46,6 @@ POTATO_LOGGERS = [
     "potato.user_state_management",
     "potato.item_state_management",
     "potato.active_learning_manager",
-    "potato.directory_watcher",
     "potato.agreement",
     "potato.ai",
     "potato.ai.ai_endpoint",

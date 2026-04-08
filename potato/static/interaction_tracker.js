@@ -24,7 +24,7 @@ class InteractionTracker {
         this.flushInterval = 5000; // Flush every 5 seconds
         this.lastFlush = Date.now();
         this.isInitialized = false;
-        this.debugMode = false;
+        this.debugMode = true;
 
         // Don't auto-init - wait for explicit init call or DOMContentLoaded
         if (document.readyState === 'loading') {
@@ -42,8 +42,11 @@ class InteractionTracker {
         document.addEventListener('click', (e) => this.trackClick(e), true);
 
         // Track focus changes
-        document.addEventListener('focusin', (e) => this.trackFocusIn(e), true);
-        document.addEventListener('focusout', (e) => this.trackFocusOut(e), true);
+        //document.addEventListener('focusin', (e) => this.trackFocusIn(e), true);
+        //document.addEventListener('focusout', (e) => this.trackFocusOut(e), true);
+
+        // Track page visibility changes
+        document.addEventListener("visibilitychange", (e) => this.trackVisibilityChange(e), true);
 
         // Track scroll depth
         window.addEventListener('scroll', () => this.trackScroll(), { passive: true });
@@ -94,6 +97,7 @@ class InteractionTracker {
      * @param {Event} e - Click event
      */
     trackClick(e) {
+        //console.log('[trackClick]');
         const target = this.getTargetIdentifier(e.target);
         if (target) {
             this.addEvent('click', target, {
@@ -126,6 +130,26 @@ class InteractionTracker {
             this.focusTime[target] = (this.focusTime[target] || 0) + duration;
             delete this.focusStartTime[target];
             this.addEvent('focus_out', target, { duration_ms: duration });
+        }
+    }
+
+    /**
+     * Track visibility change
+     * @param {Event} e - event
+     */
+    trackVisibilityChange(e) {
+        try {
+            if (document.hidden) {
+                // User left tab
+                const hiddenAt = Date.now();
+                this.addEvent('page_hidden', "page", {});
+            } else {
+                // User returned
+                const visibleAt = Date.now();
+                this.addEvent('page_visible', "page", {});
+            }
+        } catch (err) {
+            console.warn("Visibility tracking failed:", err);
         }
     }
 
@@ -168,54 +192,6 @@ class InteractionTracker {
     }
 
     /**
-     * Track AI assistance request
-     * @param {string} schemaName - The schema requesting AI help
-     */
-    trackAIRequest(schemaName) {
-        this.addEvent('ai_request', `schema:${schemaName}`);
-
-        // Also track via dedicated AI endpoint
-        this.sendAIUsage('request', schemaName);
-    }
-
-    /**
-     * Track AI assistance response
-     * @param {string} schemaName - The schema that received help
-     * @param {Array} suggestions - AI suggestions provided
-     */
-    trackAIResponse(schemaName, suggestions) {
-        this.addEvent('ai_response', `schema:${schemaName}`, {
-            suggestion_count: suggestions ? suggestions.length : 0,
-            suggestions: suggestions
-        });
-
-        this.sendAIUsage('response', schemaName, { suggestions });
-    }
-
-    /**
-     * Track user accepting AI suggestion
-     * @param {string} schemaName - The schema
-     * @param {string} acceptedValue - The value accepted
-     */
-    trackAIAccept(schemaName, acceptedValue) {
-        this.addEvent('ai_accept', `schema:${schemaName}`, {
-            accepted: acceptedValue
-        });
-
-        this.sendAIUsage('accept', schemaName, { accepted_value: acceptedValue });
-    }
-
-    /**
-     * Track user rejecting AI suggestion
-     * @param {string} schemaName - The schema
-     */
-    trackAIReject(schemaName) {
-        this.addEvent('ai_reject', `schema:${schemaName}`);
-
-        this.sendAIUsage('reject', schemaName);
-    }
-
-    /**
      * Track annotation change
      * @param {string} schemaName - Schema name
      * @param {string} labelName - Label name
@@ -225,16 +201,16 @@ class InteractionTracker {
      * @param {string} source - What triggered the change (user, ai_accept, keyboard, prefill)
      */
     trackAnnotationChange(schemaName, labelName, action, oldValue, newValue, source = 'user') {
-        this.addEvent('annotation_change', `schema:${schemaName}`, {
+        /*this.addEvent('annotation_change', `schema:${schemaName}`, {
             label: labelName,
             action: action,
             old_value: oldValue,
             new_value: newValue,
             source: source,
-        });
+        });*/ // Do not send to interaction endpoint !!!
 
         // Also send to dedicated annotation change endpoint for persistence
-        this.sendAnnotationChange(schemaName, labelName, action, oldValue, newValue, source);
+        this.sendAnnotationChange(schemaName, labelName, action, oldValue, newValue, source, Date.now() / 1000);
     }
 
     /**
@@ -259,37 +235,6 @@ class InteractionTracker {
     }
 
     /**
-     * Track when an annotation becomes stale due to display logic changes.
-     * Stale annotations are annotations for schemas that were hidden because
-     * conditions changed (e.g., user changed a parent answer).
-     *
-     * @param {string} schemaName - Schema that became stale
-     * @param {*} value - The value that is now stale
-     * @param {string} reason - Why the schema became hidden (condition not met)
-     */
-    trackStaleAnnotation(schemaName, value, reason) {
-        this.addEvent('annotation_stale', `schema:${schemaName}`, {
-            stale_value: value,
-            reason: reason,
-            timestamp: new Date().toISOString()
-        });
-    }
-
-    /**
-     * Track display logic visibility changes.
-     * @param {string} schemaName - Schema whose visibility changed
-     * @param {boolean} visible - New visibility state
-     * @param {string} reason - Reason for visibility change
-     */
-    trackDisplayLogicChange(schemaName, visible, reason) {
-        this.addEvent('display_logic_change', `schema:${schemaName}`, {
-            visible: visible,
-            reason: reason,
-            timestamp: new Date().toISOString()
-        });
-    }
-
-    /**
      * Get a unique identifier for an element
      * @param {Element} element - DOM element
      * @returns {string|null} - Element identifier or null
@@ -307,27 +252,6 @@ class InteractionTracker {
             }
         }
 
-        // Check for label wrapper with data attributes
-        const labelWrapper = element.closest('[data-label-name]');
-        if (labelWrapper) {
-            return `label:${labelWrapper.dataset.labelName}`;
-        }
-
-        // Check for schema elements
-        const schema = element.closest('[data-schema-name]');
-        if (schema) {
-            return `schema:${schema.dataset.schemaName}`;
-        }
-
-        // Check for annotation schema containers
-        const schemaContainer = element.closest('.annotation-schema');
-        if (schemaContainer) {
-            const schemaName = schemaContainer.id || schemaContainer.dataset.schema;
-            if (schemaName) {
-                return `schema:${schemaName}`;
-            }
-        }
-
         // Check for navigation buttons
         if (element.id === 'next_instance_button' || element.closest('#next_instance_button')) {
             return 'nav:next';
@@ -335,29 +259,13 @@ class InteractionTracker {
         if (element.id === 'prev_instance_button' || element.closest('#prev_instance_button')) {
             return 'nav:prev';
         }
-        if (element.id === 'save_button' || element.closest('#save_button')) {
-            return 'nav:save';
+
+        // Check for training buttons
+        if (element.id === 'training_submit_button') {
+            return 'training:submit';
         }
-
-        // Check for AI assistant elements
-        if (element.closest('.ai-assistant-button')) return 'ai:request';
-        if (element.closest('.ai-suggestion')) return 'ai:suggestion';
-        if (element.closest('.ai-assistant-panel')) return 'ai:panel';
-
-        // Check for span annotation
-        if (element.closest('.annotation-span')) return 'span:click';
-        if (element.closest('.span-label-option')) return 'span:label';
-
-        // Check for text inputs (textbox schemas)
-        const textInput = element.closest('input[type="text"], textarea');
-        if (textInput && textInput.name) {
-            return `textbox:${textInput.name}`;
-        }
-
-        // Check for slider elements
-        const slider = element.closest('input[type="range"]');
-        if (slider && slider.name) {
-            return `slider:${slider.name}`;
+        if (element.id === 'training_retry_button') {
+            return 'training:retry';
         }
 
         return null;
@@ -372,8 +280,7 @@ class InteractionTracker {
     addEvent(eventType, target, metadata = {}) {
         const event = {
             event_type: eventType,
-            timestamp: Date.now() / 1000,  // Unix timestamp in seconds
-            client_timestamp: Date.now(),   // Milliseconds for latency analysis
+            client_timestamp: Date.now() / 1000,  // Unix timestamp in seconds
             target: target,
             instance_id: this.currentInstanceId,
             metadata: metadata,
@@ -396,6 +303,8 @@ class InteractionTracker {
      * @param {boolean} isFinal - Whether this is a final flush (page unload)
      */
     async flush(isFinal) {
+        //console.log('[InteractionTracker] Flushing');
+
         if (this.events.length === 0 && Object.keys(this.focusTime).length === 0) {
             return;
         }
@@ -437,34 +346,9 @@ class InteractionTracker {
     }
 
     /**
-     * Send AI usage event to dedicated endpoint
-     * @param {string} eventType - Event type
-     * @param {string} schemaName - Schema name
-     * @param {Object} data - Additional data
-     */
-    async sendAIUsage(eventType, schemaName, data = {}) {
-        try {
-            await fetch('/api/track_ai_usage', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    instance_id: this.currentInstanceId,
-                    schema_name: schemaName,
-                    event_type: eventType,
-                    ...data,
-                }),
-            });
-        } catch (e) {
-            if (this.debugMode) {
-                console.warn('[InteractionTracker] Failed to send AI usage data:', e);
-            }
-        }
-    }
-
-    /**
      * Send annotation change to dedicated endpoint
      */
-    async sendAnnotationChange(schemaName, labelName, action, oldValue, newValue, source) {
+    async sendAnnotationChange(schemaName, labelName, action, oldValue, newValue, source, timestamp) {
         try {
             await fetch('/api/track_annotation_change', {
                 method: 'POST',
@@ -473,10 +357,11 @@ class InteractionTracker {
                     instance_id: this.currentInstanceId,
                     schema_name: schemaName,
                     label_name: labelName,
-                    action: action,
+                    //action: action,
                     old_value: oldValue,
                     new_value: newValue,
                     source: source,
+                    client_timestamp: timestamp  // Unix timestamp in seconds
                 }),
             });
         } catch (e) {

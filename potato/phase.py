@@ -78,6 +78,8 @@ class UserPhase(Enum):
             return UserPhase.ANNOTATION
         elif phase == "poststudy":
             return UserPhase.POSTSTUDY
+        elif phase == "done":
+            return UserPhase.DONE
         else:
             raise ValueError(f"Unknown phase: {phase}")
 

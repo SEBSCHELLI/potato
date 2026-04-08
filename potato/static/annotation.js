@@ -8,6 +8,9 @@ function debugLog(...args) {
     }
 }
 
+console.log('annotation.js debug:', window.config.debug);
+
+
 /**
  * Compatibility stub for registerAnnotation from base_template.html
  * This function is called by onclick handlers in checkbox/radio schemas.
@@ -53,7 +56,7 @@ const boundEventHandlers = {
     robustTextSelectionKeyUp: null
 };
 
-let aiAssistantManger = new AIAssistantManager();
+//let aiAssistantManger = new AIAssistantManager();
 
 // DEEP DEBUG: Enhanced tracking
 let deepDebugState = {
@@ -528,7 +531,7 @@ function debugVerifyOverlayCleanup() {
 
 function setupEventListeners() {
     // Go to button
-    document.getElementById('go-to-btn').addEventListener('click', function () {
+    /*document.getElementById('go-to-btn').addEventListener('click', function () {
         const goToValue = document.getElementById('go_to').value;
         if (goToValue && goToValue > 0) {
             // User enters 1-based index (item 1, 2, 3...) but server uses 0-based
@@ -542,6 +545,7 @@ function setupEventListeners() {
             document.getElementById('go-to-btn').click();
         }
     });
+    */
 
     // Keyboard navigation and shortcuts
     document.addEventListener('keydown', function (e) {
@@ -568,6 +572,7 @@ function setupEventListeners() {
 
     // Keyboard shortcuts for checkboxes and radio buttons (matches base_template.html behavior)
     document.addEventListener('keyup', function (e) {
+        console.log("keyup")
         // Don't handle when in text input fields (but allow radio/checkbox)
         const activeElement = document.activeElement;
         const activeId = activeElement.id;
@@ -581,6 +586,7 @@ function setupEventListeners() {
         }
 
         const key = e.key.toLowerCase();
+        console.log("key:", key)
 
         // Check checkboxes first
         const checkboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -631,6 +637,9 @@ function setupEventListeners() {
             }
         }
     });
+
+    console.log("added keyup eventlistener")
+
 }
 
 /**
@@ -901,19 +910,19 @@ async function loadCurrentInstance() {
         // This prevents image/audio/video annotations from persisting across instances
         clearAllFormInputs();
 
-        restoreSpanAnnotationsFromHTML();
+        //restoreSpanAnnotationsFromHTML();
         loadAnnotations();
         generateAnnotationForms();
-        aiAssistantManger.getAiAssistantName();
+        //aiAssistantManger.getAiAssistantName();
 
         // Populate pairwise item boxes after forms are generated
         populatePairwiseTileContent();
 
         // Load span annotations
-        debugLog('🔍 [DEBUG] loadCurrentInstance() - About to call loadSpanAnnotations()');
-        debugLog('🔍 [DEBUG] loadCurrentInstance() - currentInstance.id:', currentInstance?.id);
-        await loadSpanAnnotations();
-        debugLog('🔍 [DEBUG] loadCurrentInstance() - loadSpanAnnotations() completed');
+        //debugLog('🔍 [DEBUG] loadCurrentInstance() - About to call loadSpanAnnotations()');
+        //debugLog('🔍 [DEBUG] loadCurrentInstance() - currentInstance.id:', currentInstance?.id);
+        //await loadSpanAnnotations();
+        //debugLog('🔍 [DEBUG] loadCurrentInstance() - loadSpanAnnotations() completed');
 
         // Populate input values with existing annotations AFTER forms are generated
         setTimeout(() => {
@@ -1187,6 +1196,7 @@ async function saveAnnotations() {
     // Track save event
     if (window.interactionTracker) {
         window.interactionTracker.trackSave(currentInstance.id);
+        window.interactionTracker.flush();
     }
 
     try {
@@ -1289,7 +1299,7 @@ async function navigateToPrevious() {
     try {
         // Save annotations before navigating away
         debugLog('[DEEP DEBUG NAV] navigateToPrevious - Saving annotations before navigation');
-        await saveAnnotations();
+        // await saveAnnotations();
 
         // FIREFOX FIX: Force overlay cleanup before navigation
         const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
@@ -1336,7 +1346,7 @@ async function navigateToPrevious() {
         }
 
         // Use the correct endpoint and payload for navigation
-        const response = await fetch('/annotate', {
+        const response = await fetch('/annotation/navigate_to_prev', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1374,6 +1384,7 @@ async function navigateToPrevious() {
 }
 
 async function navigateToNext() {
+    console.log('annotation.js: navigateToNext STARTS')
     debugLog('[DEEP DEBUG NAV] navigateToNext - ENTRY POINT');
     deepDebugState.navigationCalls++;
 
@@ -1398,7 +1409,7 @@ async function navigateToNext() {
     try {
         // Save annotations before navigating away
         debugLog('[DEEP DEBUG NAV] navigateToNext - Saving annotations before navigation');
-        await saveAnnotations();
+        // await saveAnnotations();
 
         // FIREFOX FIX: Force overlay cleanup before navigation
         const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
@@ -1445,7 +1456,7 @@ async function navigateToNext() {
         }
 
         // Use the correct endpoint and payload for navigation
-        const response = await fetch('/annotate', {
+        const response = await fetch('/annotation/navigate_to_next', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1457,21 +1468,31 @@ async function navigateToNext() {
         });
 
         if (response.ok) {
-            debugLog('[DEEP DEBUG NAV] navigateToNext - Navigation successful, reloading page');
+            const result = await response.json();
 
-            if (window.spanManager && typeof window.spanManager.onInstanceChange === 'function') {
-                window.spanManager.onInstanceChange(currentInstance?.id);
-            }
-
-            logDeepDebug('navigateToNext_success', {
-                currentInstanceId: currentInstance?.id,
-                overlayCount: getCurrentOverlayCount()
-            });
-
-            // Add a small delay to ensure span manager operations complete before reload
-            setTimeout(() => {
+            if (result.status === "finished") {
+                // User is done → redirect to finished page
+                setTimeout(() => {
                 window.location.reload();
-            }, 100);
+                }, 100);
+
+            } else if (result.status === "success") {
+                debugLog('[DEEP DEBUG NAV] navigateToNext - Navigation successful, reloading page');
+
+                if (window.spanManager && typeof window.spanManager.onInstanceChange === 'function') {
+                    window.spanManager.onInstanceChange(currentInstance?.id);
+                }
+
+                logDeepDebug('navigateToNext_success', {
+                    currentInstanceId: currentInstance?.id,
+                    overlayCount: getCurrentOverlayCount()
+                });
+
+                // Add a small delay to ensure span manager operations complete before reload
+                setTimeout(() => {
+                    window.location.reload();
+                }, 100);
+            }
         } else {
             console.error('[DEEP DEBUG NAV] navigateToNext - Navigation failed:', response.status);
             setLoading(false);
@@ -1496,7 +1517,7 @@ async function navigateToInstance(instanceIndex) {
         console.log('[PERSISTENCE FIX] navigateToInstance - About to call saveAnnotations');
         console.log('[PERSISTENCE FIX] currentAnnotations before save:', JSON.stringify(currentAnnotations));
         debugLog('[DEEP DEBUG NAV] navigateToInstance - Saving annotations before navigation');
-        await saveAnnotations();
+        // await saveAnnotations();
         console.log('[PERSISTENCE FIX] navigateToInstance - saveAnnotations completed');
 
         // DEBUG: Track overlays before navigation
@@ -1619,20 +1640,22 @@ function setLoading(loading) {
     isLoading = loading;
     const loadingState = document.getElementById('loading-state');
     const mainContent = document.getElementById('main-content');
-    const prevBtn = document.getElementById('prev-btn');
+    //const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
 
-    if (loading) {
-        loadingState.style.display = 'block';
-        mainContent.style.display = 'none';
-        prevBtn.disabled = true;
-        nextBtn.disabled = true;
-    } else {
-        loadingState.style.display = 'none';
-        mainContent.style.display = 'block';
-        prevBtn.disabled = false;
-        // Don't enable next button here - let validateRequiredFields handle it
-        validateRequiredFields();
+    if (loadingState) {
+        if (loading) {
+            loadingState.style.display = 'block';
+            mainContent.style.display = 'none';
+            //prevBtn.disabled = true;
+            nextBtn.disabled = true;
+        } else {
+            loadingState.style.display = 'none';
+            mainContent.style.display = 'block';
+            //prevBtn.disabled = false;
+            // Don't enable next button here - let validateRequiredFields handle it
+            validateRequiredFields();
+        }
     }
 }
 
@@ -1641,13 +1664,15 @@ function showError(show, message = '') {
     const errorMessage = document.getElementById('error-message-text');
     const mainContent = document.getElementById('main-content');
 
-    if (show) {
-        errorState.style.display = 'block';
-        mainContent.style.display = 'none';
-        errorMessage.textContent = message;
-    } else {
-        errorState.style.display = 'none';
-        mainContent.style.display = 'block';
+    if (errorState) {
+        if (show) {
+            errorState.style.display = 'block';
+            mainContent.style.display = 'none';
+            errorMessage.textContent = message;
+        } else {
+            errorState.style.display = 'none';
+            mainContent.style.display = 'block';
+        }
     }
 }
 
@@ -1692,12 +1717,28 @@ function syncAnnotationsFromDOM() {
     radios.forEach(input => {
         const schema = input.getAttribute('schema');
         const labelName = input.getAttribute('label_name');
-        if (schema && labelName && input.checked) {
+        if (schema && labelName) {
+            if (input.checked) {
+                if (!currentAnnotations[schema]) {
+                    currentAnnotations[schema] = {};
+                }
+                currentAnnotations[schema][labelName] = input.value;
+            } else {
+                // Remove unchecked radios
+                if (currentAnnotations[schema] && currentAnnotations[schema][labelName]) {
+                    delete currentAnnotations[schema][labelName];
+                    if (Object.keys(currentAnnotations[schema]).length === 0) {
+                        delete currentAnnotations[schema];
+                    }
+                }
+            }
+        }
+        /*if (schema && labelName && input.checked) {
             if (!currentAnnotations[schema]) {
                 currentAnnotations[schema] = {};
             }
             currentAnnotations[schema][labelName] = input.value;
-        }
+        }*/
     });
 
     // Sync text inputs
@@ -1895,10 +1936,10 @@ function handleInputChange(element) {
             }
 
             // Auto-save the removal
-            clearTimeout(textSaveTimer);
-            textSaveTimer = setTimeout(() => {
-                saveAnnotations();
-            }, 500);
+            //clearTimeout(textSaveTimer);
+            //textSaveTimer = setTimeout(() => {
+            //    saveAnnotations();
+            //}, 500);
             return;
         }
     } else {
@@ -1922,9 +1963,9 @@ function handleInputChange(element) {
 
     // Auto-save
     clearTimeout(textSaveTimer);
-    textSaveTimer = setTimeout(() => {
-        saveAnnotations();
-    }, 500);
+    //textSaveTimer = setTimeout(() => {
+    //    saveAnnotations();
+    //}, 500);
 }
 
 function populateInputValues() {
@@ -2021,7 +2062,7 @@ function populateInputValues() {
     });
 
     // Populate pairwise annotations
-    restorePairwiseAnnotations();
+    // restorePairwiseAnnotations();
 
     validateRequiredFields();
 }
@@ -3543,7 +3584,7 @@ async function jumpToUnannotatedPrev() {
     try {
         // Save annotations before navigating away
         debugLog('[NAV] jumpToUnannotatedPrev - Saving annotations before navigation');
-        await saveAnnotations();
+        // await saveAnnotations();
 
         // Use the correct endpoint and payload for navigation
         const response = await fetch('/annotate', {
@@ -3606,7 +3647,7 @@ async function jumpToUnannotated() {
     try {
         // Save annotations before navigating away
         debugLog('[NAV] jumpToUnannotated - Saving annotations before navigation');
-        await saveAnnotations();
+        // await saveAnnotations();
 
         // Use the correct endpoint and payload for navigation
         const response = await fetch('/annotate', {

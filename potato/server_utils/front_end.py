@@ -8,6 +8,7 @@ import json
 import re
 import hashlib
 from collections import OrderedDict
+from bs4 import BeautifulSoup
 
 #add local module
 from pathlib import Path
@@ -20,6 +21,7 @@ from potato.server_utils.schemas.registry import schema_registry
 
 logger = logging.getLogger(__name__)
 
+flask_templates_dir = os.path.join(Path(__file__).parents[1],'templates')
 
 # TODO: Move this to config.yaml files
 # Items which will be displayed in the popup statistics sidebar
@@ -223,18 +225,37 @@ def generate_annotation_html_template(config: dict) -> str:
     html_template = html_template.replace("{{ HEADER }}", header)
 
     if config.get("jumping_to_id_disabled"):
-        html_template = html_template.replace(
-            '<input type="submit" value="go">', '<input type="submit" value="go" hidden>'
-        )
-        html_template = html_template.replace(
-            '<input type="number" name="go_to" id="go_to" value="" onfocusin="user_input()" onfocusout="user_input_leave()" max={{total_count}} min=0 required>',
-            '<input type="number" name="go_to" id="go_to" value="" onfocusin="user_input()" onfocusout="user_input_leave()" max={{total_count}} min=0 required hidden>',
-        )
+        #html_template = html_template.replace(
+        #    '<input type="submit" value="go">', '<input type="submit" value="go" hidden>'
+        #)
+
+        soup = BeautifulSoup(html_template, "html.parser")
+
+        # find all divs with class "jump-to"
+        for div in soup.find_all("div", class_="jump-to"):
+            div.decompose()  # completely removes the tag and all its children
+
+        html_template = str(soup)
+
+        #html_template = html_template.replace(
+        #    '<input type="number" name="go_to" id="go_to" value="" onfocusin="user_input()" onfocusout="user_input_leave()" max={{total_count}} min=0 required>',
+        #    '<input type="number" name="go_to" id="go_to" value="" onfocusin="user_input()" onfocusout="user_input_leave()" max={{total_count}} min=0 required hidden>',
+        #)
 
     if config.get("hide_navbar"):
-        html_template = html_template.replace(
-            '<div class="navbar-nav">', '<div class="navbar-nav" hidden>'
-        )
+        #html_template = html_template.replace(
+        #    '<div class="navbar-nav">', '<div class="navbar-nav" hidden>'
+        #)
+
+        soup = BeautifulSoup(html_template, "html.parser")
+
+        # find all divs with class "jump-to"
+        for div in soup.find_all("div", class_="skip-unannotated-btns"):
+            div.decompose()  # completely removes the tag and all its children
+
+        html_template = str(soup)
+
+
 
     # Grab the annotation schemes
     annotation_schemes = config["annotation_schemes"]
@@ -397,12 +418,12 @@ def get_html(fname: str, config: dict):
         html = "".join(f.readlines())
     return html
 
-def generate_core_task_html(config: dict,
-                            annotation_schemas: list[dict]) -> str:
+def generate_core_task_html(config: dict, annotation_schemas: list[dict]) -> str:
     """
     Generates the HTML layout for the core annotation task for
     all the annotation-specific content and returns the HTML layout.
     """
+    logger.debug("=== front_end.py: generate_core_task_html STARTS ===")
     schema_layouts = ""
     task_html_layout = ""
     for annotation_scheme in annotation_schemas:
@@ -416,6 +437,132 @@ def generate_core_task_html(config: dict,
 
     # Swap in the task's layout
     return cur_task_html_layout
+
+def generate_training_html(phase_name: str, config: dict, task_layout_file: str = None):
+    """
+        Generates the full HTML file in site/ for annotating this tasks data,
+        combining the various templates with the annotation specification in
+        the yaml file.
+        """
+    #
+    # Stage 1: Construct the core HTML file devoid the annotation-specific content
+    #
+    #logger.debug("=== front_end.py: generate_training_html STARTS ===")
+
+    # Use hardcoded template paths - no longer configurable
+    cur_program_dir = os.path.dirname(os.path.abspath(__file__))
+    html_template_filename = os.path.join(cur_program_dir, '..', 'templates', 'training.html')
+
+    # Load the core template that has all the UI controls and non-task layout.
+    #logger.debug("Reading html annotation template %s" % html_template_filename)
+    # html_template = get_html(html_template_filename, config)
+
+    with open(html_template_filename, "rt") as file_p:
+        html_template = "".join(file_p.readlines())
+
+    # Handle annotation layout generation for surveyflow phases
+    # Check if user provided a custom task_layout file (either from config or phase)
+    if not task_layout_file:
+        task_layout_file = config.get("task_layout")
+
+    if task_layout_file:
+        # User provided a custom task layout file
+        #logger.info(f"Using custom task layout file: {task_layout_file}")
+
+        # Resolve the path relative to the config file
+        if not os.path.exists(task_layout_file):
+            real_path = os.path.realpath(config["__config_file__"])
+            dir_path = os.path.dirname(real_path)
+            abs_task_layout_file = os.path.join(dir_path, task_layout_file)
+
+            if not os.path.exists(abs_task_layout_file):
+                raise FileNotFoundError(f"task_layout file not found: {task_layout_file}")
+            task_layout_file = abs_task_layout_file
+
+        # Read the custom task layout
+        with open(task_layout_file, "rt") as f:
+            task_html_layout = "".join(f.readlines())
+
+    else:
+        # Use the dedicated annotation layout file system (auto-generated)
+        try:
+            layout_file_path = get_or_generate_annotation_layout(config, annotation_schemas)
+
+            # Read the generated layout file
+            with open(layout_file_path, "rt") as f:
+                task_html_layout = "".join(f.readlines())
+
+        except Exception as e:
+            logger.warning(f"Failed to use dedicated layout file: {e}. Falling back to inline generation.")
+
+            # Fallback to inline generation
+            # Generate inline layout
+            schema_layouts = ""
+            for annotation_scheme in annotation_schemas:
+                schema_layout, keybindings = generate_schematic(annotation_scheme)
+                schema_layouts += schema_layout + "\n"
+
+            task_html_layout = f'<div class="annotation_schema">{schema_layouts}</div>'
+
+    task_html_layout = task_html_layout.replace("<form", "<div").replace("</form>", "</div>").replace('action="/action_page.php"', ' ')
+    #logger.debug(f"task_html_layout: {str(task_html_layout)}")
+    html_template = html_template.replace("{{ TASK_LAYOUT }}", task_html_layout)
+    #logger.debug(f"html_template: {str(html_template)}")
+
+    html_template = html_template.replace("{{annotation_task_name}}", config["annotation_task_name"])
+
+    # Cache the html as a template for use in flask server
+    site_name = ("_".join(config["annotation_task_name"].split(" ")) + "-" + "%s.html" % phase_name)
+
+    # Create generated subdirectory within the templates directory
+    if not os.path.exists(flask_templates_dir):
+        os.makedirs(flask_templates_dir)
+        logger.info(f"Created generated templates directory: {flask_templates_dir}")
+
+    output_html_fname = os.path.join(flask_templates_dir, site_name)
+
+    # Write the file
+    #logger.debug("writing %s html to %s" % (phase_name, output_html_fname))
+    with open(output_html_fname, "wt") as outf:
+        outf.write(html_template)
+
+    return site_name
+
+def generate_static_html(html_template_filename: str, phase_name: str, config: dict):
+    """
+        Generates the full HTML file in site/ for annotating this tasks data,
+        combining the various templates with the annotation specification in
+        the yaml file.
+        """
+    #
+    # Stage 1: Construct the core HTML file devoid the annotation-specific content
+    #
+    #logger.debug("=== front_end.py: generate_static_html STARTS ===")
+
+    # Load the core template that has all the UI controls and non-task layout.
+    #logger.debug("Reading html annotation template %s" % html_template_filename)
+
+    with open(html_template_filename, "rt") as file_p:
+        html_template = "".join(file_p.readlines())
+
+    html_template = html_template.replace("{{annotation_task_name}}", config["annotation_task_name"])
+
+    # Cache the html as a template for use in flask server
+    site_name = ("_".join(config["annotation_task_name"].split(" ")) + "-" + "%s.html" % phase_name)
+
+    # Create generated subdirectory within the templates directory
+    if not os.path.exists(flask_templates_dir):
+        os.makedirs(flask_templates_dir)
+        logger.info(f"Created generated templates directory: {flask_templates_dir}")
+
+    output_html_fname = os.path.join(flask_templates_dir, site_name)
+
+    # Write the file
+    #logger.debug("writing %s html to %s" % (phase_name, output_html_fname))
+    with open(output_html_fname, "wt") as outf:
+        outf.write(html_template)
+
+    return site_name
 
 
 def generate_html_from_schematic(annotation_schemas: list[dict],
@@ -432,6 +579,7 @@ def generate_html_from_schematic(annotation_schemas: list[dict],
     #
     # Stage 1: Construct the core HTML file devoid the annotation-specific content
     #
+    #logger.debug("=== front_end.py: generate_html_from_schematic STARTS ===")
 
     # Use hardcoded template paths - no longer configurable
     cur_program_dir = os.path.dirname(os.path.abspath(__file__))
@@ -439,29 +587,31 @@ def generate_html_from_schematic(annotation_schemas: list[dict],
     html_header_filename = os.path.join(cur_program_dir, '..', 'templates', 'header.html')
 
     # Load the core template that has all the UI controls and non-task layout.
-    logger.debug("Reading html annotation template %s" % html_template_filename)
-    html_template = get_html(html_template_filename, config)
+    #logger.debug(f"Reading html annotation template: {html_template_filename}")
+
+    if not os.path.exists(html_template_filename):
+        raise FileNotFoundError(f"html_template_filename not found: {html_template_filename}")
+
+    with open(html_template_filename, "rt") as file_p:
+        html_template = "".join(file_p.readlines())
 
     # Load the header content we'll stuff in the template, which has scripts and assets we'll need
-    logger.debug("Reading html header %s" % html_header_filename)
-    header = get_html(html_header_filename, config)
+    #logger.debug(f"Reading html header {html_header_filename}")
+
+    if not os.path.exists(html_header_filename):
+        raise FileNotFoundError(f"header_file not found: {html_header_filename}")
+
+    with open(html_header_filename, "rt") as file_p:
+        header = "".join(file_p.readlines())
 
     # Once we have the base template constructed, load the user's custom layout for their task
     html_template = html_template.replace("{{ HEADER }}", header)
 
     if allow_jumping_to_id:
-        html_template = html_template.replace(
-            '<input type="submit" value="go">', '<input type="submit" value="go" hidden>'
-        )
-        html_template = html_template.replace(
-            '<input type="number" name="go_to" id="go_to" value="" onfocusin="user_input()" onfocusout="user_input_leave()" max={{total_count}} min=0 required>',
-            '<input type="number" name="go_to" id="go_to" value="" onfocusin="user_input()" onfocusout="user_input_leave()" max={{total_count}} min=0 required hidden>',
-        )
+        allow_jumping_to_id = None
 
     if hide_navbar:
-        html_template = html_template.replace(
-            '<div class="navbar-nav">', '<div class="navbar-nav" hidden>'
-        )
+        hide_navbar = None
 
     # Handle annotation layout generation for surveyflow phases
     # Check if user provided a custom task_layout file (either from config or phase)
@@ -470,7 +620,7 @@ def generate_html_from_schematic(annotation_schemas: list[dict],
 
     if task_layout_file:
         # User provided a custom task layout file
-        logger.info(f"Using custom task layout file: {task_layout_file}")
+        #logger.info(f"Using custom task layout file: {task_layout_file}")
 
         # Resolve the path relative to the config file
         if not os.path.exists(task_layout_file):
@@ -507,51 +657,13 @@ def generate_html_from_schematic(annotation_schemas: list[dict],
 
             task_html_layout = f'<div class="annotation_schema">{schema_layouts}</div>'
 
-    cur_html_template = html_template.replace("{{ TASK_LAYOUT }}", task_html_layout)
-
-    # Add in a codebook link if the admin specified one
-    codebook_html = ""
-    if len(config.get("annotation_codebook_url", "")) > 0:
-        annotation_codebook = config["annotation_codebook_url"]
-        codebook_html = '<a href="{{annotation_codebook_url}}" class="nav-item nav-link">Annotation Codebook</a>'
-        codebook_html = codebook_html.replace("{{annotation_codebook_url}}", annotation_codebook)
-
-    html_template = html_template.replace("{{annotation_codebook}}", codebook_html)
-
-    html_template = html_template.replace(
-        "{{annotation_task_name}}", config["annotation_task_name"]
-    )
-
-    _ = generate_statistics_sidebar(STATS_KEYS)
-    html_template = html_template.replace("{{statistics_nav}}", " ")
+    #logger.debug(f"task_html_layout: {str(task_html_layout[:100])}")
+    html_template = html_template.replace("{{ TASK_LAYOUT }}", task_html_layout)
+    html_template = html_template.replace("{{annotation_task_name}}", config["annotation_task_name"])
 
     #
     # Step 3, Fill in the annotation-specific pieces in the layout and save the page
     #
-
-    logger.debug("Saw %d annotation scheme(s)" % len(annotation_schemas))
-
-    # Keep track of all the keybindings we have
-    all_keybindings = [("&#8592;", "Move backward"), ("&#8594;", "Move forward")]
-
-    # Do not display keybindings for the first and last page
-    if False:
-        if i == 0:
-            keybindings_desc = generate_keybindings_sidebar(config, all_keybindings[1:])
-            cur_html_template = cur_html_template.replace(
-                '<a class="btn btn-secondary" href="#" role="button" onclick="click_to_prev()">Move backward</a>',
-                '<a class="btn btn-secondary" href="#" role="button" onclick="click_to_prev()" hidden>Move backward</a>',
-            )
-        elif i == len(annotation_schemas) - 1 or re.search("prestudy_fail", page):
-            keybindings_desc = generate_keybindings_sidebar(config, all_keybindings[:-1])
-            cur_html_template = cur_html_template.replace(
-                '<a class="btn btn-secondary" href="#" role="button" onclick="click_to_next()">Move forward</a>',
-                '<a class="btn btn-secondary" href="#" role="button" onclick="click_to_next()" hidden>Move forward</a>',
-            )
-        else:
-            keybindings_desc = generate_keybindings_sidebar(config, all_keybindings)
-
-        cur_html_template = cur_html_template.replace("{{keybindings}}", keybindings_desc)
 
     # Cache the html as a template for use in flask server
     site_name = (
@@ -561,16 +673,16 @@ def generate_html_from_schematic(annotation_schemas: list[dict],
         )
 
     # Create generated subdirectory within the templates directory
-    generated_dir = os.path.join(config["site_dir"], "generated")
-    if not os.path.exists(generated_dir):
-        os.makedirs(generated_dir)
-        logger.info(f"Created generated templates directory: {generated_dir}")
+    if not os.path.exists(flask_templates_dir):
+        os.makedirs(flask_templates_dir)
+        logger.info(f"Created generated templates directory: {flask_templates_dir}")
 
-    output_html_fname = os.path.join(generated_dir, site_name)
+    output_html_fname = os.path.join(flask_templates_dir, site_name)
+    #logger.debug(f"Output HTML filename: {output_html_fname}")
 
     # Write the file
-    logger.debug("writing %s html to %s.html" % (phase_name, output_html_fname))
+    #logger.debug("writing %s html to %s.html" % (phase_name, output_html_fname))
     with open(output_html_fname, "wt") as outf:
-        outf.write(cur_html_template)
+        outf.write(html_template)
 
-    return site_name #output_html_fname
+    return site_name

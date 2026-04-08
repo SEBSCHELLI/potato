@@ -1031,7 +1031,7 @@ class SpanManager {
             }
 
             await this.loadSchemas();
-            await this.loadColors();
+            //await this.loadColors();
             this.setupResizeHandler();
             this.setupOverlayInteractions();
             await this.loadAnnotations(serverInstanceId);
@@ -1249,7 +1249,7 @@ class SpanManager {
             this.renderSpans();
 
             // Load admin keyword highlights after span annotations
-            await this.loadKeywordHighlights(instanceId);
+            //await this.loadKeywordHighlights(instanceId);
 
         } catch (error) {
             console.error('[SpanManager] Error loading annotations:', error);
@@ -2017,9 +2017,9 @@ class SpanManager {
         this.renderSpans();
 
         // Re-render admin keyword highlights
-        if (this.currentInstanceId) {
-            this.loadKeywordHighlights(this.currentInstanceId);
-        }
+        //if (this.currentInstanceId) {
+        //    this.loadKeywordHighlights(this.currentInstanceId);
+        //}
 
         // Clear AI keyword overlays on resize since they're temporary
         // User can re-click the keyword button to regenerate
@@ -2151,7 +2151,7 @@ function initializeSpanManager() {
 }
 
 // Initialize when DOM is ready
-if (document.readyState === 'loading') {
+/*if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeSpanManager);
 } else {
     // DOM already loaded, initialize immediately
@@ -2167,6 +2167,7 @@ setTimeout(() => {
         initializeSpanManager();
     }
 }, 1000);
+ */
 
 // Export for testing
 if (typeof module !== 'undefined' && module.exports) {

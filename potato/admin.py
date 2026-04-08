@@ -47,13 +47,18 @@ from typing import Dict, List, Optional, Tuple, Any
 from collections import defaultdict, Counter
 from dataclasses import dataclass
 from flask import request, jsonify, session
+import dash
+from dash import html, dash_table
+import pandas as pd
 
 from potato.flask_server import (
     config, logger, get_user_state_manager, get_item_state_manager,
-    get_users, get_total_annotations
+    get_users, UserPhase, test_setup
 )
 from potato.annotation_history import AnnotationHistoryManager, AnnotationAction
 from potato.quality_control import get_quality_control_manager
+
+#test_setup()
 
 @dataclass
 class AnnotatorTimingData:
@@ -129,32 +134,6 @@ class AdminDashboard:
         """Initialize the admin dashboard."""
         self.logger = logging.getLogger(__name__)
 
-    def check_admin_access(self) -> bool:
-        """
-        Check if the current request has admin access via API key.
-
-        Returns:
-            bool: True if admin access is granted, False otherwise
-        """
-        api_key = request.headers.get('X-API-Key')
-        logger.info(f"Debug: in check_admin_access api_key (X-API-Key) is '{api_key}'")
-
-        configured_api_key = os.environ.get("POTATO_ADMIN_API_KEY")
-        logger.info(f"Debug: in check_admin_access configured_api_key is '{configured_api_key}'")
-
-        # In debug mode, allow access without API key
-        if config.get("debug", False):
-            return True
-
-        # If no admin API key is configured, deny access
-        if not configured_api_key:
-            return False
-
-        # Check if the provided API key matches the configured one
-        logger.info(f"Debug: in check_admin_access api_key == configured_api_key is '{api_key == configured_api_key}'")
-
-        return api_key == configured_api_key
-
     def get_dashboard_overview(self) -> Dict[str, Any]:
         """
         Get comprehensive dashboard overview data.
@@ -170,68 +149,64 @@ class AdminDashboard:
         Side Effects:
             - Logs errors if data generation fails
         """
-        if not self.check_admin_access():
-            return {"error": "Admin access required"}, 403
-
         try:
             usm = get_user_state_manager()
             ism = get_item_state_manager()
 
             # Get all users and their states
-            users = get_users()
-            total_annotations = get_total_annotations()
+            user_session_ids = usm.get_user_session_ids()
+
+            phases_config = config.get("phases", {})
+            page_order = ["login"] + phases_config.get("order", []) + ["done"]
+
+            pages2nuser = {page: 0 for page in page_order}
+
+            n_active_users = 0
+            n_completed_users = 0
+            n_total_annotations = 0
 
             # Calculate user statistics
-            active_users = 0
-            completed_users = 0
-            total_working_time = 0
+            for username, session_ids in user_session_ids.items():
+                for session_id in session_ids:
+                    user_state = usm.get_user_state(username, session_id)
+                    if user_state:
+                        phase, page = user_state.get_current_phase_and_page()
 
-            for username in users:
-                user_state = usm.get_user_state(username)
-                if user_state:
-                    if user_state.get_phase().value == "ANNOTATION":
-                        active_users += 1
-                    elif user_state.get_phase().value == "DONE":
-                        completed_users += 1
+                        # count page active user
+                        if page in pages2nuser:
+                            pages2nuser[page] += 1
 
-                    # Get timing data
-                    timing_data = self._get_annotator_timing_data(username)
-                    if timing_data:
-                        total_working_time += timing_data.total_seconds
+                        is_finished = user_state.get_current_phase() == UserPhase.DONE
+                        if not is_finished:
+                            n_active_users += 1
+                        else:
+                            n_completed_users += 1
 
-            # Get item statistics
-            items = ism.items()
+                        n_total_annotations += user_state.get_annotation_count()
+
             items_with_annotations = 0
             total_assignments = 0
 
-            for item in items:
-                item_id = item.get_id()
+            for item_id, item in ism.item_id_to_item.items():
                 annotators = ism.get_annotators_for_item(item_id)
                 if annotators:
                     items_with_annotations += 1
                     total_assignments += len(annotators)
 
             # Calculate completion percentages
-            total_items = len(items)
+            total_items = len(ism.item_id_to_item)
             completion_percentage = (items_with_annotations / total_items * 100) if total_items > 0 else 0
-
-            # Format total working time
-            hours = total_working_time // 3600
-            minutes = (total_working_time % 3600) // 60
-            formatted_time = f"{hours}h {minutes}m"
 
             return {
                 "overview": {
-                    "total_users": len(users),
-                    "active_users": active_users,
-                    "completed_users": completed_users,
-                    "total_annotations": total_annotations,
+                    "total_users": len(user_session_ids),
+                    "active_users": n_active_users,
+                    "completed_users": n_completed_users,
+                    "total_annotations": n_total_annotations,
                     "total_items": total_items,
                     "items_with_annotations": items_with_annotations,
                     "completion_percentage": round(completion_percentage, 1),
                     "total_assignments": total_assignments,
-                    "total_working_time": formatted_time,
-                    "average_annotations_per_item": round(total_annotations / total_items, 1) if total_items > 0 else 0
                 },
                 "config": {
                     "annotation_task_name": config.get("annotation_task_name", "Unknown"),
@@ -246,6 +221,446 @@ class AdminDashboard:
             self.logger.error(f"Error getting dashboard overview: {e}")
             return {"error": f"Failed to get dashboard overview: {str(e)}"}, 500
 
+    # annotator dashboard
+    def get_dash_annotator_overview_data(self):
+        annotator_overview_data = []
+        try:
+            usm = get_user_state_manager()
+
+            # Get all users and their states
+            user_session_ids = usm.get_user_session_ids()
+
+            # Calculate user statistics
+            for username, session_ids in user_session_ids.items():
+                for session_id in session_ids:
+                    user_state = usm.get_user_state(username, session_id)
+                    if user_state:
+                        annotator_data = {
+                            "User": username,
+                            "Session ID": session_id
+                        }
+
+                        # get page start times
+                        phases_config = config.get("phases", {})
+                        page_order = ["login"] + phases_config.get("order", [])
+
+                        user_page_start_times = {page: format_datetime(st) for k, v in user_state.phase_page_start_times.items() for page, st in v.items()}
+                        page2start_times = {page.capitalize(): user_page_start_times.get(page, "") for page in page_order}
+
+                        annotator_data.update(page2start_times)
+
+                        is_finished = user_state.get_current_phase() == UserPhase.DONE
+                        num_annotated = user_state.get_annotation_count()
+
+                        training_state = user_state.get_training_state()
+                        if training_state:
+                            if training_state.is_passed():
+                                training_status = "passed"
+                            elif training_state.is_failed():
+                                training_status = "failed"
+                            else:
+                                training_status = "active"
+                        else:
+                            training_status = "not started"
+
+                        last_activity = user_state.last_activity_time
+                        if last_activity:
+                            last_activity = format_datetime(last_activity)
+                        else:
+                            last_activity = ""
+
+                        annotator_data.update(
+                            {"Training Status": training_status,
+                             "# Annotated": num_annotated,
+                             "Last Activity": last_activity,
+                             "Done": is_finished
+                             }
+                        )
+                        annotator_overview_data.append(annotator_data)
+
+            dash_layout = html.Div([
+                dash_table.DataTable(
+                    id='annotator_overview-table',
+                    data=annotator_overview_data,
+                    style_data_conditional=[{
+                        'if': {'row_index': 'odd'},
+                        'backgroundColor': 'rgb(220, 220, 220)'}],
+                    style_header=dict(backgroundColor="#003c78", color="white"),
+                    sort_action='native'
+                )
+            ])
+
+            return dash_layout
+
+        except Exception as e:
+            self.logger.error(f"Error getting annotator overview: {e}")
+            return {"error": f"Failed to get annotator overview: {str(e)}"}, 500
+
+    # annotation phase dashboards
+    def get_dash_annotation_overview_data(self):
+        annotation_overview_data = []
+        try:
+            usm = get_user_state_manager()
+
+            # Get all users and their states
+            user_session_ids = usm.get_user_session_ids()
+
+            # Calculate user statistics
+            for username, session_ids in user_session_ids.items():
+                for session_id in session_ids:
+                    user_state = usm.get_user_state(username, session_id)
+                    if user_state:
+                        annotator_data = {
+                            "User": username,
+                            "Session ID": session_id
+                        }
+
+                        # get annotation start
+                        start_time_dt = user_state.phase_page_start_times.get(UserPhase.ANNOTATION, {}).get("annotation")
+                        if start_time_dt:
+                            start_time = format_datetime(start_time_dt)
+                        else:
+                            continue # do not include if not already in annotation phase
+
+                        #finished_annotation = any([phase == UserPhase.ANNOTATION for phase, _ in user_state.completed_phase_and_pages])
+                        status = "done" if user_state.get_current_phase() == UserPhase.DONE else "active"
+
+                        num_annotated = user_state.get_annotation_count()
+
+                        last_activity_dt = user_state.last_activity_time
+                        if last_activity_dt:
+                            last_activity = format_datetime(last_activity_dt)
+                        else:
+                            last_activity = ""
+
+                        if last_activity_dt and start_time_dt:
+                            duration_td = last_activity_dt - start_time_dt
+                            duration = format_timedelta(duration_td)
+                        else:
+                            duration = format_timedelta(datetime.timedelta(seconds=0))
+
+                        if num_annotated > 0:
+                            avg_duration_per_instance_td = duration_td / num_annotated
+                            avg_duration_per_instance = format_timedelta(avg_duration_per_instance_td)
+                        else:
+                            avg_duration_per_instance = format_timedelta(datetime.timedelta(seconds=0))
+
+                        if num_annotated > 0:
+                            bd = user_state.instance_id_to_behavioral_data
+                            n_annotation_changes = 0
+                            for iid, ibd in bd.items():
+                                if len(ibd.annotation_changes) > 0:
+                                    n_annotation_changes += (len(ibd.annotation_changes) - 1)
+
+                            avg_annotation_changes = n_annotation_changes / num_annotated
+                        else:
+                            avg_annotation_changes = 0
+
+                        annotator_data.update(
+                            {
+                                "Started": start_time,
+                                "Status": status,
+                                "# Annotated": num_annotated,
+                                "Duration": duration,
+                                "Last Activity": last_activity,
+                                "Avg. Duration per Instance": avg_duration_per_instance,
+                                "Avg. Annotation Changes": avg_annotation_changes
+                             }
+                        )
+                        annotation_overview_data.append(annotator_data)
+
+            dash_layout = html.Div([
+                dash_table.DataTable(
+                    id='annotation_overview-table',
+                    data=annotation_overview_data,
+                    style_data_conditional=[{
+                        'if': {'row_index': 'odd'},
+                        'backgroundColor': 'rgb(220, 220, 220)'}],
+                    style_header=dict(backgroundColor="#003c78", color="white"),
+                    sort_action='native'
+                )
+            ])
+
+            return dash_layout
+
+        except Exception as e:
+            self.logger.error(f"Error getting annotation overview: {e}")
+            return {"error": f"Failed to get annotation overview: {str(e)}"}, 500
+
+    def get_dash_annotation_annotator_view_data(self):
+        annotation_annotator_view_data = []
+        try:
+            usm = get_user_state_manager()
+
+            # Get all users and their states
+            user_session_ids = usm.get_user_session_ids()
+
+            # Calculate user statistics
+            for username, session_ids in user_session_ids.items():
+                for session_id in session_ids:
+                    user_state = usm.get_user_state(username, session_id)
+                    if user_state:
+                        for iid, bd in user_state.instance_id_to_behavioral_data.items():
+                            if len(bd.annotation_changes) > 0:
+                                annotator_instance_data = {
+                                    "User": username,
+                                    "Session ID": session_id,
+                                    "Instance ID": iid,
+                                }
+
+                                last_annotation = "not yet annotated"
+                                n_annotation_changes = 0
+                                annotation_changes = bd.annotation_changes
+                                if len(annotation_changes) > 0:
+                                    last_annotation = annotation_changes[-1].new_value
+                                    n_annotation_changes = len(annotation_changes) - 1
+
+                                duration = datetime.timedelta(seconds=0)
+                                loaded_ts = None
+                                for interaction in bd.interactions:
+                                    if loaded_ts is None and interaction.event_type == "navigation" and interaction.target == "instance_load":
+                                        loaded_ts = interaction.client_timestamp
+
+                                    if loaded_ts is not None and interaction.event_type == "navigation" and (interaction.target == "next" or interaction.target == "prev"):
+                                        ts = interaction.client_timestamp
+                                        stayed_for = ts - loaded_ts
+                                        duration += stayed_for
+                                        loaded_ts = None
+
+                                duration = format_timedelta(duration)
+
+                                duration_hidden = datetime.timedelta(seconds=0)
+                                hidden_ts = None
+                                if len(bd.interactions) > 0:
+                                    for interaction in bd.interactions:
+                                        if hidden_ts is None and interaction.event_type == "page_hidden":
+                                            hidden_ts = interaction.client_timestamp
+                                        elif hidden_ts is not None and interaction.event_type == "page_visible":
+                                            visible_ts = interaction.client_timestamp
+                                            duration_hidden += (visible_ts - hidden_ts)
+                                            hidden_ts = None
+                                        elif hidden_ts is not None and interaction.event_type == "navigation" and interaction.target == "instance_load":
+                                            visible_ts = interaction.client_timestamp
+                                            duration_hidden += (visible_ts - hidden_ts)
+                                            hidden_ts = None
+
+                                duration_hidden = format_timedelta(duration_hidden)
+
+                                annotator_instance_data.update(
+                                    {
+                                        "Annotation": last_annotation,
+                                        "# Annotation Changes": n_annotation_changes,
+                                        "Duration": duration,
+                                        "Duration Hidden": duration_hidden
+                                    }
+                                )
+
+                                annotation_annotator_view_data.append(annotator_instance_data)
+
+            dash_layout = html.Div([
+                dash_table.DataTable(
+                    id='annotation_annotator_view-table',
+                    data=annotation_annotator_view_data,
+                    columns=[{"name": i, 'id': i} for i in ["User", "Session ID", "Instance ID", "Annotation", "# Annotation Changes", "Duration", "Duration Hidden"]],
+                    style_data_conditional=[{
+                        'if': {'row_index': 'odd'},
+                        'backgroundColor': 'rgb(220, 220, 220)'}],
+                    style_header=dict(backgroundColor="#003c78", color="white"),
+                    sort_action='native',
+                    filter_action='native',
+                    filter_options={"placeholder_text": "", "case": "insensitive"},
+                )
+            ])
+
+            return dash_layout
+
+        except Exception as e:
+            self.logger.error(f"Error getting annotation annotator view: {e}")
+            return {"error": f"Failed to get annotation annotator view: {str(e)}"}, 500
+
+    # training phase dashboards
+    def get_dash_training_overview_data(self):
+        training_overview_data = []
+        try:
+            usm = get_user_state_manager()
+
+            # Get all users and their states
+            user_session_ids = usm.get_user_session_ids()
+
+            # Get user data
+            for username, session_ids in user_session_ids.items():
+                for session_id in session_ids:
+                    user_state = usm.get_user_state(username, session_id)
+                    if user_state:
+                        training_state = user_state.get_training_state()
+                        if training_state:
+                            annotator_data = {
+                                "User": username,
+                                "Session ID": session_id
+                            }
+
+                            # get training start
+                            start_time_dt = user_state.phase_page_start_times.get(UserPhase.TRAINING, {}).get("training")
+                            if start_time_dt:
+                                start_time = format_datetime(start_time_dt)
+                            else:
+                                continue
+
+                            if training_state.is_passed():
+                                status = "passed"
+                            elif training_state.is_failed():
+                                status = "failed"
+                            else:
+                                status = "active"
+
+                            n_correct = training_state.total_correct
+                            n_mistakes = training_state.total_mistakes
+                            n_attempts = training_state.total_attempts
+
+                            last_activity_dt = training_state.last_activity_time
+                            if last_activity_dt:
+                                last_activity = format_datetime(last_activity_dt)
+                            else:
+                                last_activity = ""
+
+                            if last_activity_dt and start_time_dt:
+                                duration_td = last_activity_dt - start_time_dt
+                                duration = format_timedelta(duration_td)
+                            else:
+                                duration = format_timedelta(datetime.timedelta(seconds=0))
+
+                            num_annotated = len(training_state.training_instance_id_to_label_to_value)
+
+                            if num_annotated > 0:
+                                avg_duration_per_instance_td = duration_td / num_annotated
+                                avg_duration_per_instance = format_timedelta(avg_duration_per_instance_td)
+                            else:
+                                avg_duration_per_instance = format_timedelta(datetime.timedelta(seconds=0))
+
+                            annotator_data.update(
+                                {
+                                    "Started": start_time,
+                                    "Status": status,
+                                    "# Correct": n_correct,
+                                    "# Mistakes": n_mistakes,
+                                    "# Attempts": n_attempts,
+                                    "Duration": duration,
+                                    "Last Activity": last_activity,
+                                    "Avg. Duration per Instance": avg_duration_per_instance,
+                                }
+                            )
+                            training_overview_data.append(annotator_data)
+
+        except Exception as e:
+            self.logger.exception(f"Error getting training overview: {e}")
+            training_overview_data = [{"Error": e}]
+
+        dash_layout = html.Div([
+            dash_table.DataTable(
+                id='training_overview-table',
+                data=training_overview_data,
+                style_data_conditional=[{
+                    'if': {'row_index': 'odd'},
+                    'backgroundColor': 'rgb(220, 220, 220)'}],
+                style_header=dict(backgroundColor="#003c78", color="white"),
+                sort_action='native'
+            )
+        ])
+
+        return dash_layout
+
+    def get_dash_training_annotator_view_data(self):
+        training_annotator_view_data = []
+        try:
+            usm = get_user_state_manager()
+
+            # Get all users and their states
+            user_session_ids = usm.get_user_session_ids()
+
+            # Calculate user statistics
+            for username, session_ids in user_session_ids.items():
+                for session_id in session_ids:
+                    user_state = usm.get_user_state(username, session_id)
+                    if user_state:
+                        training_state = user_state.get_training_state()
+                        if training_state:
+                            for iid, bd in training_state.training_instance_id_to_behavioral_data.items():
+                                annotator_instance_data = {
+                                    "User": username,
+                                    "Session ID": session_id,
+                                    "Instance ID": iid,
+                                }
+
+                                last_annotation = "not yet annotated"
+                                annotations_changes = bd.annotation_changes
+                                if len(annotations_changes) > 0:
+                                    last_annotation = annotations_changes[-1].new_value
+
+                                stats = training_state.training_instance_id_stats.get(iid, {})
+                                is_correct = stats.get("correct", "?")
+                                n_attempts = stats.get("attempts", "?")
+
+                                if bd.session_start and bd.session_end:
+                                    duration = format_timedelta(bd.session_end - bd.session_start)
+                                else:
+                                    duration = format_timedelta(datetime.timedelta(seconds=0))
+
+                                duration_hidden = datetime.timedelta(seconds=0)
+                                hidden_ts = None
+                                if len(bd.interactions) > 0:
+                                    for i in bd.interactions:
+                                        if hidden_ts is None and i.event_type == "page_hidden":
+                                            hidden_ts = i.client_timestamp
+                                        elif hidden_ts is not None and i.event_type == "page_visible":
+                                            visible_ts = i.client_timestamp
+                                            duration_hidden += (visible_ts - hidden_ts)
+                                            hidden_ts = None
+                                        elif hidden_ts is not None and i.event_type == "navigation" and i.target == "instance_load":
+                                            visible_ts = i.client_timestamp
+                                            duration_hidden += (visible_ts - hidden_ts)
+                                            hidden_ts = None
+
+                                duration_hidden = format_timedelta(duration_hidden)
+
+                                annotator_instance_data.update(
+                                    {
+                                        "Annotation": last_annotation,
+                                        "Correct": is_correct,
+                                        "# Attempts": n_attempts,
+                                        "Duration": duration,
+                                        "Duration Hidden": duration_hidden
+                                    }
+                                )
+
+                                training_annotator_view_data.append(annotator_instance_data)
+
+        except Exception as e:
+            self.logger.exception(f"Error getting training annotator view: {e}")
+            training_annotator_view_data = [{"Error": e}]
+
+        dash_layout = html.Div([
+            dash_table.DataTable(
+                id='training_annotator_view-table',
+                data=training_annotator_view_data,
+                columns=[{"name": i, 'id': i} for i in ["User", "Session ID", "Instance ID", "Annotation", "Correct", "# Attempts", "Duration", "Duration Hidden"]],
+                style_data_conditional=[{
+                    'if': {'row_index': 'odd'},
+                    'backgroundColor': 'rgb(220, 220, 220)'}],
+                style_header=dict(backgroundColor="#003c78", color="white"),
+                sort_action='native',
+                filter_action='native',
+                filter_options={"placeholder_text": "", "case": "insensitive"},
+            )
+        ])
+
+        return dash_layout
+
+    def get_dash_annotation_instance_view_data(self):
+        return self.get_dash_annotator_overview_data()
+
+    def get_dash_training_instance_view_data(self):
+        return self.get_dash_annotator_overview_data()
+
     def get_annotators_data(self) -> Dict[str, Any]:
         """
         Get detailed annotator data including timing information.
@@ -253,61 +668,79 @@ class AdminDashboard:
         Returns:
             Dict containing annotator data with timing analysis
         """
-        if not self.check_admin_access():
-            return {"error": "Admin access required"}, 403
 
         try:
             usm = get_user_state_manager()
-            users = get_users()
+
+            # Get all users and their states
+            user_session_ids = usm.get_user_session_ids()
+            logger.debug(f"user_session_ids: {user_session_ids}")
+
             annotators_data = []
 
+            for username, session_ids in user_session_ids.items():
+                for session_id in session_ids:
+                    #logger.debug(f"username: {username}")
+                    #logger.debug(f"session_id: {session_id}")
+                    user_state = usm.get_user_state(username, session_id)
 
-            for username in users:
-                user_state = usm.get_user_state(username)
-                if user_state:
-                    timing_data = self._get_annotator_timing_data(username)
-                    if timing_data:
-                        annotators_data.append({
-                            "user_id": timing_data.user_id,
-                            "total_annotations": timing_data.total_annotations,
-                            "completion_percentage": self._calculate_completion_percentage(timing_data.user_id),
-                            "total_seconds": timing_data.total_seconds,
-                            "average_seconds_per_annotation": timing_data.average_seconds_per_annotation,
-                            "annotations_per_hour": timing_data.annotations_per_hour,
-                            "phase": timing_data.phase,
-                            "has_assignments": timing_data.has_assignments,
-                            "remaining_assignments": timing_data.remaining_assignments,
-                            "last_activity": timing_data.last_activity.isoformat() if timing_data.last_activity else None,
-                            "current_instance_time": timing_data.current_instance_time,
+                    if user_state:
+                        timing_data = self._get_annotator_timing_data(user_state)
+                        #logger.debug(f"timing_data: {timing_data}")
+                        if timing_data:
 
-                            # NEW: Annotation history metrics
-                            "total_actions": timing_data.total_actions,
-                            "average_action_time_ms": timing_data.average_action_time_ms,
-                            "fastest_action_time_ms": timing_data.fastest_action_time_ms if timing_data.fastest_action_time_ms != float('inf') else None,
-                            "slowest_action_time_ms": timing_data.slowest_action_time_ms,
-                            "actions_per_minute": timing_data.actions_per_minute,
-                            "suspicious_score": timing_data.suspicious_score,
-                            "suspicious_level": timing_data.suspicious_level,
-                            "fast_actions_count": timing_data.fast_actions_count,
-                            "burst_actions_count": timing_data.burst_actions_count,
-                            "session_start_time": timing_data.session_start_time.isoformat() if timing_data.session_start_time else None,
-                            "current_session_duration_minutes": timing_data.current_session_duration_minutes,
-                            "recent_actions_count": timing_data.recent_actions_count,
+                            # Format total working time
+                            total_working_time = timing_data.total_seconds
+                            hours = total_working_time // 3600
+                            minutes = (total_working_time % 3600) // 60
+                            total_working_time = f"{hours}h {minutes}m"
 
-                            # Training metrics
-                            "training_completed": timing_data.training_completed,
-                            "training_correct_answers": timing_data.training_correct_answers,
-                            "training_total_attempts": timing_data.training_total_attempts,
-                            "training_pass_rate": round(timing_data.training_pass_rate, 2),
-                            "training_current_question": timing_data.training_current_question,
-                            "training_total_questions": timing_data.training_total_questions
-                        })
+
+                            annotators_data.append({
+                                "user_id": timing_data.user_id,
+                                "session_id": session_id,
+                                "total_annotations": timing_data.total_annotations,
+                                "completion_percentage": self._calculate_completion_percentage(user_state),
+                                "total_seconds": timing_data.total_seconds,
+                                "total_working_time": total_working_time,
+                                "average_seconds_per_annotation": timing_data.average_seconds_per_annotation,
+                                "annotations_per_hour": f"{timing_data.annotations_per_hour:.2f}",
+                                "phase": timing_data.phase,
+                                "has_assignments": timing_data.has_assignments,
+                                "remaining_assignments": timing_data.remaining_assignments,
+                                "last_activity": timing_data.last_activity.isoformat() if timing_data.last_activity else None,
+                                "current_instance_time": timing_data.current_instance_time,
+
+                                # NEW: Annotation history metrics
+                                "total_actions": timing_data.total_actions,
+                                "average_action_time_ms": timing_data.average_action_time_ms,
+                                "fastest_action_time_ms": timing_data.fastest_action_time_ms if timing_data.fastest_action_time_ms != float('inf') else None,
+                                "slowest_action_time_ms": timing_data.slowest_action_time_ms,
+                                "actions_per_minute": timing_data.actions_per_minute,
+                                "suspicious_score": timing_data.suspicious_score,
+                                "suspicious_level": timing_data.suspicious_level,
+                                "fast_actions_count": timing_data.fast_actions_count,
+                                "burst_actions_count": timing_data.burst_actions_count,
+                                "session_start_time": timing_data.session_start_time.isoformat() if timing_data.session_start_time else None,
+                                "current_session_duration_minutes": timing_data.current_session_duration_minutes,
+                                "recent_actions_count": timing_data.recent_actions_count,
+
+                                # Training metrics
+                                "training_completed": timing_data.training_completed,
+                                "training_correct_answers": timing_data.training_correct_answers,
+                                "training_total_attempts": timing_data.training_total_attempts,
+                                "training_pass_rate": round(timing_data.training_pass_rate, 2),
+                                "training_current_question": timing_data.training_current_question,
+                                "training_total_questions": timing_data.training_total_questions
+                            })
 
             # Sort by suspicious score (highest first)
             annotators_data.sort(key=lambda x: x["suspicious_score"], reverse=True)
 
+            #logger.debug(f"annotators_data: {annotators_data}")
+
             return {
-                "total_annotators": len(annotators_data),
+                "total_annotators": len(user_session_ids),
                 "annotators": annotators_data,
                 "summary": {
                     "high_suspicious_count": len([a for a in annotators_data if a["suspicious_level"] in ["High", "Very High"]]),
@@ -336,9 +769,6 @@ class AdminDashboard:
         Returns:
             Dict containing annotation history data
         """
-        if not self.check_admin_access():
-            return {"error": "Admin access required"}, 403
-
         try:
             usm = get_user_state_manager()
 
@@ -379,9 +809,6 @@ class AdminDashboard:
         Returns:
             Dict containing suspicious activity data
         """
-        if not self.check_admin_access():
-            return {"error": "Admin access required"}, 403
-
         try:
             usm = get_user_state_manager()
             users = get_users()
@@ -435,9 +862,6 @@ class AdminDashboard:
         Returns:
             Dict containing paginated instances data
         """
-        if not self.check_admin_access():
-            return {"error": "Admin access required"}, 403
-
         try:
             ism = get_item_state_manager()
             items = ism.items()
@@ -472,7 +896,7 @@ class AdminDashboard:
                     label_disagreement=disagreement,
                     annotators=list(annotators) if annotators else [],
                     average_time_per_annotation=avg_time,
-                    num_ai_instance=self._calculate_total_instance_ai(item_id)
+                    num_ai_instance=0 #self._calculate_total_instance_ai(item_id)
                 )
                 instances_data.append(instance_data)
 
@@ -549,9 +973,6 @@ class AdminDashboard:
         Returns:
             Dict containing update result
         """
-        if not self.check_admin_access():
-            return {"error": "Admin access required"}, 403
-
         try:
             # Validate and apply updates
             updated_fields = []
@@ -589,9 +1010,6 @@ class AdminDashboard:
         Returns:
             Dict containing questions data with visualizations for different annotation types
         """
-        if not self.check_admin_access():
-            return {"error": "Admin access required"}, 403
-
         try:
             ism = get_item_state_manager()
             annotation_schemes = config.get("annotation_schemes", [])
@@ -872,7 +1290,7 @@ class AdminDashboard:
             "counts": counts
         }
 
-    def _get_annotator_timing_data(self, user_id: str) -> Optional[AnnotatorTimingData]:
+    def _get_annotator_timing_data(self, user_state) -> Optional[AnnotatorTimingData]:
         """
         Get timing data for a specific annotator.
 
@@ -883,21 +1301,22 @@ class AdminDashboard:
             AnnotatorTimingData object or None if user not found
         """
         try:
-            usm = get_user_state_manager()
-            user_state = usm.get_user_state(user_id)
-
             if not user_state:
                 return None
 
+            user_id = user_state.user_id
+
             # Get basic user info
             total_annotations = len(user_state.get_all_annotations())
-            phase = str(user_state.get_phase())
+            phase = str(user_state.get_current_phase_and_page())
             has_assignments = user_state.has_assignments()
-            remaining_assignments = user_state.has_remaining_assignments()
+            remaining_assignments = user_state.is_allowed_remaining_assignments()
 
             # Calculate timing data
             total_seconds = 0
             instance_times = []
+
+            last_activity = datetime.datetime.fromtimestamp(0)
 
             for instance_id, behavioral_data in user_state.instance_id_to_behavioral_data.items():
                 instance_seconds = None
@@ -906,6 +1325,14 @@ class AdminDashboard:
                     # BehavioralData object (loaded from JSON)
                     if behavioral_data.total_time_ms:
                         instance_seconds = behavioral_data.total_time_ms / 1000.0
+
+                    if behavioral_data.session_end:
+                        session_end_date = datetime.datetime.fromtimestamp(behavioral_data.session_end)
+                        logger.debug(f"session_end_date: {session_end_date}")
+                        if session_end_date > last_activity:
+                            logger.debug(f"last_activity: {last_activity} replaced with session_end_date: {session_end_date}")
+                            last_activity = session_end_date
+
                 elif isinstance(behavioral_data, dict):
                     # Plain dict (runtime data)
                     if behavioral_data.get("total_time_ms"):
@@ -940,8 +1367,6 @@ class AdminDashboard:
                             if parsed_current:
                                 current_instance_time = parsed_current["total_seconds"]
 
-            # Estimate last activity (for now, use current time - this could be enhanced)
-            last_activity = datetime.datetime.now()
 
             # NEW: Get annotation history metrics
             performance_metrics = user_state.get_performance_metrics()
@@ -1042,21 +1467,27 @@ class AdminDashboard:
         """
         try:
             usm = get_user_state_manager()
-            users = get_users()
+
+            # Get all users and their states
+            user_session_ids = usm.get_user_session_ids()
 
             all_labels = []
-            for username in users:
-                user_state = usm.get_user_state(username)
-                if user_state:
-                    annotations = user_state.get_all_annotations()
-                    if instance_id in annotations:
-                        instance_annotations = annotations[instance_id]
-                        if "labels" in instance_annotations:
-                            for label, value in instance_annotations["labels"].items():
-                                if hasattr(label, 'label_name'):
-                                    all_labels.append(label.label_name)
-                                else:
-                                    all_labels.append(str(value))
+
+            for username, session_ids in user_session_ids.items():
+                for session_id in session_ids:
+                    user_state = usm.get_user_state(username, session_id)
+                    if user_state:
+                        annotations = user_state.get_all_annotations()
+                        if instance_id in annotations:
+                            instance_annotations = annotations[instance_id]
+                            if "labels" in instance_annotations:
+                                for label, value in instance_annotations["labels"].items():
+                                    if hasattr(label, 'label_name'):
+                                        all_labels.append(label.label_name)
+                                    else:
+                                        all_labels.append(str(value))
+
+                                    logger.debug(f"User ID: {username}, Session ID: {session_id} annotated Instance {instance_id} with {value}")
 
             if not all_labels:
                 return None, 0.0
@@ -1069,6 +1500,8 @@ class AdminDashboard:
             total_annotations = len(all_labels)
             most_frequent_count = label_counts[most_frequent_label]
             disagreement = 1 - (most_frequent_count / total_annotations)
+
+            logger.debug(f"Instance ID: {instance_id}, total_annotations: {total_annotations}, most_frequent_count: {most_frequent_count}, disagreement: {disagreement}")
 
             return most_frequent_label, disagreement
 
@@ -1088,21 +1521,24 @@ class AdminDashboard:
         """
         try:
             usm = get_user_state_manager()
-            users = get_users()
+
+            # Get all users and their states
+            user_session_ids = usm.get_user_session_ids()
 
             total_time = 0
             annotation_count = 0
 
-            for username in users:
-                user_state = usm.get_user_state(username)
-                if user_state:
-                    behavioral_data = user_state.instance_id_to_behavioral_data.get(instance_id, {})
-                    time_string = behavioral_data.get("time_string")
-                    if time_string:
-                        parsed_time = user_state.parse_time_string(time_string)
-                        if parsed_time:
-                            total_time += parsed_time["total_seconds"]
-                            annotation_count += 1
+            for username, session_ids in user_session_ids.items():
+                for session_id in session_ids:
+                    user_state = usm.get_user_state(username, session_id)
+                    if user_state:
+                        behavioral_data = user_state.instance_id_to_behavioral_data.get(instance_id, {})
+                        if hasattr(behavioral_data, 'total_time_ms'):
+                            # BehavioralData object (loaded from JSON)
+                            if behavioral_data.total_time_ms:
+                                instance_seconds = behavioral_data.total_time_ms / 1000.0
+                                total_time += instance_seconds
+                                annotation_count += 1
 
             return total_time / annotation_count if annotation_count > 0 else None
 
@@ -1110,7 +1546,7 @@ class AdminDashboard:
             self.logger.error(f"Error calculating average time for instance {instance_id}: {e}")
             return None
 
-    def _calculate_completion_percentage(self, user_id: str) -> float:
+    def _calculate_completion_percentage(self, user_state) -> float:
         """
         Calculate completion percentage for a user.
 
@@ -1121,19 +1557,25 @@ class AdminDashboard:
             Completion percentage (0-100)
         """
         try:
-            usm = get_user_state_manager()
-            user_state = usm.get_user_state(user_id)
-
             if not user_state:
                 return 0.0
 
-            total_assignments = user_state.get_assigned_instance_count()
+            user_id = user_state.user_id
+            finished_count = user_state.get_annotation_count()
+            remaining_count = get_item_state_manager().get_total_assignable_items_for_user(get_user_state_manager().get_all_user_states(user_id))
+
+            # Total = finished + remaining (so counter shows "X / Total" not "X / Remaining")
+            total_count = finished_count + remaining_count
+
+            max_assignments = user_state.get_max_assignments()
+            total_count = min(total_count, max_assignments)
+
             completed_assignments = len(user_state.get_all_annotations())
 
-            if total_assignments == 0:
+            if total_count == 0:
                 return 0.0
 
-            return (completed_assignments / total_assignments) * 100
+            return (completed_assignments / total_count) * 100
 
         except Exception as e:
             self.logger.error(f"Error calculating completion percentage for user {user_id}: {e}")
@@ -1257,9 +1699,6 @@ class AdminDashboard:
             - mturk: MTurk-specific statistics
             - workers: List of individual worker data
         """
-        if not self.check_admin_access():
-            return {"error": "Admin access required"}, 403
-
         try:
             from potato.authentication import UserAuthenticator
 
@@ -1398,9 +1837,6 @@ class AdminDashboard:
         Returns:
             Dict containing agreement metrics by schema and overall
         """
-        if not self.check_admin_access():
-            return {"error": "Admin access required"}, 403
-
         try:
             import simpledorff
             from simpledorff.metrics import nominal_metric, interval_metric
@@ -1573,9 +2009,6 @@ class AdminDashboard:
         Returns:
             Dict containing quality control metrics
         """
-        if not self.check_admin_access():
-            return {"error": "Admin access required"}, 403
-
         try:
             qc_manager = get_quality_control_manager()
 
@@ -1606,9 +2039,6 @@ class AdminDashboard:
             - Quality indicators
             - AI assistance analysis
         """
-        if not self.check_admin_access():
-            return {"error": "Admin access required"}, 403
-
         try:
             usm = get_user_state_manager()
             users = get_users()
@@ -1893,5 +2323,22 @@ class AdminDashboard:
         return mace_mgr.get_predictions_for_schema(schema, instance_id)
 
 
+def format_datetime(dt) -> str:
+    return dt.strftime("%Y-%m-%d %H:%M:%S")
+
+def format_timedelta(td) -> str:
+    total_seconds = int(td.total_seconds())
+    days, rem = divmod(total_seconds, 86400)
+    hours, rem = divmod(rem, 3600)
+    minutes, seconds = divmod(rem, 60)
+    parts = []
+    if days: parts.append(f"{days}d")
+    if hours: parts.append(f"{hours}h")
+    if minutes: parts.append(f"{minutes}m")
+    if seconds or not parts: parts.append(f"{seconds}s")  # always show something
+    return " ".join(parts)
+
 # Global instance
 admin_dashboard = AdminDashboard()
+
+

@@ -16,8 +16,19 @@
 
     <!-- Training-specific styles -->
     <style>
+        body {
+            background-color: var(--primary-bg-color);
+        }
+
+        .navbar {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+        }
+
         .training-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 50%, var(--secondary-color) 100%);
             color: white;
             padding: 2rem 0;
             margin-bottom: 2rem;
@@ -84,14 +95,33 @@
         }
 
         .submit-button {
-            background-color: #007bff;
-            border-color: #007bff;
+            background-color: var(--secondary-color);
+            color: white;
         }
 
         .submit-button:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
+            background-color: var(--interact-color);
+            color: white;
         }
+
+        .button {
+            background-color: var(--light-color);
+            color: var(--secondary-color);
+            height: auto;
+            padding: 0.25rem 0.75rem;
+            font-size: 1rem;
+            min-width: 60px;
+            text-align: center;
+            border: none;
+            border-radius: 0.2rem;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background-color: var(--interact-color);
+            color: white;
+        }
+
     </style>
 
     <!-- jQuery -->
@@ -100,7 +130,7 @@
 
 <body>
     <!-- Header navigation bar -->
-    <nav class="navbar sticky-top shadow-sm" style="background-color: var(--primary-color); padding: 0.75rem 1rem; margin-bottom: 1.5rem;">
+    <nav class="navbar sticky-top shadow-sm">
         <div class="container-fluid d-flex align-items-center">
             <!-- Task name (left aligned) -->
             <div class="navbar-brand">
@@ -115,16 +145,16 @@
             </div>
 
             <!-- User info and logout (right aligned) -->
-            <div class="d-flex align-items-center"
-                 style="background-color: rgba(255, 255, 255, 0.15); padding: 0.5rem 1rem; border-radius: var(--radius);">
+            <div class="d-flex align-items-center" style="padding: 0.5rem 1rem;">
                 <div class="me-3" style="color: var(--light-color)">
                     <span>Logged in as <span class="fw-medium">{{username}}</span></span>
                 </div>
                 <div class="border-start" style="padding-left: 20px; height: 24px; display: flex; align-items: center;">
-                    <a href="/logout" class="shadcn-button"
-                       style="background-color: var(--light-color); color: var(--primary-color); height: auto; padding: 0.25rem 0.75rem !important; font-size: 0.875rem; min-width: 60px; text-align: center; border: none; text-decoration: none;">
-                        Logout
-                    </a>
+                    <form action="/logout" method="POST">
+                        <button type="submit" class="button">
+                            Logout
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -138,7 +168,7 @@
         </div>
 
         <!-- Progress bar -->
-        <div class="training-progress mb-4">
+        <div class="training-progress mb-4" style="margin-left: 2rem; margin-right: 2rem;">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="text-muted">
                     <i class="fas fa-tasks me-2"></i>Question {{ current_question }} of {{ total_questions }}
@@ -152,15 +182,15 @@
             </div>
             <div class="progress" style="height: 8px;">
                 <div class="progress-bar bg-success" role="progressbar"
-                     style="width: {{ (current_question / total_questions * 100)|int }}%"
-                     aria-valuenow="{{ current_question }}" aria-valuemin="0" aria-valuemax="{{ total_questions }}">
+                     style="width: {{ (completed_question / total_questions * 100)|int }}%"
+                     aria-valuenow="{{ completed_question }}" aria-valuemin="0" aria-valuemax="{{ total_questions }}">
                 </div>
             </div>
         </div>
 
         <!-- Feedback alert (shown when feedback is available) -->
         {% if show_feedback %}
-        <div class="feedback-alert {% if feedback_type == 'success' %}feedback-correct{% elif feedback_type == 'warning' %}feedback-warning{% else %}feedback-incorrect{% endif %}">
+        <div class="feedback-alert {% if feedback_type == 'success' %}feedback-correct{% elif feedback_type == 'warning' %}feedback-warning{% else %}feedback-incorrect{% endif %}" style="margin-left: 2rem; margin-right: 2rem;">
             <div class="d-flex align-items-start">
                 <i class="fas {% if feedback_type == 'success' %}fa-check-circle{% elif feedback_type == 'warning' %}fa-exclamation-triangle{% else %}fa-exclamation-circle{% endif %} me-3 mt-1"></i>
                 <div>
@@ -174,28 +204,47 @@
         {% endif %}
 
         <!-- Training instance -->
-        <div class="training-instance">
+        <div class="training-instance" style="margin-left: 2rem; margin-right: 2rem;">
             <h5><i class="fas fa-question-circle me-2"></i>Training Question</h5>
+            <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Post:</h5>
+
+            <!-- Hidden input for instance_id -->
+            <input type="hidden" id="instance_id" name="instance_id" value="{{instance_id}}">
 
             <!-- Instance text -->
-            <div class="training-instance-text">
-                {{ instance_text | safe }}
+            <div id="instance-text" class="p-3 border rounded instance-text-container" style="background-color: var(--light-bg); min-height: 50px; position: relative;">
+                <!-- Text content layer for span annotation -->
+                <!-- Note: sanitize_html filter allows safe span annotation HTML while blocking XSS -->
+                <!-- data-original-text uses plain text (no span HTML) for correct position calculations -->
+                <!-- DOM content uses rendered HTML with span tags for visual display -->
+                <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">{{instance_text | safe}}</div>
+                <!-- Span overlays layer for span annotation -->
             </div>
 
-            <!-- Annotation form -->
-            <form method="POST" id="training-form">
-                <div id="annotation-forms">
-                    {{ TASK_LAYOUT }}
-                </div>
+            <br>
+            <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Paper:</h5>
+            <h6 data-original-text="{{paper_title | safe}}">Title: {{paper_title | safe}}</h6>
+            <!--- <h6 style="display: inline;" data-original-text="Link:">Link:</h6> <a href={{paper_url}} id="publicationlink" target='_blank'>Link to publication</a>-->
+            <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+            <div id="instance-text" class="p-3 border rounded instance-text-container" style="background-color: var(--light-bg); min-height: 0px; position: relative;">
+                <div id="text-content" data-original-text="{{paper_abstract | safe}}" style="position: relative; z-index: 1; pointer-events: auto;">{{paper_abstract | safe}}</div>
 
-                <!-- Submit button -->
-                <div class="d-flex justify-content-end mt-3">
-                    {% if allow_retry %}
-                    <button type="submit" class="btn retry-button me-2">
+            </div>
+        </div>
+
+        <div class="training-instance" style="margin-left: 2rem; margin-right: 2rem;">
+            <!-- Annotation form -->
+            <form method="POST" id="training-form" action="/training/answer">
+                <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Annotation:</h5>
+                <div id="annotation-forms" style="display: flex; align-items: center;">
+                    {{ TASK_LAYOUT }}
+
+                    {% if needs_retry %}
+                    <button id="training_retry_button" type="submit" class="btn retry-button me-2" style="margin-left: auto;">
                         <i class="fas fa-redo me-2"></i>Try Again
                     </button>
                     {% else %}
-                    <button type="submit" class="btn submit-button">
+                    <button id="training_submit_button" type="submit" class="btn submit-button" style="margin-left: auto;">
                         <i class="fas fa-paper-plane me-2"></i>Submit Answer
                     </button>
                     {% endif %}
@@ -203,15 +252,12 @@
             </form>
         </div>
 
-        <!-- Footer -->
-        <hr style="color: var(--border)">
-        <footer class="py-2 text-center" style="font-size: 0.75rem; color: var(--muted-foreground)">
-            Copyright &copy; 2025
-            <a href="https://blablablab.si.umich.edu/" style="color: var(--primary); text-decoration: none">Blablablab</a>
+        <!-- Footer-->
+        <hr style="color: var(--footer-border)">
+        <footer class="py-2 text-center" style="font-size: 0.75rem">
+            <a href="https://www.gesis.org/en/institute/about-us/staff/person/Sebastian.Schellhammer/" style="color: var(--primary); text-decoration: none">Contact</a>
             <span class="mx-2">|</span>
-            <a href="https://github.com/davidjurgens/potato" style="color: var(--primary); text-decoration: none">Chat with us on GitHub</a>
-            <span class="mx-2">|</span>
-            <a href="https://github.com/davidjurgens/potato#cite-us" style="color: var(--primary); text-decoration: none">Cite Us</a>
+            <a href="https://github.com/davidjurgens/potato" style="color: var(--primary); text-decoration: none">Powered by POTATO</a>
         </footer>
     </div>
 
@@ -230,6 +276,7 @@
 
     <!-- Load annotation JavaScript -->
     <script src="{{ url_for('static', filename='interaction_tracker.js') }}?v=1"></script>
+    <script src="{{ url_for('static', filename='display-logic.js') }}?v=1"></script>
     <script src="{{ url_for('static', filename='ai_assistant_manager.js') }}?v=1"></script>
     <script src="{{ url_for('static', filename='annotation.js') }}?v=11"></script>
 

@@ -17,6 +17,7 @@ import logging
 from dataclasses import dataclass, asdict
 from typing import Optional, Dict, Any, List
 import json
+from potato.server_utils.date_handler import DateHandler
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +32,7 @@ class AnnotationAction:
     """
     action_id: str  # UUID for unique identification
     timestamp: datetime.datetime  # Precise timestamp
+    client_timestamp: datetime.datetime  # Frontend timestamp
     user_id: str
     instance_id: str
     action_type: str  # 'add_label', 'update_label', 'delete_label', 'add_span', 'update_span', 'delete_span'
@@ -38,26 +40,23 @@ class AnnotationAction:
     label_name: str
     old_value: Optional[Any]  # Previous value (for updates/deletes)
     new_value: Optional[Any]  # New value (for adds/updates)
-    span_data: Optional[Dict]  # For span annotations (start, end, text)
     session_id: str  # Browser session identifier
-    client_timestamp: Optional[datetime.datetime]  # Frontend timestamp
     server_processing_time_ms: int  # Server processing time
     metadata: Dict[str, Any]  # Additional metadata (browser info, etc.)
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization"""
         data = asdict(self)
-        data['timestamp'] = self.timestamp.isoformat()
+        data['timestamp'] = DateHandler.datetime_to_str(self.timestamp)
         if self.client_timestamp:
-            data['client_timestamp'] = self.client_timestamp.isoformat()
+            data['client_timestamp'] = DateHandler.datetime_to_str(self.client_timestamp)
         return data
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'AnnotationAction':
         """Create from dictionary"""
-        data['timestamp'] = datetime.datetime.fromisoformat(data['timestamp'])
-        if data.get('client_timestamp'):
-            data['client_timestamp'] = datetime.datetime.fromisoformat(data['client_timestamp'])
+        data['timestamp'] = DateHandler.str_to_datetime(data.get('timestamp'))
+        data['client_timestamp'] = DateHandler.str_to_datetime(data.get('client_timestamp')),
         return cls(**data)
 
     def __str__(self) -> str:
@@ -82,7 +81,6 @@ class AnnotationHistoryManager:
         label_name: str,
         old_value: Optional[Any],
         new_value: Optional[Any],
-        span_data: Optional[Dict] = None,
         session_id: str = None,
         client_timestamp: Optional[datetime.datetime] = None,
         server_processing_time_ms: int = 0,
@@ -99,7 +97,6 @@ class AnnotationHistoryManager:
             label_name: Name of the specific label
             old_value: Previous value (for updates/deletes)
             new_value: New value (for adds/updates)
-            span_data: Span annotation data (start, end, text)
             session_id: Browser session identifier
             client_timestamp: Frontend timestamp
             server_processing_time_ms: Server processing time in milliseconds
@@ -118,9 +115,8 @@ class AnnotationHistoryManager:
             label_name=label_name,
             old_value=old_value,
             new_value=new_value,
-            span_data=span_data,
             session_id=session_id or "unknown",
-            client_timestamp=client_timestamp,
+            client_timestamp=DateHandler.timestamp_to_datetime(client_timestamp),
             server_processing_time_ms=server_processing_time_ms,
             metadata=metadata or {}
         )

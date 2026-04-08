@@ -5,9 +5,9 @@
   --card-foreground: #09090b;
   --popover: #ffffff;
   --popover-foreground: #09090b;
-  --primary: #6e56cf;
+  --primary: #003C78;
   --primary-foreground: #ffffff;
-  --secondary: #f4f4f5;
+  --secondary: #1e8cc8;
   --secondary-foreground: #18181b;
   --muted: #f4f4f5;
   --muted-foreground: #71717a;
@@ -16,11 +16,14 @@
   --destructive: #ef4444;
   --destructive-foreground: #fafafa;
   --border: #e4e4e7;
+  --footer-border: #5e5e61;
   --input: #e4e4e7;
-  --ring: #6e56cf;
+  --ring: #003C78;
   --radius: 0.5rem;
-  --primary-color: #6e56cf;
-  --secondary-color: #7c66ce;
+  --primary-color: #1E8CC8;
+  --secondary-color: #003C78;
+  --interact-color: #E25A9B;
+  --primary-bg-color: #dfeff7;
   --accent-color: #a18fff;
   --dark-color: #09090b;
   --light-color: #fafafa;
@@ -106,13 +109,13 @@ body {
 }
 
 .status-badge.labeled {
-  background-color: #dcfce7;
-  color: #166534;
+  background-color: #26598c;
+  color: #ffffff;
 }
 
 .status-badge.unlabeled {
-  background-color: #fef3c7;
-  color: #92400e;
+  background-color: #1e8cc8;
+  color: #ffffff;
 }
 
 /* Skip to unannotated button hover states */
@@ -312,7 +315,7 @@ body {
 .annotation-form fieldset p,
 .annotation-form fieldset div {
   color: var(--text-color);
-  margin-bottom: 0.75rem;
+  /*margin-bottom: 1rem;*/
 }
 
 /* Text content within fieldsets */
@@ -458,7 +461,7 @@ input[type="range"]::-moz-range-thumb {
   font-size: 10px;
   border-radius: 3px;
   padding: 2px 4px;
-  color: #6e56cf;
+  color: #003C78;
   background-color: white;
   border: 1px solid #e4e4e7;
   z-index: 10;
@@ -817,7 +820,7 @@ input[type="range"]::-moz-range-thumb {
 .shadcn-radio-options.horizontal {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 1.5rem;
 }
 
 .shadcn-radio-option {
@@ -1210,12 +1213,12 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* Remove bottom margin from last items in schema containers to fix excessive whitespace */
-.shadcn-radio-options > .shadcn-radio-option:last-child,
+/*.shadcn-radio-options > .shadcn-radio-option:last-child,
 .shadcn-multiselect-grid > .shadcn-multiselect-item:last-child,
 .shadcn-likert-options > .shadcn-likert-option:last-child,
 .shadcn-textbox-item:last-child {
   margin-bottom: 0;
-}
+}*/
 
 /* Remove bottom margin from container elements themselves */
 .shadcn-radio-options,
@@ -2186,7 +2189,7 @@ fieldset[schema] {
 
 /* Visual indicator for span-target fields */
 .display-field[data-span-target="true"] {
-  border-left: 3px solid var(--primary, #6e56cf);
+  border-left: 3px solid var(--primary, #003C78);
   padding-left: 12px;
 }
 

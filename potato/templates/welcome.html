@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{annotation_task_name}} - Instructions</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <!-- Colors
+    https://www.gesis.org/styleguide/farben
+
+    # Primärfarbe:          #1E8CC8 100%    #6DB4DB 65%     #dfeff7 10%
+    # Sekundärfarbe:        #003C78 100%    #5980A7 65%
+    # Interaktionsfarbe:    #d20064 100%    #E25A9B 65%
+
+    -->
+    <!--
+        :root {
+            --primary-bg-color: #dfeff7;
+            --primary-color: #1E8CC8;
+            --secondary-color: #003C78;
+            --interact-color: #E25A9B;
+        }
+    -->
+    <!-- Instructions-specific styles -->
+    <style>
+        body {
+            background-color: var(--primary-bg-color);
+        }
+
+        strong {
+            color: var(--secondary-color); /* or a hex/rgb value */
+        }
+
+        .navbar {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .instructions-header {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 50%, var(--secondary-color) 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        .text-box {
+            background-color: #fff;
+            margin-left: 2rem;
+            margin-right: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            padding-top: 1rem;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.16);
+        }
+
+        .task-image {
+            border-radius: 0.5rem;
+            border: 2px solid white;
+            display: block;
+            margin: 0rem;
+        }
+
+        .criteria-box {
+            background-color: #fff;
+            margin-left: 2rem;
+            margin-right: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.16);
+        }
+
+        .criteria-headline {
+            font-size: 18px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+        }
+
+        .criteria-text {
+            color: black;
+            font-size: 16px;
+            margin-bottom: 0rem;
+            margin-left: 2rem;
+            margin-right: 0rem;
+        }
+
+        .criteria-box ul {
+            font-size: 16px;
+            list-style-type: square; /* or circle, square */
+            margin-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .criteria-box li {
+            margin-bottom: 0.5em;
+        }
+
+        .instructions-instance h5 {
+            color: #495057;
+            margin-bottom: 1rem;
+        }
+
+        .button {
+            background-color: var(--light-color);
+            color: var(--secondary-color);
+            height: auto;
+            padding: 0.25rem 0.75rem;
+            font-size: 1rem;
+            min-width: 60px;
+            text-align: center;
+            border: none;
+            border-radius: 0.2rem;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background-color: var(--interact-color);
+            color: white;
+        }
+
+        .button_on_bg {
+            background-color: var(--secondary-color);
+            color: white;
+            height: auto;
+            padding: 0.25rem 0.75rem;
+            font-size: 1rem;
+            min-width: 60px;
+            text-align: center;
+            border: none;
+            border-radius: 0.2rem;
+            text-decoration: none;
+        }
+
+        .button_on_bg:hover {
+            background-color: var(--interact-color);
+        }
+
+    </style>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+<!-- Header navigation bar -->
+<nav class="navbar sticky-top shadow-sm">
+    <div class="container-fluid d-flex align-items-center">
+        <!-- Task name (left aligned) -->
+        <div class="navbar-brand">
+            <span class="fw-bold">{{annotation_task_name}}</span>
+        </div>
+
+        <!-- Middle section with instructions progress -->
+        <div class="d-flex align-items-center justify-content-center flex-grow-1">
+            <div class="d-flex align-items-center">
+                <span><i class="fas fa-graduation-cap me-2"></i>Instructions</span>
+            </div>
+        </div>
+
+        <!-- User info and logout (right aligned) -->
+        <div class="d-flex align-items-center" style="padding: 0.5rem 1rem;">
+            <div class="me-3">
+                <span>Logged in as <span class="fw-medium">{{username}}</span></span>
+            </div>
+            <div class="border-start" style="padding-left: 20px; height: 24px; display: flex; align-items: center;">
+                <form action="/logout" method="POST">
+                    <button type="submit" class="button">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <!-- Instructions header -->
+    <div class="instructions-header text-center">
+        <h2><i class="fas fa-graduation-cap me-3"></i>Instructions</h2>
+    </div>
+
+    <div>
+        <!-- General Instructions-->
+        <h4 style="margin-left: 2rem; color: var(--secondary-color); font-weight: bold;">Welcome and thank you for participating!</h4>
+
+        <div style="display: flex; align-items: stretch; gap: 0rem;">
+            <div class="text-box" style="flex: 1 1 45%">
+                <p>In this task, you will help classify <strong>social media posts that refer to scientific papers</strong>.</p>
+
+                <p>Your goal is to identify posts that <strong>criticize or question a scientific study</strong> in a way that may lead readers to partially or fully doubt the
+                    study’s conclusions.</p>
+
+                <p>You will be shown <strong>Reddit posts</strong> that refer to a scientific paper, along with the <strong>title and abstract</strong> of the paper. Your task is to determine
+                    whether the post <strong>expresses criticism or skepticism toward the study</strong>.</p>
+
+                <p style="margin-bottom: 0px;"><strong>Example:</strong></p>
+                <p style="margin-left: 1rem; margin-top: 0px;">The figure on the right shows a Reddit post from user <em>UserABC</em> referring to the paper <em>“Very-low-carbohydrate diet enhances
+                    human T-cell immunity through immunometabolic reprogramming.”</em>. Another user, <em>User123</em>, replies (<strong>blue box</strong>) and implicitly criticizes the study by
+                    suggesting that a different study reports contradicting results.</p>
+
+
+                <p>During the annotation task, you will decide whether a post <strong>contains such criticism</strong>.</p></div>
+            <div class="text-box" style="flex: 1 1 45%; display:block; max-width: 600px;">
+                <img class="task-image" width="100%" height="auto" style="margin: 0px; padding: 0px; max-width: 600px"
+                     src="static/img/NegativStanceReddit.png" alt="Description of image">
+            </div>
+        </div>
+
+        <div class="text-box">
+            <p>This session will take approximately <strong>60 minutes</strong> and is structured as follows:</p>
+
+            <ol>
+                <li><strong>Familiarization:</strong> Review the Annotation Protocol (<em>5 minutes</em>)</li>
+                <li><strong>Training:</strong> Annotate examples with feedback (<em>15 minutes</em>)</li>
+                <li><strong>Annotation:</strong> Annotate the full dataset (<em>40 minutes</em>)</li>
+                <li><strong>Finish:</strong> The return link to Prolific will be provided</li>
+
+            </ol>
+
+            <p>Your annotations are valuable and help improve research.</p>
+
+            <p>Please proceed to the next page to familiarize with the annotation protocol.</p>
+
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end;">
+        <form action="/continue_instructions" method="POST">
+            <button type="submit" class="button_on_bg" id="finish-instructions-btn" style="height: 50px; width: 300px; margin-right: 2rem;">
+                <i class="fa-solid fa-forward"></i> Move to Annotation Protocol
+            </button>
+        </form>
+    </div>
+    
+    <!-- Footer-->
+    <hr style="color: var(--footer-border)">
+    <footer class="py-2 text-center" style="font-size: 0.75rem">
+        <a href="https://www.gesis.org/en/institute/about-us/staff/person/Sebastian.Schellhammer/" style="color: var(--primary); text-decoration: none">Contact</a>
+        <span class="mx-2">|</span>
+        <a href="https://github.com/davidjurgens/potato" style="color: var(--primary); text-decoration: none">Powered by POTATO</a>
+    </footer>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

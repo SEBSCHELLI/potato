@@ -300,11 +300,12 @@
     };
 
     // Initialize when DOM is ready
-    if (document.readyState === 'loading') {
+    /*if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initTriage);
     } else {
         // DOM already loaded
         initTriage();
     }
+     */
 
 })();

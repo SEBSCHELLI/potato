@@ -105,10 +105,11 @@
                     <span>Logged in as <span class="fw-medium">{{username}}</span></span>
                 </div>
                 <div class="border-start" style="padding-left: 20px; height: 24px; display: flex; align-items: center;">
-                    <a href="/logout" class="shadcn-button"
-                       style="background-color: var(--light-color); color: var(--primary-color); height: auto; padding: 0.25rem 0.75rem !important; font-size: 0.875rem; min-width: 60px; text-align: center; border: none; text-decoration: none;">
-                        Logout
-                    </a>
+                    <form action="/logout" method="POST">
+                        <button type="submit" class="button">
+                            Logout
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
