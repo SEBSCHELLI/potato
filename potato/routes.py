@@ -49,7 +49,7 @@ def home():
 
     if not username or not session_id:
         # User not logged in
-        logger.warning(f'User {username} (Session ID {session_id}) - Session info missing')
+        #logger.warning(f'User {username} (Session ID {session_id}) - Session info missing')
         return render_template("error.html", error_message="Not logged in.")
 
     usm = get_user_state_manager()
