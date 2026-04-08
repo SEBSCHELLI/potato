@@ -101,9 +101,6 @@ class QualityControlManager:
         self._load_attention_checks()
         self._load_attention_check_data()
 
-        self.logger.info(f"QualityControlManager initialized: "
-                         f"attention_checks={self.qc_config.attention_checks_enabled}")
-
     def _parse_config(self, config: Dict[str, Any]) -> QualityControlConfig:
         """Parse quality control configuration from the main config."""
         qc = QualityControlConfig()

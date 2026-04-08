@@ -1084,7 +1084,7 @@ def run_server(args):
         task_dir = config.get('task_dir', os.path.dirname(config.get('config_file', '')))
         logger.info("=== INIT QUALITY CONTROL MANAGER STARTS ===")
         init_quality_control_manager(config, task_dir)
-        logger.info("Quality control manager initialized")
+        logger.info("=== INIT QUALITY CONTROL MANAGER ENDS ===")
 
     # Log password requirement status
     logger.info(f"Password authentication required: {config.get('require_password', True)}")
