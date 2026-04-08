@@ -253,7 +253,7 @@ def load_instance_data(config: dict):
         max_annotations_per_user = config.get("max_annotations_per_user", len(ism.get_item_ids()))
         get_user_state_manager().set_max_annotations_per_user(max_annotations_per_user)
 
-        logger.debug("Loaded %d instances from %s" % (line_no, data_fname))
+        logger.info("Loaded %d instances from %s" % (line_no, data_fname))
 
     # For each item, render the text to display in the UI ahead of time.
     _render_displayed_text(text_key)
@@ -1047,7 +1047,7 @@ def run_server(args):
     # Admins can set 'random_seed' in config YAML to control assignment randomness (default 1234)
     if "random_seed" not in config:
         config["random_seed"] = 1234
-    logger.info(f"Assignment random seed set to: {config['random_seed']}")
+    logger.debug(f"Assignment random seed set to: {config['random_seed']}")
     # -----------------------------------
 
     # Log debug phase setting if specified
