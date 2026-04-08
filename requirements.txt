@@ -19,3 +19,4 @@ tqdm>=4.62.3
 ujson>=5.4.0
 Werkzeug>=3.0.6
 pydantic>=2.11.9
+dash>=4.1.0
