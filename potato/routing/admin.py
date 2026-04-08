@@ -90,11 +90,10 @@ def admin_api_overview():
 @admin_bp.route("/shutdown", methods=["GET"])
 @is_admin()
 def shutdown():
-    func = request.environ.get('werkzeug.server.shutdown')
-    if func is None:
-        return jsonify({'error': 'Not running with the Werkzeug Server'}), 500
-    logger.info('Shutting down server via /shutdown')
-    func()
+    import os, signal, threading
+    def stop():
+        os.kill(os.getpid(), signal.SIGINT)
+    threading.Thread(target=stop).start()
     return jsonify({'status': 'Server shutting down...'})
 
 
