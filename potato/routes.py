@@ -183,16 +183,6 @@ def done():
                            auto_redirect_delay=auto_redirect_delay)
 
 
-#@app.route('/shutdown', methods=['POST'])
-def shutdown():
-    func = request.environ.get('werkzeug.server.shutdown')
-    if func is None:
-        return jsonify({'error': 'Not running with the Werkzeug Server'}), 500
-    logger.info('Shutting down server via /shutdown')
-    func()
-    return jsonify({'status': 'Server shutting down...'})
-
-
 def configure_routes(flask_app, app_config):
     """
     Initialize the Flask routes with the given Flask app instance
@@ -228,7 +218,6 @@ def configure_routes(flask_app, app_config):
     # Register all routes with the flask app instance
     app.add_url_rule("/", "home", home, methods=["GET", "POST"])
     app.add_url_rule("/done", "done", done, methods=["GET", "POST"])
-    #app.add_url_rule("/shutdown", "shutdown", shutdown, methods=["POST"])
 
     app.register_blueprint(loginout_bp)
     app.register_blueprint(instructions_bp)

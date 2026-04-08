@@ -87,6 +87,17 @@ def admin_api_overview():
     return jsonify(result)
 
 
+@admin_bp.route("/shutdown", methods=["GET"])
+@is_admin()
+def shutdown():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        return jsonify({'error': 'Not running with the Werkzeug Server'}), 500
+    logger.info('Shutting down server via /shutdown')
+    func()
+    return jsonify({'status': 'Server shutting down...'})
+
+
 def get_admin_api_key():
     # Check config first
     configured_key = config.get("admin_api_key")
