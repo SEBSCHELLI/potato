@@ -8,7 +8,7 @@ task_dir: "."
 site_dir: "templates"
 # Data configuration
 data_files:
-  - "twitter_data.json"
+  - "data/twitter_data.json"
 
 item_properties:
   id_key: tweetid
@@ -62,19 +62,19 @@ hide_navbar: true
 
 phases:
   order:
-  #- welcome
-  #- instructions
-  #- training
+  - welcome
+  - instructions
+  - training
   - annotation
-  #welcome:
-  #  type: instructions
-  #  file: "potato/templates/welcome.html"
-  #instructions:
-  #  type: instructions
-  #  file: "potato/templates/instructions.html"
-  #training:
-  #  type: training
-  #  task_layout: "layouts/task_layout.html"
+  welcome:
+    type: instructions
+    file: "potato/templates/welcome.html"
+  instructions:
+    type: instructions
+    file: "potato/templates/instructions.html"
+  training:
+    type: training
+    task_layout: "layouts/task_layout.html"
   annotation:
     type: annotation
     task_layout: "layouts/task_layout.html"
@@ -82,7 +82,7 @@ phases:
 
 training:
   enabled: true
-  data_file: "twitter_training_data.json"
+  data_file: "data/twitter_training_data.json"
   annotation_schemes: ["stance"]
   passing_criteria:
     min_correct: 5
@@ -94,7 +94,7 @@ attention_checks:
   enabled: true
 
   # Path to JSON file containing attention check items
-  items_file: "gold_data.json"
+  items_file: "data/gold_data.json"
 
   # How often to inject attention checks
   #frequency: 2
