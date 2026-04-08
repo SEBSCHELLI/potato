@@ -462,7 +462,6 @@ slider Layout
 import logging
 
 # Needed for the fall-back radio layout
-from potato.ai.ai_help_wrapper import get_ai_wrapper, get_dynamic_ai_help
 from .radio import generate_radio_layout
 from .identifier_utils import (
     safe_generate_layout,
@@ -535,7 +534,6 @@ def generate_slider_layout_internal(annotation_scheme):
 
     schematic = f"""
     <form id="{identifiers['schema']}" class="annotation-form slider" action="/action_page.php" data-annotation-id="{annotation_scheme["annotation_id"]}" >
-            {get_ai_wrapper()}
         <fieldset schema="{identifiers['schema']}">
             <legend class="custom-slider-title">{annotation_scheme['description']}</legend>
 

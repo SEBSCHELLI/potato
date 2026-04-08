@@ -13,7 +13,6 @@ Features include:
 import logging
 from typing import Dict, Any, Tuple, List
 
-from potato.ai.ai_help_wrapper import get_ai_wrapper
 from .identifier_utils import (
     safe_generate_layout,
     generate_element_identifier,
@@ -121,7 +120,6 @@ def _generate_binary_mode(annotation_scheme: Dict[str, Any]) -> Tuple[str, List[
 
     schematic = f"""
     <form id="{escaped_schema}" class="annotation-form pairwise pairwise-binary" action="/action_page.php" data-annotation-id="{annotation_scheme.get('annotation_id', '')}" {data_attrs} {layout_attrs}>
-        {get_ai_wrapper()}
         <fieldset schema="{escaped_schema}">
             <legend class="pairwise-question">{escaped_description}</legend>
 
@@ -227,7 +225,6 @@ def _generate_scale_mode(annotation_scheme: Dict[str, Any]) -> Tuple[str, List[T
 
     schematic = f"""
     <form id="{escaped_schema}" class="annotation-form pairwise pairwise-scale" action="/action_page.php" data-annotation-id="{annotation_scheme.get('annotation_id', '')}" {data_attrs} {layout_attrs}>
-        {get_ai_wrapper()}
         <fieldset schema="{escaped_schema}">
             <legend class="pairwise-question">{escaped_description}</legend>
 

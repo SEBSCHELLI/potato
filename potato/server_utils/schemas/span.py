@@ -5,7 +5,6 @@ Span Layout
 import logging
 from collections.abc import Mapping
 from collections import defaultdict
-from potato.ai.ai_help_wrapper import get_ai_wrapper, get_dynamic_ai_help
 from potato.server_utils.config_module import config
 from .identifier_utils import (
     safe_generate_layout,
@@ -171,7 +170,6 @@ def _generate_span_layout_internal(annotation_scheme, horizontal=False):
 
     schematic = f"""
     <form id="{escape_html_content(scheme_name)}" class="annotation-form span shadcn-span-container" action="/action_page.php" data-annotation-id="{annotation_scheme["annotation_id"]}"{target_field_attr}{discontinuous_attr}{entity_linking_attr} {layout_attrs}>
-            {get_ai_wrapper()}
         <fieldset schema="{escape_html_content(scheme_name)}">
             <legend class="shadcn-span-title">{escape_html_content(annotation_scheme["description"])}</legend>
             {"<div class='discontinuous-hint'>Hold Ctrl/Cmd + select to add additional text to this span</div>" if allow_discontinuous else ""}

@@ -15,7 +15,6 @@ of choices. Features include:
 import logging
 from collections.abc import Mapping
 
-from potato.ai.ai_help_wrapper import get_ai_wrapper, get_dynamic_ai_help
 from .identifier_utils import (
     safe_generate_layout,
     generate_element_identifier,
@@ -73,7 +72,6 @@ def _generate_multiselect_layout_internal(annotation_scheme):
     # Initialize form wrapper
     schematic = f"""
     <form id="{escape_html_content(annotation_scheme['name'])}" class="annotation-form multiselect shadcn-multiselect-container" action="/action_page.php" data-annotation-id="{annotation_scheme["annotation_id"]}" data-annotation-type="multiselect" data-schema-name="{escape_html_content(annotation_scheme['name'])}" {layout_attrs}>
-        {get_ai_wrapper()}
         <fieldset schema="{escape_html_content(annotation_scheme['name'])}">
             <legend class="shadcn-multiselect-title">{escape_html_content(annotation_scheme['description'])}</legend>
     """

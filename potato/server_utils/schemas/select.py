@@ -5,7 +5,6 @@ Select Layout
 import os
 from pathlib import Path
 
-from potato.ai.ai_help_wrapper import get_ai_wrapper, get_dynamic_ai_help
 from .identifier_utils import (
     safe_generate_layout,
     generate_element_identifier,
@@ -47,7 +46,7 @@ def _generate_select_layout_internal(annotation_scheme):
     layout_attrs = generate_layout_attributes(annotation_scheme)
 
     schematic = (
-          f'<form id="{escape_html_content(annotation_scheme["name"])}" class="annotation-form select" action="/action_page.php" data-annotation-id="{annotation_scheme["annotation_id"]}" data-annotation-type="select" data-schema-name="{escape_html_content(annotation_scheme["name"])}" {layout_attrs}>     {get_ai_wrapper()}'
+          f'<form id="{escape_html_content(annotation_scheme["name"])}" class="annotation-form select" action="/action_page.php" data-annotation-id="{annotation_scheme["annotation_id"]}" data-annotation-type="select" data-schema-name="{escape_html_content(annotation_scheme["name"])}" {layout_attrs}>     '
         + "  <fieldset>"
         + f"  <legend>{escape_html_content(annotation_scheme['description'])}</legend>"
         + (

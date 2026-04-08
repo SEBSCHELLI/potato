@@ -4,7 +4,6 @@ Textbox Layout
 
 import logging
 
-from potato.ai.ai_help_wrapper import get_ai_wrapper, get_dynamic_ai_help
 from .identifier_utils import (
     safe_generate_layout,
     generate_element_identifier,
@@ -53,7 +52,6 @@ def _generate_textbox_layout_internal(annotation_scheme):
     # Initialize form wrapper
     schematic = f"""
     <form id="{escape_html_content(annotation_scheme['name'])}" class="annotation-form textbox shadcn-textbox-container" action="/action_page.php" data-annotation-id="{annotation_scheme["annotation_id"]}" {layout_attrs}>
-            {get_ai_wrapper()}
         <fieldset schema_name="{escape_html_content(annotation_scheme['name'])}">
             <legend class="shadcn-textbox-title">{escape_html_content(annotation_scheme["description"])}</legend>
     """

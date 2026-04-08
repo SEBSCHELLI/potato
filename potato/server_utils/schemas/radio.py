@@ -13,7 +13,6 @@ Features include:
 import logging
 from collections.abc import Mapping
 
-from potato.ai.ai_help_wrapper import get_ai_wrapper, get_dynamic_ai_help
 from potato.server_utils.config_module import config
 from .identifier_utils import (
     safe_generate_layout,
@@ -75,7 +74,6 @@ def _generate_radio_layout_internal(annotation_scheme, horizontal=False):
     schema_name = annotation_scheme["name"]
     schematic = f"""
     <form id="{escape_html_content(schema_name)}" class="annotation-form radio shadcn-radio-container" action="/action_page.php" data-annotation-id="{annotation_scheme["annotation_id"]}" data-annotation-type="radio" data-schema-name="{escape_html_content(schema_name)}" {layout_attrs}>
-        {get_ai_wrapper()}
         <fieldset schema="{escape_html_content(schema_name)}">
             <legend class="shadcn-radio-title">{escape_html_content(annotation_scheme['description'])}</legend>
             <div class="shadcn-radio-options{' horizontal' if horizontal else ''}">
