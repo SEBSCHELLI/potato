@@ -129,7 +129,7 @@ def load_instance_data(config: dict):
     Raises:
         Exception: If file format is unsupported or required fields are missing
     """
-    logger.debug("=== LOAD INSTANCE DATA STARTS ===")
+    logger.info("=== LOAD ANNOTATION DATA STARTS ===")
     ism = get_item_state_manager()
 
     # Where to look in the JSON item object for the text to annotate
@@ -142,7 +142,7 @@ def load_instance_data(config: dict):
         logger.debug("No data_files configured, skipping file-based loading")
         return
 
-    logger.debug("Loading data from %d files" % (len(data_files)))
+    logger.info("Loading data from %d files" % (len(data_files)))
 
     for data_file_entry in data_files:
         # Support both string paths and dict configs
@@ -258,7 +258,7 @@ def load_instance_data(config: dict):
     # For each item, render the text to display in the UI ahead of time.
     _render_displayed_text(text_key)
 
-    logger.debug("=== LOAD INSTANCE DATA ENDS ===")
+    logger.info("=== LOAD ANNOTATION DATA ENDS ===")
 
 
 def _render_displayed_text(text_key: str) -> None:
@@ -283,7 +283,7 @@ def _render_displayed_text(text_key: str) -> None:
 
 
 def load_user_data(config: dict):
-    logger.debug("=== LOAD USER DATA STARTS ===")
+    logger.info("=== LOAD USER DATA STARTS ===")
     user_data_dir = config['output_annotation_dir']
     usm = get_user_state_manager()
 
@@ -296,10 +296,9 @@ def load_user_data(config: dict):
     # For each user's directory, load in their state
     user_dirs = [d for d in os.listdir(user_data_dir) if os.path.isdir(os.path.join(user_data_dir, d))]
 
-    logger.debug(f"Load user data for the following users: {user_dirs}")
+    logger.info(f"Load user data for the following users: {user_dirs}")
     for user_dir in user_dirs:
         for fn in os.listdir(f"{user_data_dir}{user_dir}"):
-            #logger.debug(f"fn: {fn}")
             session_id = fn.split("_")[0]
             try:
                 usm.load_user_state(user_dir, session_id)
@@ -333,7 +332,7 @@ def load_user_data(config: dict):
 
     logger.info("Loaded user data for %d users" % len(usm.get_user_ids()))
 
-    logger.debug("=== LOAD USER DATA ENDS ===")
+    logger.info("=== LOAD USER DATA ENDS ===")
 
 
 def load_training_data(config: dict) -> None:
@@ -355,7 +354,7 @@ def load_training_data(config: dict) -> None:
     Raises:
         Exception: If training data file is not found or invalid
     """
-    logger.debug("=== LOAD TRAINING DATA STARTS ===")
+    logger.info("=== LOAD TRAINING DATA STARTS ===")
 
     if 'training' not in config or not config['training'].get('enabled', False):
         logger.debug("Training not enabled, skipping training data loading")
@@ -375,12 +374,11 @@ def load_training_data(config: dict) -> None:
         logger.error(f"Training data file not found: {data_file}")
         raise Exception(f"Training data file not found: {data_file}")
 
-    logger.debug(f"Loading training data from {training_data_path}")
+    logger.info(f"Loading training data from {training_data_path}")
 
     try:
         with open(training_data_path, 'r', encoding='utf-8') as f:
             training_data = json.load(f)
-            #logger.debug(f"training_data: {training_data}")
     except (json.JSONDecodeError, UnicodeDecodeError) as e:
         logger.error(f"Invalid training data file format: {e}")
         raise Exception(f"Invalid training data file format: {e}")
@@ -440,8 +438,8 @@ def load_training_data(config: dict) -> None:
         tism.add_training_item(instance['id'], item_data)
 
     logger.info(f"Loaded {len(tism.get_training_item_ids())} training instances")
-    logger.debug(f"Training instances: {[i for i in tism.get_training_item_ids()]}")
-    logger.debug("=== LOAD TRAINING DATA ENDS ===")
+    #logger.debug(f"Training instances: {[i for i in tism.get_training_item_ids()]}")
+    logger.info("=== LOAD TRAINING DATA ENDS ===")
 
 
 def init_prolific_study(config: dict) -> None:
@@ -459,12 +457,12 @@ def init_prolific_study(config: dict) -> None:
         - Sets global PROLIFIC_STUDY_INSTANCE
         - May start workload checker thread
     """
-    logger.debug("=== INIT PROLIFIC STUDY STARTS ===")
+    logger.info("=== INIT PROLIFIC STUDY STARTS ===")
     global PROLIFIC_STUDY_INSTANCE
 
     prolific_config = config.get('prolific', {})
     if not prolific_config:
-        logger.debug("No Prolific configuration found")
+        logger.error("No Prolific configuration found")
         return
 
     # Check for config file path
@@ -520,7 +518,7 @@ def init_prolific_study(config: dict) -> None:
         logger.error(f"Failed to initialize Prolific study: {e}")
         PROLIFIC_STUDY_INSTANCE = None
 
-    logger.debug("=== INIT PROLIFIC STUDY ENDS ===")
+    logger.info("=== INIT PROLIFIC STUDY ENDS ===")
 
 
 def load_all_data(config: dict):
@@ -534,7 +532,7 @@ def load_all_data(config: dict):
 
 def load_phase_data(config: dict) -> None:
     # Lazy import - only when this function is called
-    logger.debug(f"=== LOAD PHASE DATA STARTS ===")
+    logger.info(f"=== LOAD PHASE DATA STARTS ===")
 
     from server_utils.front_end import generate_html_from_schematic, generate_training_html, generate_static_html
 
@@ -562,13 +560,13 @@ def load_phase_data(config: dict) -> None:
     #logger.debug(f"[PHASE LOAD] phases: {phases}")
     #logger.debug(f"[PHASE LOAD] phase_order: {phase_order}")
 
-    logger.debug(f"phases_dict: {phases_dict}")
+    #logger.debug(f"phases_dict: {phases_dict}")
 
-    logger.debug("Loading %d phases in order: %s" % (len(phase_order), phase_order))
+    #logger.debug("Loading %d phases in order: %s" % (len(phase_order), phase_order))
 
     for phase_name in phase_order:
         try:
-            logger.debug(f"PHASE: {phase_name}")
+            #logger.debug(f"PHASE: {phase_name}")
             phase = phases_dict[phase_name]
 
             # Handle new format with annotation_schemes directly in phase
@@ -609,7 +607,7 @@ def load_phase_data(config: dict) -> None:
                     if "file" not in phase or not phase['file']:
                         # Use the main annotation schemes for training/annotation
                         phase_labeling_schemes = config.get('annotation_schemes', [])
-                        logger.debug(f"Phase {phase_name} using main annotation schemes: {phase_labeling_schemes}")
+                        #logger.debug(f"Phase {phase_name} using main annotation schemes: {phase_labeling_schemes}")
                     else:
                         # Use the file if specified
                         phase_scheme_fname = get_abs_or_rel_path(phase['file'], config)
@@ -685,7 +683,7 @@ def load_phase_data(config: dict) -> None:
             # Register the HTML so it's easy to find later
             user_state_manager = get_user_state_manager()
             user_state_manager.add_phase(phase_type, phase_name, phase_html_fname)
-            logger.debug(f"Registered phase {phase_name} as {phase_type} with HTML {phase_html_fname}")
+            #logger.debug(f"Registered phase {phase_name} as {phase_type} with HTML {phase_html_fname}")
 
         except Exception as e:
             logger.error(f"Failed to load phase '{phase_name}': {e}")
@@ -693,8 +691,8 @@ def load_phase_data(config: dict) -> None:
             continue
 
     user_state_manager = get_user_state_manager()
-    logger.debug(f"[PHASE LOAD] phase_type_to_name_to_page: {user_state_manager.phase_type_to_name_to_page}")
-    logger.debug(f"=== LOAD PHASE DATA ENDS ===")
+    logger.info(f"[PHASE LOAD] phase_type_to_name_to_page: {user_state_manager.phase_type_to_name_to_page}")
+    logger.info(f"=== LOAD PHASE DATA ENDS ===")
 
 
 def get_phase_annotation_schemes(filename: str) -> list[dict]:
