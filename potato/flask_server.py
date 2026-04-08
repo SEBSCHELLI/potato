@@ -534,7 +534,7 @@ def load_phase_data(config: dict) -> None:
     # Lazy import - only when this function is called
     logger.info(f"=== LOAD PHASE DATA STARTS ===")
 
-    from server_utils.front_end import generate_html_from_schematic, generate_training_html, generate_static_html
+    from potato.server_utils.front_end import generate_html_from_schematic, generate_training_html, generate_static_html
 
     if "phases" not in config or not config["phases"]:
         return
