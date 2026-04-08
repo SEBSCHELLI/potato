@@ -49,8 +49,6 @@ setup(
     package_data={
         "potato": [
             "templates/*.html",
-            "base_html/*.html",
-            "base_html/examples/*.html",
             "static/*",
             "static/styles/*",
             "static/survey_assets/*",
