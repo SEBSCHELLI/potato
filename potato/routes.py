@@ -85,6 +85,8 @@ def home():
 @app.route("/api/current_instance", methods=["GET"])
 def get_current_instance():
     """Get the current instance information for the current user."""
+    return jsonify({"error": str(e)}), 500
+    """
     logger.debug(f"=== GET_CURRENT_INSTANCE START ===")
 
     if 'username' not in session:
@@ -94,7 +96,7 @@ def get_current_instance():
     username = session['username']
     session_id = session['session_id']
     logger.debug(f"Username: {username}")
-
+    
     try:
         usm = get_user_state_manager()
         user_state = usm.get_user_state(username, session_id)
@@ -118,7 +120,7 @@ def get_current_instance():
 
     except Exception as e:
         logger.error(f"Error getting current instance: {e}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 500"""
 
 
 @app.route("/done", methods=["GET", "POST"])
