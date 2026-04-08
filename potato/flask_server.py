@@ -52,9 +52,9 @@ from flask import Flask
 
 # Get current working directory and program directory
 cur_working_dir = os.getcwd() #get the current working dir
-cur_working_dir = "/home/schellsn/author2paper_potato_multi_session"
+#cur_working_dir = "/home/schellsn/author2paper_potato_multi_session"
 cur_program_dir = os.path.dirname(os.path.abspath(__file__)) #get the current program dir (for the case of pypi, it will be the path where potato is installed)
-cur_program_dir = "/opt/anaconda3/envs/potato_env/lib/python3.10/site-packages/potato"
+#cur_program_dir = "/opt/anaconda3/envs/potato_env/lib/python3.10/site-packages/potato"
 flask_templates_dir = os.path.join(cur_program_dir,'templates') #get the dir where the flask templates are saved
 base_html_dir = os.path.join(cur_program_dir,'base_htmls') #get the dir where the the base_html templates files are saved
 
@@ -1014,7 +1014,14 @@ def run_server(args):
         log_dir=config.get("output_annotation_dir"),
     )
 
+    logger.debug(f"os.getcwd(): {os.getcwd()}")
+    logger.debug(f"cur_working_dir: {cur_working_dir}")
+    logger.debug(f"cur_program_dir: {cur_program_dir}")
+    logger.debug(f"flask_templates_dir: {flask_templates_dir}")
+    logger.debug(f"base_html_dir: {base_html_dir}")
+
     logger.debug(f"args: {args}")
+
 
     # Apply command line flags that override config settings
     if args.require_password is not None:
