@@ -47,7 +47,6 @@ from dataclasses import dataclass
 from dash import html, dash_table
 
 from potato.flask_server import config, logger, get_user_state_manager, get_item_state_manager, UserPhase, test_setup
-from potato.annotation_history import AnnotationHistoryManager, AnnotationAction
 from potato.quality_control import get_quality_control_manager
 
 #test_setup()

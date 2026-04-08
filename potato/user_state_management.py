@@ -859,8 +859,8 @@ class UserStateManager:
         '''Loads the user state for the given user ID and session ID'''
 
         # TODO: make the user state type configurable between in-memory and DB-backed.
-        logger.debug("=== LOAD USER STATE STARTS===")
-        logger.debug(f"user: {user_id} (Session ID: {session_id})")
+        #logger.debug("=== LOAD USER STATE STARTS===")
+        #logger.debug(f"user: {user_id} (Session ID: {session_id})")
 
         output_annotation_dir = self.config["output_annotation_dir"]
         user_dir = os.path.join(output_annotation_dir, user_id)
@@ -869,9 +869,8 @@ class UserStateManager:
         user_state = InMemoryUserState.load(state_file=state_fp)
 
         if user_state.session_id != session_id:
-            logger.debug(f'user_state.session_id "{user_state.session_id}" != provided session_id {session_id}')
-        else:
-            logger.debug(f'user_state.session_id "{user_state.session_id}" == provided session_id {session_id}')
+            logger.warning(f'user_state.session_id "{user_state.session_id}" != provided session_id {session_id}')
+            return None
 
         user_id = user_state.user_id
 
@@ -885,7 +884,7 @@ class UserStateManager:
             self.user_to_annotation_state[user_id] = {session_id: user_state}
             logger.debug(f'User "{user_id}" (Session ID: {session_id}) loaded')
 
-        logger.debug("=== END LOAD USER STATE ===")
+        #logger.debug("=== END LOAD USER STATE ===")
 
         return user_state
 
