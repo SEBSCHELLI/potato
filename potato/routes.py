@@ -85,7 +85,7 @@ def home():
 @app.route("/api/current_instance", methods=["GET"])
 def get_current_instance():
     """Get the current instance information for the current user."""
-    return jsonify({"error": str(e)}), 500
+    return jsonify({"error": "error"}), 500
     """
     logger.debug(f"=== GET_CURRENT_INSTANCE START ===")
 
