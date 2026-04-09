@@ -80,6 +80,7 @@ def training_page():
         logger.info(f'User {username} (Session ID {session_id}) - Training failed: total_mistakes {training_state.total_mistakes} exceeded max_mistakes ({training_state.max_mistakes})')
 
         # Move to DONE phase (kick out)
+        user_state.completed_phase_and_pages.append(user_state.get_current_phase_and_page())
         user_state.set_current_phase_and_page(UserPhase.DONE, "done")
         return render_template("training_failed.html",
                                message=training_state.failed_message,
@@ -220,6 +221,7 @@ def submit_answer():
                 logger.info(f'User {username} (Session ID {session_id}) - Training failed: Not all questions were answered correctly')
 
                 # Move to DONE phase (kick out)
+                user_state.completed_phase_and_pages.append(user_state.get_current_phase_and_page())
                 user_state.set_current_phase_and_page(UserPhase.DONE, "done")
                 user_state = get_user_state_manager().get_user_state(username, session_id)
                 get_user_state_manager().save_user_state(user_state)
@@ -246,6 +248,7 @@ def submit_answer():
             logger.info(f'User {username} (Session ID {session_id}) - Training failed: exceeded max_mistakes ({training_state.max_mistakes}) on {instance_id}')
 
             # Move to DONE phase (kick out)
+            user_state.completed_phase_and_pages.append(user_state.get_current_phase_and_page())
             user_state.set_current_phase_and_page(UserPhase.DONE, "done")
             user_state = get_user_state_manager().get_user_state(username, session_id)
             get_user_state_manager().save_user_state(user_state)
@@ -259,6 +262,7 @@ def submit_answer():
             logger.info(f'User {username} (Session ID {session_id}) - Training failed: exceeded max_mistakes_per_question ({training_state.max_mistakes_per_question}) on {instance_id}')
 
             # Move to DONE phase (kick out)
+            user_state.completed_phase_and_pages.append(user_state.get_current_phase_and_page())
             user_state.set_current_phase_and_page(UserPhase.DONE, "done")
             user_state = get_user_state_manager().get_user_state(username, session_id)
             get_user_state_manager().save_user_state(user_state)
