@@ -59,6 +59,7 @@ def training_page():
     if not training_state:
         training_config = config.get('training', {})
         passing_criteria = training_config.get('passing_criteria', {})
+        logger.debug(f"passing_criteria: {passing_criteria}")
         allow_retry = training_config.get('allow_retry', False)
 
         max_mistakes = passing_criteria.get('max_mistakes', -1)
