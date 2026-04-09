@@ -942,7 +942,7 @@ function updateInstanceDisplay() {
 
         // FIREFOX FIX: Force the input element to be updated in Firefox
         const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
-        if (isFirefox && "1" == "2") {
+        if (isFirefox) {
             debugLog('🔍 [DEBUG] updateInstanceDisplay: Firefox detected - forcing input update');
 
             // Method 1: Force a DOM update by temporarily changing and restoring the value
