@@ -238,8 +238,6 @@ def navigate_to_next():
     else:
         annotation_data = dict(request.form)
 
-    logger.debug(f"annotation_data: {annotation_data}")
-
     action = annotation_data.get("btn")
     instance_id = annotation_data.get('instance_id')
 
