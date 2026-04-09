@@ -229,7 +229,7 @@
                 <div style="display: flex;gap: 1rem;">
                     <div style="background-color: #d9d9d9;border: 2px solid #e9ecef;border-radius: 0.5rem;margin-left: 2rem;padding-left: 2rem;padding-top: 1rem;margin-bottom: 2rem;">
                         <h6 class="criteria-text" style="margin-left: 0px;">
-                            Flaws in the study’s design (sample too small, wrong method, claims too strong)
+                            Post mentions flaws in the study’s design (e.g., sample too small, wrong method, claims too strong)
                         </h6>
                         <div class="training-instance" style="margin-right: 2rem;margin-top: 1rem;margin-bottom: 2rem;">
                             <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Post:</h5>
@@ -249,7 +249,7 @@
                     </div>
                     <div style="background-color: #d9d9d9;border: 2px solid #e9ecef;border-radius: 0.5rem;margin-left: 2rem;padding-left: 2rem;padding-top: 1rem;margin-bottom: 2rem;">
                         <h6 class="criteria-text" style="margin-left: 0px;">
-                            Proposes a more realistic study design instead (better method, different sample)
+                            Post proposes a more realistic study design instead (e.g., better method, different sample)
                         </h6>
                         <div class="training-instance" style="margin-right: 2rem;margin-top: 1rem;margin-bottom: 2rem;">
                             <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Post:</h5>
@@ -272,30 +272,123 @@
 
             <div class="criteria-box">
                 <p class="criteria-headline">Post criticizes the study’s authors or source</p>
-                <p class="criteria-text" style="margin-top: 10px;">Examples:</p>
-                <ul class="criteria-text">
-                    <li>Conflicts of interest, author’s questionable track of record</li>
-                    <li>Not peer-reviewed, questionable journal / venue</li>
-                </ul>
+                <p class="criteria-text" style="margin-top: 10px; margin-bottom: 10px;">Examples:</p>
+                <div style="display: flex;gap: 1rem;">
+                    <div style="background-color: #d9d9d9;border: 2px solid #e9ecef;border-radius: 0.5rem;margin-left: 2rem;padding-left: 2rem;padding-top: 1rem;margin-bottom: 2rem;">
+                        <h6 class="criteria-text" style="margin-left: 0px;">
+                            Posts criticizes the study's authors (e.g., mentions conflicts of interest or author’s questionable track of record)
+                        </h6>
+                        <div class="training-instance" style="margin-right: 2rem;margin-top: 1rem;margin-bottom: 2rem;">
+                            <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Post:</h5>
+                            <div id="instance-text" class="p-3 border rounded instance-text-container" style="background-color: var(--light-bg); min-height: 50px; position: relative;">
+                                <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">This is really bad news.</div>
+                            </div>
+                            <br>
+                            <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Paper:</h5>
+                            <h6>Title: Robust acceleration of Earth system heating observed over the past six decades</h6>
+                            <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                            <div id="instance-text" class="p-3 border rounded instance-text-container" style="background-color: var(--light-bg); min-height: 0px; position: relative;">
+                                <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">
+                                    Global heating of the Earth system is unequivocal. However, detecting an acceleration of Earth heating has remained elusive to date, despite suggestive evidence of a potential increase in heating rates. In this study, we demonstrate that since 1960, the warming of the world ocean has accelerated at a relatively cons ... [abstract truncated for better readability]
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="background-color: #d9d9d9;border: 2px solid #e9ecef;border-radius: 0.5rem;margin-left: 2rem;padding-left: 2rem;padding-top: 1rem;margin-bottom: 2rem;">
+                        <h6 class="criteria-text" style="margin-left: 0px;">
+                            Post criticizes the study's source (e.g., that it is not peer-reviewed, from a questionable journal/venue)
+                        </h6>
+                        <div class="training-instance" style="margin-right: 2rem;margin-top: 1rem;margin-bottom: 2rem;">
+                            <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Post:</h5>
+                            <div id="instance-text" class="p-3 border rounded instance-text-container" style="background-color: var(--light-bg); min-height: 50px; position: relative;">
+                                <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">This is really bad news.</div>
+                            </div>
+                            <br>
+                            <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Paper:</h5>
+                            <h6>Title: Robust acceleration of Earth system heating observed over the past six decades</h6>
+                            <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                            <div id="instance-text" class="p-3 border rounded instance-text-container" style="background-color: var(--light-bg); min-height: 0px; position: relative;">
+                                <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">
+                                    Global heating of the Earth system is unequivocal. However, detecting an acceleration of Earth heating has remained elusive to date, despite suggestive evidence of a potential increase in heating rates. In this study, we demonstrate that since 1960, the warming of the world ocean has accelerated at a relatively cons ... [abstract truncated for better readability]
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="criteria-box">
                 <p class="criteria-headline">Post provides counter-evidence and/or implies the existence of more recent evidence</p>
-                <p class="criteria-text" style="margin-top: 10px;">Examples:</p>
-                <ul class="criteria-text">
-                    <li>Counter-evidence (studies with contrary findings, anecdotal counter-evidence)</li>
-                    <li>Calling the study outdated or old, implying more recent studies exist, which could be both in line or contrary to the study’s
-                        conclusions
-                    </li>
-                </ul>
+                <p class="criteria-text" style="margin-top: 10px; margin-bottom: 10px;">Examples:</p>
+                <div style="display: flex;gap: 1rem;">
+                    <div style="background-color: #d9d9d9;border: 2px solid #e9ecef;border-radius: 0.5rem;margin-left: 2rem;padding-left: 2rem;padding-top: 1rem;margin-bottom: 2rem;">
+                        <h6 class="criteria-text" style="margin-left: 0px;">
+                            Posts provides counter-evidence (e.g., studies with contrary findings, anecdotal counter-evidence)
+                        </h6>
+                        <div class="training-instance" style="margin-right: 2rem;margin-top: 1rem;margin-bottom: 2rem;">
+                            <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Post:</h5>
+                            <div id="instance-text" class="p-3 border rounded instance-text-container" style="background-color: var(--light-bg); min-height: 50px; position: relative;">
+                                <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">This is really bad news.</div>
+                            </div>
+                            <br>
+                            <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Paper:</h5>
+                            <h6>Title: Robust acceleration of Earth system heating observed over the past six decades</h6>
+                            <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                            <div id="instance-text" class="p-3 border rounded instance-text-container" style="background-color: var(--light-bg); min-height: 0px; position: relative;">
+                                <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">
+                                    Global heating of the Earth system is unequivocal. However, detecting an acceleration of Earth heating has remained elusive to date, despite suggestive evidence of a potential increase in heating rates. In this study, we demonstrate that since 1960, the warming of the world ocean has accelerated at a relatively cons ... [abstract truncated for better readability]
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="background-color: #d9d9d9;border: 2px solid #e9ecef;border-radius: 0.5rem;margin-left: 2rem;padding-left: 2rem;padding-top: 1rem;margin-bottom: 2rem;">
+                        <h6 class="criteria-text" style="margin-left: 0px;">
+                            Post calls the study outdated or old, implying more recent studies exist, which could be both in line or contrary to the study’s conclusions
+                        </h6>
+                        <div class="training-instance" style="margin-right: 2rem;margin-top: 1rem;margin-bottom: 2rem;">
+                            <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Post:</h5>
+                            <div id="instance-text" class="p-3 border rounded instance-text-container" style="background-color: var(--light-bg); min-height: 50px; position: relative;">
+                                <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">This is really bad news.</div>
+                            </div>
+                            <br>
+                            <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Paper:</h5>
+                            <h6>Title: Robust acceleration of Earth system heating observed over the past six decades</h6>
+                            <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                            <div id="instance-text" class="p-3 border rounded instance-text-container" style="background-color: var(--light-bg); min-height: 0px; position: relative;">
+                                <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">
+                                    Global heating of the Earth system is unequivocal. However, detecting an acceleration of Earth heating has remained elusive to date, despite suggestive evidence of a potential increase in heating rates. In this study, we demonstrate that since 1960, the warming of the world ocean has accelerated at a relatively cons ... [abstract truncated for better readability]
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="criteria-box">
                 <p class="criteria-headline">Post questions the study’s relevance or applicability</p>
-                <p class="criteria-text" style="margin-top: 10px;">Examples:</p>
-                <ul class="criteria-text">
-                    <li>Findings in basic research might not apply to real-world scenarios or scenarios readers care about</li>
-                </ul>
+                <p class="criteria-text" style="margin-top: 10px; margin-bottom: 10px;">Examples:</p>
+                <div style="display: flex;gap: 1rem;">
+                    <div style="flex: 0 0 45%; background-color: #d9d9d9;border: 2px solid #e9ecef;border-radius: 0.5rem;margin-left: 2rem;padding-left: 2rem;padding-top: 1rem;margin-bottom: 2rem;">
+                        <h6 class="criteria-text" style="margin-left: 0px;">
+                            Posts criticizes the study's generalizability (e.g., findings in basic research might not apply to real-world scenarios or scenarios readers care about)
+                        </h6>
+                        <div class="training-instance" style="margin-right: 2rem;margin-top: 1rem;margin-bottom: 2rem;">
+                            <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Post:</h5>
+                            <div id="instance-text" class="p-3 border rounded instance-text-container" style="background-color: var(--light-bg); min-height: 50px; position: relative;">
+                                <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">This is really bad news.</div>
+                            </div>
+                            <br>
+                            <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Paper:</h5>
+                            <h6>Title: Robust acceleration of Earth system heating observed over the past six decades</h6>
+                            <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                            <div id="instance-text" class="p-3 border rounded instance-text-container" style="background-color: var(--light-bg); min-height: 0px; position: relative;">
+                                <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">
+                                    Global heating of the Earth system is unequivocal. However, detecting an acceleration of Earth heating has remained elusive to date, despite suggestive evidence of a potential increase in heating rates. In this study, we demonstrate that since 1960, the warming of the world ocean has accelerated at a relatively cons ... [abstract truncated for better readability]
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
