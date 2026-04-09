@@ -324,7 +324,11 @@
                 </div>
                 <div class="d-flex justify-content-end align-items-center" style="margin-left: 2rem; margin-right: 2rem; min-height: 0px;">
                     <button class="shadcn-button shadcn-button-primary next-button" id="next-btn" name="btn" type="submit" value="next-btn" style="margin-left: auto;">
-                        Next <i class="fas fa-arrow-right ms-2"></i>
+                        {% if finished_count == total_count - 1 %}
+                            Finish <i class="fas fa-arrow-right ms-2"></i>
+                        {% else %}
+                            Next  <i class="fas fa-arrow-right ms-2"></i>
+                        {% endif %}
                     </button>
                 </div>
             </form>
