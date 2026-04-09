@@ -87,6 +87,7 @@ training:
   passing_criteria:
     min_correct: 5
     require_all_correct: true
+    max_mistakes: 2
   allow_retry: true
   failure_action: "move_to_done"  # or "advance"
 
