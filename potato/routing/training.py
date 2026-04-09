@@ -39,13 +39,15 @@ def phase_required(required_phase):
         return wrapped
     return decorator
 
+
 training_bp = Blueprint("training", __name__, url_prefix="/training")
+
 
 # GET: Show the current training example
 @training_bp.route("/", methods=["GET"])
 @phase_required(UserPhase.TRAINING)
 def training_page():
-    #logger.debug("=== training_page STARTS ===")
+    # logger.debug("=== training_page STARTS ===")
 
     username = session['username']
     session_id = session["session_id"]
@@ -53,6 +55,7 @@ def training_page():
 
     training_state = user_state.get_training_state()
 
+    # Initialize training state if not already done
     if not training_state:
         training_config = config.get('training', {})
         passing_criteria = training_config.get('passing_criteria', {})
@@ -75,7 +78,7 @@ def training_page():
         logger.info(f'User {username} (Session ID {session_id}) has failed training due to too many mistakes')
 
         # Move to DONE phase (kick out)
-        user_state.set_current_phase_and_page((UserPhase.DONE, None))
+        user_state.set_current_phase_and_page(UserPhase.DONE, "done")
         return render_template("training_failed.html",
                                message="You have exceeded the maximum number of allowed mistakes and cannot continue.",
                                total_mistakes=training_state.get_total_mistakes(),
@@ -109,7 +112,7 @@ def training_page():
     instance_paper_title = instance_data.get('paper_title', "???")
     instance_paper_abstract = instance_data.get('paper_abstract', "???")
 
-    cur_phase, cur_page = user_state.current_phase_and_page
+    cur_phase, cur_page = user_state.get_current_phase_and_page()
     page_fname = get_user_state_manager().get_phase_html_fname(cur_phase, cur_page)
 
     # Create behavioral data structure if not already available
@@ -216,7 +219,7 @@ def submit_answer():
             if require_all and training_state.get_correct_answer_count() < total_questions:
                 # User didn't get all correct
                 training_state.set_failed(True)
-                user_state.set_current_phase_and_page((UserPhase.DONE, None))
+                user_state.set_current_phase_and_page(UserPhase.DONE, "done")
 
                 user_state = get_user_state_manager().get_user_state(username, session_id)
                 get_user_state_manager().save_user_state(user_state)
@@ -242,7 +245,7 @@ def submit_answer():
         if training_state.should_fail_due_to_mistakes():
             training_state.set_failed(True)
             logger.info(f'User {username} (Session ID {session_id}) failed training - exceeded max_mistakes ({training_state.max_mistakes})')
-            user_state.set_current_phase_and_page((UserPhase.DONE, None))
+            user_state.set_current_phase_and_page(UserPhase.DONE, "done")
 
             user_state = get_user_state_manager().get_user_state(username, session_id)
             get_user_state_manager().save_user_state(user_state)
@@ -254,7 +257,7 @@ def submit_answer():
         if training_state.should_fail_training_instance_due_to_mistakes(instance_id):
             training_state.set_failed(True)
             logger.info(f'User {username} (Session ID {session_id}) failed training - exceeded max_mistakes_per_question on {instance_id}')
-            user_state.set_current_phase_and_page((UserPhase.DONE, None))
+            user_state.set_current_phase_and_page(UserPhase.DONE, "done")
 
             user_state = get_user_state_manager().get_user_state(username, session_id)
             get_user_state_manager().save_user_state(user_state)
@@ -282,7 +285,7 @@ def submit_answer():
             if failure_action == 'move_to_done':
                 training_state.set_failed(True)
                 logger.info(f'User {username} failed training - no retry allowed')
-                user_state.set_current_phase_and_page((UserPhase.DONE, None))
+                user_state.set_current_phase_and_page(UserPhase.DONE, None)
                 return render_template("training_failed.html",
                                        message="You answered incorrectly and retries are not allowed.",
                                        explanation=explanation,
@@ -330,13 +333,14 @@ def submit_answer():
                         return home()
                     else:
                         training_state.set_failed(True)
-                        user_state.set_current_phase_and_page((UserPhase.DONE, None))
+                        user_state.set_current_phase_and_page(UserPhase.DONE, None)
                         return render_template("training_failed.html",
                                                message="You did not meet the minimum correct answers requirement.",
                                                correct_count=training_state.get_correct_answer_count(),
                                                min_correct=min_correct,
                                                annotation_task_name=config.get("annotation_task_name", "Annotation Platform"),
                                                username=username)"""
+
 
 # POST: User pressed Continue Button after Training is finished
 @training_bp.route("/finish_training", methods=["POST"])
@@ -362,6 +366,7 @@ def finish_training():
         #logger.debug(f"User {username} (Session ID {session_id}) state saved")
 
         return redirect(url_for("home"))
+
 
 # GET: Training summary after all examples completed
 @training_bp.route("/summary", methods=["GET"])
@@ -395,7 +400,6 @@ def training_summary():
                                max_mistakes=training_state.max_mistakes,
                                annotation_task_name=config.get("annotation_task_name", "Annotation Platform"),
                                username=username)
-
 
 
 def check_training_answer(user_answer: dict, correct_answers: dict) -> bool:

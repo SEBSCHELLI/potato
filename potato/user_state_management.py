@@ -221,8 +221,7 @@ class TrainingState:
     def should_fail_due_to_mistakes(self) -> bool:
         # logger.debug("should_fail_due_to_mistakes")
         """Check if the user should fail due to too many mistakes."""
-
-        if self.max_mistakes > 0 and self.total_mistakes >= self.max_mistakes:
+        if 0 < self.max_mistakes <= self.total_mistakes:
             return True
 
         return False
