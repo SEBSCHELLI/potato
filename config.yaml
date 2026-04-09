@@ -45,6 +45,7 @@ prolific:
   config_file_path: configs/prolific_config.yaml
 
 completion_code: "POTATO2026"
+training_failed_completion_code: "TRAINING_FAILED_E78XH"
 
 # Automatic task assignment for crowdsourcing
 assignment_strategy: random

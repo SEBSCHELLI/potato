@@ -152,12 +152,28 @@ def done():
     training_state = user_state.get_training_state()
     if training_state:
         if training_state.is_failed():
+
+            training_failed_completion_code = config.get("training_failed_completion_code")
+
+            prolific_redirect_url = None
+            login_config = config.get('login', {})
+            login_type = login_config.get('type', 'standard')
+
+            if training_failed_completion_code and login_type in ['url_direct', 'prolific']:
+                # Build the Prolific completion URL (only if using Prolific-style URL argument)
+                url_argument = login_config.get('url_argument', 'PROLIFIC_PID')
+                if url_argument in ['PROLIFIC_PID', 'prolific_pid']:
+                    prolific_redirect_url = f"https://app.prolific.co/submissions/complete?cc={training_failed_completion_code}"
+
+
             return render_template("training_failed.html",
                                    message=training_state.failed_message,
                                    total_mistakes=training_state.get_total_mistakes(),
                                    max_mistakes=training_state.max_mistakes,
                                    annotation_task_name=config.get("annotation_task_name", "Annotation Platform"),
-                                   username=username)
+                                   username=username,
+                                   completion_code=training_failed_completion_code,
+                                   prolific_redirect_url=prolific_redirect_url                                   )
 
     # Get completion code from config
     completion_code = config.get("completion_code", "")
