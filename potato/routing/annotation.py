@@ -238,10 +238,13 @@ def navigate_to_next():
     else:
         annotation_data = dict(request.form)
 
-    logger.debug(f"data: {annotation_data}")
+    logger.debug(f"annotation_data: {annotation_data}")
 
     action = annotation_data.get("btn")
     instance_id = annotation_data.get('instance_id')
+    logger.debug(f"action: {action}")
+    logger.debug(f"instance_id: {instance_id}")
+
     if action != "nxt-btn" or not instance_id:
         return jsonify({"error": "Need to send btn='nxt-btn' and instance_id"}), 404
 
