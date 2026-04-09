@@ -118,6 +118,7 @@
             margin: 20px 0;
             user-select: all;
             cursor: pointer;
+            max-width: 400px;
         }
 
         .completion-code-box:hover {
@@ -184,29 +185,6 @@
             </div>
             {% endif %}
 
-
-            {% if completion_code %}
-            <div class="mb-4">
-                <h5 class="mb-3">Your Completion Code:</h5>
-                <div class="completion-code-box" id="completion-code" onclick="copyCode()" title="Click to copy">
-                    {{ completion_code }}
-                </div>
-                <p class="copy-hint">
-                    <i class="fas fa-copy me-1"></i>
-                    Click the code above to copy it to your clipboard
-                </p>
-            </div>
-            <div class="d-grid gap-2 mb-4">
-                <a href="{{ prolific_redirect_url }}" class="btn btn-primary btn-lg prolific-button">
-                    <i class="fas fa-external-link-alt me-2"></i>
-                    Return to Prolific
-                </a>
-            </div>
-            <p class="text-muted small">
-                Click the button above to automatically submit your completion code to Prolific.
-            </p>
-            {% endif %}
-
             <!-- Statistics -->
             <div class="stats-box">
                 <h6 class="mb-3"><i class="fas fa-chart-bar me-2"></i>Your Training Statistics</h6>
@@ -261,6 +239,25 @@
                 {% endif %}
             </div>
 
+            {% if completion_code %}
+            <div class="completion" style="max-width: 400px; margin: 100px auto 1rem;">
+                <h5 class="mb-3">Your Completion Code:</h5>
+                <div class="completion-code-box" id="completion-code" onclick="copyCode()" title="Click to copy">
+                    {{ completion_code }}
+                </div>
+                <p class="text-muted small">
+                    <i class="fas fa-copy me-1"></i>
+                    Click the code above to copy it to your clipboard or click the button below to automatically submit your completion code to Prolific.
+                </p>
+                <div class="d-grid gap-2 mb-4">
+                    <a href="{{ prolific_redirect_url }}" class="btn btn-primary btn-lg prolific-button">
+                        <i class="fas fa-external-link-alt me-2"></i>
+                        Return to Prolific
+                    </a>
+                </div>
+            </div>
+
+            {% endif %}
             <!-- Contact info -->
             <div class="contact-info">
                 <p class="mb-0">
@@ -281,5 +278,27 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function copyCode() {
+            const code = document.getElementById('completion-code').innerText.trim();
+            navigator.clipboard.writeText(code).then(function() {
+                // Show feedback
+                const codeBox = document.getElementById('completion-code');
+                const originalText = codeBox.innerText;
+                codeBox.innerHTML = '<i class="fas fa-check me-2"></i>Copied!';
+                codeBox.style.backgroundColor = '#d4edda';
+                codeBox.style.color = '#155724';
+
+                setTimeout(function() {
+                    codeBox.innerText = originalText;
+                    codeBox.style.backgroundColor = '';
+                    codeBox.style.color = '';
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Failed to copy: ', err);
+                alert('Failed to copy code. Please select and copy manually.');
+            });
+        }
+    </script>
 </body>
 </html>
