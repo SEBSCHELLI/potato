@@ -242,11 +242,9 @@ def navigate_to_next():
 
     action = annotation_data.get("btn")
     instance_id = annotation_data.get('instance_id')
-    logger.debug(f"action: {action}")
-    logger.debug(f"instance_id: {instance_id}")
 
-    if action != "nxt-btn" or not instance_id:
-        return jsonify({"error": "Need to send btn='nxt-btn' and instance_id"}), 404
+    if action != "next-btn" or not instance_id:
+        return jsonify({"error": "Need to send btn='next-btn' and instance_id"}), 404
 
     user_state = get_user_state_manager().get_user_state(username, session_id)
     if not user_state:
