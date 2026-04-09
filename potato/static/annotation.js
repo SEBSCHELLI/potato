@@ -880,6 +880,7 @@ async function loadCurrentInstance() {
 
         // Notify interaction tracker of instance change
         if (window.interactionTracker && instanceId) {
+            debugLog(`🔍 [DEBUG] loadCurrentInstance: window.interactionTracker.setInstanceId(${instanceId})`);
             window.interactionTracker.setInstanceId(instanceId);
         }
 
@@ -903,7 +904,6 @@ async function loadCurrentInstance() {
             }
         }
 
-        updateProgressDisplay();
         updateInstanceDisplay();
 
         // Clear browser-preserved form state before loading new annotations
@@ -916,13 +916,7 @@ async function loadCurrentInstance() {
         //aiAssistantManger.getAiAssistantName();
 
         // Populate pairwise item boxes after forms are generated
-        populatePairwiseTileContent();
-
-        // Load span annotations
-        //debugLog('🔍 [DEBUG] loadCurrentInstance() - About to call loadSpanAnnotations()');
-        //debugLog('🔍 [DEBUG] loadCurrentInstance() - currentInstance.id:', currentInstance?.id);
-        //await loadSpanAnnotations();
-        //debugLog('🔍 [DEBUG] loadCurrentInstance() - loadSpanAnnotations() completed');
+        // populatePairwiseTileContent();
 
         // Populate input values with existing annotations AFTER forms are generated
         setTimeout(() => {
@@ -937,12 +931,6 @@ async function loadCurrentInstance() {
     }
 }
 
-function updateProgressDisplay() {
-    // Progress is already displayed in the HTML template
-    // No need to update it since it's server-rendered
-    debugLog('Progress display updated from server-rendered HTML');
-}
-
 function updateInstanceDisplay() {
     // Instance text is already displayed in the HTML template
     // Just ensure the instance_id is set correctly
@@ -954,7 +942,7 @@ function updateInstanceDisplay() {
 
         // FIREFOX FIX: Force the input element to be updated in Firefox
         const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
-        if (isFirefox) {
+        if (isFirefox && "1" == "2") {
             debugLog('🔍 [DEBUG] updateInstanceDisplay: Firefox detected - forcing input update');
 
             // Method 1: Force a DOM update by temporarily changing and restoring the value
@@ -1499,98 +1487,6 @@ async function navigateToNext() {
         }
     } catch (error) {
         console.error('[DEEP DEBUG NAV] navigateToNext - Navigation error:', error);
-        setLoading(false);
-    }
-}
-
-async function navigateToInstance(instanceIndex) {
-    console.log('[PERSISTENCE FIX] navigateToInstance called with index:', instanceIndex);
-    if (isLoading) {
-        console.log('[PERSISTENCE FIX] navigateToInstance - blocked, isLoading=true');
-        return;
-    }
-
-    try {
-        setLoading(true);
-
-        // Save annotations before navigating away (same as navigateToPrevious/Next)
-        console.log('[PERSISTENCE FIX] navigateToInstance - About to call saveAnnotations');
-        console.log('[PERSISTENCE FIX] currentAnnotations before save:', JSON.stringify(currentAnnotations));
-        debugLog('[DEEP DEBUG NAV] navigateToInstance - Saving annotations before navigation');
-        // await saveAnnotations();
-        console.log('[PERSISTENCE FIX] navigateToInstance - saveAnnotations completed');
-
-        // DEBUG: Track overlays before navigation
-        debugTrackOverlays('BEFORE_GO_TO_NAVIGATION', currentInstance?.id);
-
-        // FIREFOX FIX: Force overlay cleanup before navigation
-        const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
-        debugLog('🔍 [DEBUG] navigateToInstance() - Is Firefox:', isFirefox);
-
-        if (isFirefox) {
-            debugLog('🔍 [DEBUG] Firefox detected - forcing overlay cleanup before navigation');
-            const spanOverlays = document.getElementById('span-overlays');
-            if (spanOverlays) {
-                debugLog('🔍 [DEBUG] navigateToInstance() - Before Firefox cleanup:', spanOverlays.children.length, 'overlays');
-
-                // Remove all overlays individually
-                while (spanOverlays.firstChild) {
-                    const child = spanOverlays.firstChild;
-                    debugLog('🔍 [DEBUG] navigateToInstance() - Removing overlay child:', child.className, child.id);
-
-                    // Track overlay removal for debugging
-                    if (typeof trackOverlayRemoval === 'function') {
-                        trackOverlayRemoval(child, 'navigateToInstance Firefox cleanup');
-                    }
-
-                    spanOverlays.removeChild(child);
-                }
-
-                // Force reflow
-                spanOverlays.offsetHeight;
-                debugLog('🔍 [DEBUG] navigateToInstance() - After Firefox cleanup:', spanOverlays.children.length, 'overlays');
-            } else {
-                debugLog('🔍 [DEBUG] navigateToInstance() - No span-overlays container found');
-            }
-        }
-
-        const headers = {
-            'Content-Type': 'application/json',
-        };
-        if (window.config.api_key) {
-            headers['X-API-Key'] = window.config.api_key;
-        }
-        const response = await fetch('/annotate', {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify({
-                action: 'go_to',
-                go_to: instanceIndex
-            })
-        });
-
-        if (response.ok) {
-            debugLog('🔍 [DEBUG] navigateToInstance() - Navigation successful, about to reload page');
-            // DEBUG: Clear overlays before reload
-            const spanOverlays = document.getElementById('span-overlays');
-            if (spanOverlays) {
-                debugLog('🔍 [DEBUG] navigateToInstance() - Before clearing overlays:', spanOverlays.children.length, 'overlays');
-                debugLog('🔍 [DEBUG] navigateToInstance() - Clearing span overlays before page reload');
-                spanOverlays.innerHTML = '';
-                debugLog('🔍 [DEBUG] navigateToInstance() - After clearing overlays:', spanOverlays.children.length, 'overlays');
-                debugVerifyOverlayCleanup();
-            } else {
-                debugLog('🔍 [DEBUG] navigateToInstance() - No span-overlays container found');
-            }
-            // Reload the page to get the new instance data from the server
-            window.location.reload();
-        } else {
-            throw new Error('Failed to navigate to instance');
-        }
-    } catch (error) {
-        console.error('Error navigating to instance:', error);
-        showError(true, error.message);
-    } finally {
         setLoading(false);
     }
 }

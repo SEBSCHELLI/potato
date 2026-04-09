@@ -14,11 +14,6 @@
     <!-- Custom Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
-    <!-- Format Display Styles (document, code, etc.) -->
-    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/format-displays.css') }}"> -->
-
-    <!-- Display Logic Styles (conditional schema branching) -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='display-logic.css') }}">
 
     <style>
         body {
@@ -154,49 +149,49 @@
 
 <body>
 <!-- Header navigation bar -->
-<nav class="navbar sticky-top shadow-sm">
-    <div class="container-fluid d-flex align-items-center">
-        <!-- Task name (left aligned) -->
-        <div class="navbar-brand">
-            <span class="fw-bold" style="color: var(--light-color); font-size: 1.25rem">{{annotation_task_name}}</span>
+    <nav class="navbar sticky-top shadow-sm">
+        <div class="container-fluid d-flex align-items-center">
+            <!-- Task name (left aligned) -->
+            <div class="navbar-brand">
+                <span class="fw-bold" style="color: var(--light-color); font-size: 1.25rem">{{annotation_task_name}}</span>
+            </div>
+
+            <!-- Middle section with progress and navigation -->
+            <div class="d-flex align-items-center justify-content-center flex-grow-1 gap-4">
+                <!-- Annotation status indicator -->
+                <div class="annotation-status-indicator" id="annotation-status" style="color: var(--light-color);">
+                        <span class="status-badge {{ 'labeled' if instance_has_annotations else 'unlabeled' }}">
+                            {{ 'Labeled' if instance_has_annotations else 'Not labeled' }}
+                        </span>
+                </div>
+
+                <!-- Progress counter -->
+                <div class="d-flex align-items-center" style="color: var(--light-color); margin-right: 10px">
+                    <span>Annotated: <span class="fw-medium" id="progress-counter">{{finished_count}}/{{total_count}}</span></span>
+                </div>
+
+                <!-- Passed Attention Checks counter -->
+                <div class="d-flex align-items-center" style="color: var(--light-color); margin-right: 40px">
+                    <span>Coins: <span class="fw-medium" id="ac-counter">{{totals_acs_passed}} <i class="fa-solid fa-coins"></i></span></span>
+                </div>
+
+            </div>
+
+            <!-- User info and logout (right aligned) -->
+            <div class="d-flex align-items-center" style="padding: 0.5rem 1rem;">
+                <div class="me-3" style="color: var(--light-color)">
+                    <span>Logged in as <span class="fw-medium">{{username}}</span></span>
+                </div>
+                <div class="border-start" style="padding-left: 20px; height: 24px; display: flex; align-items: center;">
+                    <form action="/logout" method="POST">
+                        <button type="submit" class="button">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <!-- Middle section with progress and navigation -->
-        <div class="d-flex align-items-center justify-content-center flex-grow-1 gap-4">
-            <!-- Annotation status indicator -->
-            <div class="annotation-status-indicator" id="annotation-status" style="color: var(--light-color);">
-                    <span class="status-badge {{ 'labeled' if instance_has_annotations else 'unlabeled' }}">
-                        {{ 'Labeled' if instance_has_annotations else 'Not labeled' }}
-                    </span>
-            </div>
-
-            <!-- Progress counter -->
-            <div class="d-flex align-items-center" style="color: var(--light-color); margin-right: 10px">
-                <span>Annotated: <span class="fw-medium" id="progress-counter">{{finished_count}}/{{total_count}}</span></span>
-            </div>
-
-            <!-- Passed Attention Checks counter -->
-            <div class="d-flex align-items-center" style="color: var(--light-color); margin-right: 40px">
-                <span>Coins: <span class="fw-medium" id="ac-counter">{{totals_acs_passed}} <i class="fa-solid fa-coins"></i></span></span>
-            </div>
-
-        </div>
-
-        <!-- User info and logout (right aligned) -->
-        <div class="d-flex align-items-center" style="padding: 0.5rem 1rem;">
-            <div class="me-3" style="color: var(--light-color)">
-                <span>Logged in as <span class="fw-medium">{{username}}</span></span>
-            </div>
-            <div class="border-start" style="padding-left: 20px; height: 24px; display: flex; align-items: center;">
-                <form action="/logout" method="POST">
-                    <button type="submit" class="button">
-                        Logout
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</nav>
+    </nav>
 
 <div class="container-fluid">
     <div id="content" style="display: flex;">
@@ -354,7 +349,7 @@
             </div>
         </div>
     </div>
-
+</div>
 
     <!-- Footer -->
     <hr style="color: var(--footer-border)">
