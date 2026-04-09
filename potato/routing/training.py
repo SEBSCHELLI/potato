@@ -47,7 +47,7 @@ training_bp = Blueprint("training", __name__, url_prefix="/training")
 @training_bp.route("/", methods=["GET"])
 @phase_required(UserPhase.TRAINING)
 def training_page():
-    # logger.debug("=== training_page STARTS ===")
+    logger.debug("=== training_page STARTS ===")
 
     username = session['username']
     session_id = session["session_id"]
