@@ -33,7 +33,7 @@ def phase_required(required_phase):
             if current_phase != required_phase:
                 # Optionally flash a message
                 logger.debug(f'User {username} (Session ID {session_id}) not in {required_phase} phase, redirecting')
-                redirect(url_for("home"))
+                return redirect(url_for("home"))
 
             return f(*args, **kwargs)
         return wrapped
@@ -47,7 +47,7 @@ training_bp = Blueprint("training", __name__, url_prefix="/training")
 @training_bp.route("/", methods=["GET"])
 @phase_required(UserPhase.TRAINING)
 def training_page():
-    logger.debug("=== training_page STARTS ===")
+    #logger.debug("=== training_page STARTS ===")
 
     username = session['username']
     session_id = session["session_id"]
@@ -59,7 +59,6 @@ def training_page():
     if not training_state:
         training_config = config.get('training', {})
         passing_criteria = training_config.get('passing_criteria', {})
-        logger.debug(f"passing_criteria: {passing_criteria}")
         allow_retry = training_config.get('allow_retry', False)
 
         max_mistakes = passing_criteria.get('max_mistakes', -1)
@@ -239,7 +238,7 @@ def submit_answer():
         if training_state.should_fail_due_to_mistakes():
             failed_message = "You have exceeded the maximum number of allowed mistakes and cannot continue."
             training_state.set_failed(True, failed_message)
-            logger.info(f'User {username} (Session ID {session_id}) - Training failed: exceeded max_mistakes ({training_state.max_mistakes}) on {instance_id}')
+            logger.info(f'User {username} (Session ID {session_id}) - Training failed: exceeded max_mistakes ({training_state.max_mistakes})')
 
             # Move to DONE phase (kick out)
             user_state.completed_phase_and_pages.append(user_state.get_current_phase_and_page())

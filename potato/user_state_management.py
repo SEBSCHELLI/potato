@@ -1427,7 +1427,6 @@ class InMemoryUserState(UserState):
         return self.training_state
 
     def init_training_state(self, max_mistakes: int = -1, max_mistakes_per_question: int = -1, allow_retry: bool = False) -> None:
-        logger.debug(f"init_training_state max_mistakes:{max_mistakes} max_mistakes_per_question:{max_mistakes_per_question} allow_retry:{allow_retry}")
         self.training_state = TrainingState(max_mistakes=max_mistakes, max_mistakes_per_question=max_mistakes_per_question, allow_retry=allow_retry)
 
     # Methods for admin
