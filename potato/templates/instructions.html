@@ -220,19 +220,26 @@
     <div>
         <h2 style="margin-left: 2rem; color: var(--secondary-color); font-weight: bold;">Annotation Protocol</h2>
         <div class="text-box">
-            <p>The annotation framework will ... </p>
+            <p>This annotation framework guides you to consistently identify negative citations in social media posts.
+                Spend up to 5 minutes reading the definitions, criteria and examples.
+                You should aim to understand how to identify negative citations before moving on the training phase.</p>
         </div>
 
         <h4 style="margin-left: 2rem; color: var(--secondary-color); font-weight: bold;">Definition</h4>
         <div class="text-box">
-            <p>In this study we define negative citations in the following way:</p>
+            <p>In this annotation project, we define negative citations in the following way:</p>
             <p style="margin-left: 1rem; color: var(--secondary-color); font-weight: bold; font-size: 18px;">A negative citation occurs when a social media post encourages readers to partially or
                 fully question, doubt, or dismiss the conclusions of the referenced study.</p>
         </div>
 
         <h4 style="margin-top: 2rem; margin-left: 2rem; color: var(--secondary-color); font-weight: bold;">Criteria for negative citations:</h4>
-
-
+        <div class="text-box">
+            <p>
+                If you are unsure whether a post meets any of the criteria, ask yourself:
+                "Does this post encourage readers to partially or fully question, doubt, or dismiss the conclusions of the referenced study?"
+                If yes, label it as a negative citation.
+            </p>
+        </div>
         <div style="margin-left: 0rem;">
             <div class="criteria-box">
                 <p class="criteria-headline">Post criticizes the study’s data, methodology, or interpretations, etc., and/or proposes better study design choices</p>
@@ -287,7 +294,7 @@
                 <div style="display: flex;gap: 0rem;">
                     <div class="example-container">
                         <h6 class="criteria-text" style="margin-left: 0px;">
-                            Posts criticizes the study's authors (e.g., mentions conflicts of interest or author’s questionable track of record)
+                            Post criticizes the study's authors (e.g., mentions conflicts of interest or author’s questionable track of record)
                         </h6>
                         <div class="training-instance">
                             <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Post:</h5>
@@ -334,7 +341,7 @@
                 <div style="display: flex;gap: 0rem;">
                     <div class="example-container">
                         <h6 class="criteria-text" style="margin-left: 0px;">
-                            Posts provides counter-evidence (e.g., studies with contrary findings, anecdotal counter-evidence)
+                            Post provides counter-evidence (e.g., studies with contrary findings, anecdotal counter-evidence)
                         </h6>
                         <div class="training-instance">
                             <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Post:</h5>
@@ -381,7 +388,7 @@
                 <div style="display: flex;gap: 0rem;">
                     <div class="example-container" style="flex: 0 0 calc(50% - 4rem);">
                         <h6 class="criteria-text" style="margin-left: 0px;">
-                            Posts criticizes the study's generalizability (e.g., findings in basic research might not apply to real-world scenarios or scenarios readers care about)
+                            Post criticizes the study's generalizability (e.g., findings in basic research might not apply to real-world scenarios or scenarios readers care about)
                         </h6>
                         <div class="training-instance">
                             <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Post:</h5>
@@ -403,7 +410,7 @@
             </div>
         </div>
     </div>
-    
+
     <div style="display: flex; justify-content: flex-end;">
         <form action="/continue_instructions" method="POST">
             <button type="submit" class="button_on_bg" id="finish-instructions-btn" style="height: 50px; width: 300px; margin-right: 2rem;">
