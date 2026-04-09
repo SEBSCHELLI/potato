@@ -280,7 +280,7 @@ def track_annotation_change():
 
                     # Check if this is an attention check
                     attention_result = qc_manager.validate_attention_response(
-                        username, session_id, instance_id, annotation, response_time
+                        username, session_id, instance_id, annotation, response_time, client_timestamp
                     )
                     user_state.attention_check_state.add_attention_check_result(attention_result)
                     user_state.attention_check_state.n_items_since_last_check = 0 # reset counter

@@ -246,7 +246,8 @@ class QualityControlManager:
             session_id: str,
             item_id: str,
             response: Dict[str, Any],
-            response_time_seconds: Optional[float] = None
+            response_time_seconds: Optional[float] = None,
+            timestamp = None
     ) -> Optional[Dict[str, Any]]:
         """
         Validate a response to an attention check.
@@ -284,7 +285,8 @@ class QualityControlManager:
             passed=passed,
             expected=expected,
             actual=response,
-            response_time_seconds=response_time_seconds
+            response_time_seconds=response_time_seconds,
+            timestamp=timestamp
         )
 
         with self._lock:
