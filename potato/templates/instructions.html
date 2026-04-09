@@ -221,8 +221,9 @@
         <h2 style="margin-left: 2rem; color: var(--secondary-color); font-weight: bold;">Annotation Protocol</h2>
         <div class="text-box">
             <p>This annotation framework guides you to consistently identify negative citations in social media posts.
+                Following this framework ensures your annotations are accurate and comparable with those from others.
                 Spend up to 5 minutes reading the definitions, criteria and examples.
-                You should aim to understand how to identify negative citations before moving on the training phase.</p>
+                You should understand how to identify negative citations before moving on the training phase.</p>
         </div>
 
         <h4 style="margin-left: 2rem; color: var(--secondary-color); font-weight: bold;">What are negative citations?</h4>
@@ -413,8 +414,21 @@
             <p>
                 The following image shows a flowchart on how to arrive at a decision:
             </p>
-        <img class="task-image" width="100%" height="auto" style="margin: 0px; padding: 0px; max-width: 600px" src="static/img/annotation_flow_2.png" alt="annotation_flow_2.png">
-        </div>
+        <img class="task-image" width="100%" height="auto" style="padding: 0px;max-width: 70%;display: block;margin: auto;" src="static/img/annotation_flow_2.png" alt="annotation_flow_2.png">
+    </div>
+
+    <h4 style="margin-left: 2rem; color: var(--secondary-color); font-weight: bold;">Continue</h4>
+    <div class="text-box">
+        <p>
+            You are now ready to begin the Training Phase, where you will practice identifying negative citations.
+            During this phase, you will annotate {{n_train_items}} posts.
+            After each annotation, you will receive immediate feedback to help you improve.
+        </p>
+        <p>
+            To successfully complete the Training Phase, you must correctly annotate {{min_correct}} examples.
+            If this threshold is not met, your participation will end, and you will be compensated accordingly.
+        </p>
+    </div>
 
     <div style="display: flex; justify-content: flex-end;">
         <form action="/continue_instructions" method="POST">
