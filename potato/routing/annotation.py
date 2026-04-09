@@ -240,7 +240,45 @@ def navigate_to_next():
 
     logger.debug(f"data: {annotation_data}")
 
-    return redirect(url_for('annotation.annotation_page'))
+    action = annotation_data.get("btn")
+    instance_id = annotation_data.get('instance_id')
+    if action != "nxt-btn" or not instance_id:
+        return jsonify({"error": "Need to send btn='nxt-btn' and instance_id"}), 404
+
+    user_state = get_user_state_manager().get_user_state(username, session_id)
+    if not user_state:
+        return jsonify({"error": "User state not found"}), 404
+
+    current_instance = user_state.get_current_instance()
+    if not current_instance:
+        logger.error(f'User {username} (Session ID {session_id}) - No annotation instance available')
+        return render_template("error.html", message="No annotation instance available")
+
+    current_instance_id = current_instance.get_id()
+    if instance_id != current_instance_id:
+        logger.error(f'User {username} (Session ID {session_id}) - Instance ID provided by browser and ID in user state are not equal.')
+        return render_template("error.html", message="Instance ID provided by browser and ID in user state are not equal.")
+
+    instance_has_annotations = user_state.has_annotated(instance_id)
+    if not instance_has_annotations:
+        logger.error(f'User {username} (Session ID {session_id}) - No annotation, cannot navigate to next instance')
+        return jsonify({"status": "error", "message": "Could not navigate to next. Annotate first"}), 400
+
+    if str(instance_id).startswith("GOLD"):
+        logger.debug(f"User {username} (Session ID {session_id}) - user_state.instance_id_ordering {user_state.instance_id_ordering}")
+        user_state.instance_id_ordering = [iid for iid in user_state.instance_id_ordering if not str(iid).startswith("GOLD")]
+        logger.debug(f"User {username} (Session ID {session_id}) - user_state.instance_id_ordering {user_state.instance_id_ordering}")
+        user_state.current_instance_index = user_state.current_instance_index - 1
+        logger.debug(f"User {username} (Session ID {session_id}) - user_state.current_instance_index {user_state.current_instance_index}")
+
+    success = move_to_next_instance(username, session_id)
+
+    if success == "finished":
+        return redirect(url_for('annotation.annotation_page'))
+    elif success:
+        return redirect(url_for('annotation.annotation_page'))
+    else:
+        return render_template("error.html", message="Could not navigate to next item")
 
 """@annotation_bp.route("/navigate_to_prev", methods=["POST"])
 @phase_required(UserPhase.ANNOTATION)
