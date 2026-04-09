@@ -167,9 +167,9 @@ def annotation_page():
 
     return rendered_html
 
-@annotation_bp.route("/navigate_to_next", methods=["POST"])
+@annotation_bp.route("/old_navigate_to_next", methods=["POST"])
 @phase_required(UserPhase.ANNOTATION)
-def navigate_to_next():
+def old_navigate_to_next():
     #logger.debug("=== navigate_to_next STARTS ===")
     username = session.get("username")
     session_id = session.get('session_id')
@@ -222,6 +222,24 @@ def navigate_to_next():
         return jsonify({"status": "success"}), 200
     else:
         return jsonify({"status": "error", "message": "Could not navigate to next"}), 400
+
+@annotation_bp.route("/navigate_to_next", methods=["POST"])
+@phase_required(UserPhase.ANNOTATION)
+def navigate_to_next():
+    #logger.debug("=== navigate_to_next STARTS ===")
+    username = session.get("username")
+    session_id = session.get('session_id')
+    if not username or not session_id:
+        return jsonify({"error": "Not authenticated"}), 401
+
+    data = request.get_json()
+
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    logger.debug(f"data: {data}")
+
+    return redirect(url_for('annotation.annotation_page'))
 
 """@annotation_bp.route("/navigate_to_prev", methods=["POST"])
 @phase_required(UserPhase.ANNOTATION)
