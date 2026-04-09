@@ -234,9 +234,6 @@ def navigate_to_next():
 
     data = request.get_json()
 
-    if not data:
-        return jsonify({"error": "No data provided"}), 400
-
     logger.debug(f"data: {data}")
 
     return redirect(url_for('annotation.annotation_page'))
