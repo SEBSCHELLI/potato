@@ -195,7 +195,6 @@
 
 <div class="container-fluid">
     <!-- Hidden input for instance_id -->
-    <input type="hidden" id="instance_id" name="instance_id" value="{{instance_id}}">
     <div id="content" style="display: flex;">
         <div id="left">
             <h2 style="margin-left: 2rem; color: var(--secondary-color); font-weight: bold;">Annotation Protocol</h2>
@@ -307,46 +306,41 @@
                 </div>
             </div>
 
-            <div id="task_layout"
-                 class="shadcn-card mb-2 text-annotation"
-                 style="margin-left: 2rem; margin-right: 2rem; min-height: 0px;">
-                <div class="shadcn-card-content" style="background-color: #f8f9fa; padding: 1.5rem;">
-                    <!-- Main content area -->
-                    <div id="main-content">
-                        <!-- Status messages -->
-                        <div id="status" class="status" style="display: none;"></div>
+            <form method="POST" id="annotation-form" action="/annotation/navigate_to_next">
+                <input type="hidden" id="instance_id" name="instance_id" value="{{instance_id}}">
+                <div id="task_layout"
+                     class="shadcn-card mb-2 text-annotation"
+                     style="margin-left: 2rem; margin-right: 2rem; min-height: 0px;">
+                    <div class="shadcn-card-content" style="background-color: #f8f9fa; padding: 1.5rem;">
+                        <!-- Main content area -->
+                        <div id="main-content">
+                            <!-- Status messages -->
+                            <div id="status" class="status" style="display: none;"></div>
 
-                        <!-- Annotation forms -->
-                        <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Annotation:</h5>
-                        <div id="annotation-forms">
-                            {{ TASK_LAYOUT }}
+                            <!-- Annotation forms -->
+                            <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Annotation:</h5>
+                            <div id="annotation-forms">
+                                {{ TASK_LAYOUT }}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Navigation buttons -->
-            <div class="my-2" style="margin-left: 2rem; margin-right: 2rem;">
-                <div class="d-flex justify-content-end align-items-center">
-                    <!-- Previous button -->
-                    <!--<div>
-                        <button class="shadcn-button shadcn-button-outline me-2 prev-button" id="prev-btn" onclick="navigateToPrevious()">
-                            <i class="fas fa-arrow-left me-2"></i>Previous
-                        </button>
-                    </div>-->
-
-                    <!-- Next button -->
-                    <div>
-                        <button class="shadcn-button shadcn-button-primary next-button" id="next-btn" onclick="navigateToNext()">
-                            {% if finished_count == total_count-1 %}
-                                Finish
-                            {% else %}
-                                Next
-                            {% endif %}<i class="fas fa-arrow-right ms-2"></i>
-                        </button>
+                <!-- Navigation buttons -->
+                <div class="my-2" style="margin-left: 2rem; margin-right: 2rem;">
+                    <div class="d-flex justify-content-end align-items-center">
+                        <div>
+                            <button class="shadcn-button shadcn-button-primary next-button" id="next-btn" type="submit">
+                                {% if finished_count == total_count-1 %}
+                                    Finish
+                                {% else %}
+                                    Next
+                                {% endif %}<i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
