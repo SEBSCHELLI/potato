@@ -149,6 +149,16 @@ def done():
         # If not in the done phase, redirect
         return home()
 
+    training_state = user_state.get_training_state()
+    if training_state:
+        if training_state.is_failed():
+            return render_template("training_failed.html",
+                                   message=training_state.failed_message,
+                                   total_mistakes=training_state.get_total_mistakes(),
+                                   max_mistakes=training_state.max_mistakes,
+                                   annotation_task_name=config.get("annotation_task_name", "Annotation Platform"),
+                                   username=username)
+
     # Get completion code from config
     completion_code = config.get("completion_code", "")
 

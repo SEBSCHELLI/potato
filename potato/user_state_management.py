@@ -120,6 +120,7 @@ class TrainingState:
 
     passed: bool
     failed: bool
+    failed_message: str
 
     show_feedback: bool  # Whether to show feedback on the current question
     feedback_message: str  # The feedback message to display
@@ -146,6 +147,7 @@ class TrainingState:
 
         self.passed = False
         self.failed = False
+        self.failed_message = ""
 
         self.show_feedback = False
         self.feedback_message = ""
@@ -265,10 +267,11 @@ class TrainingState:
         """Set the passed status."""
         self.passed = passed
 
-    def set_failed(self, failed: bool) -> None:
+    def set_failed(self, failed: bool, failed_message: str) -> None:
         # logger.debug("set_failed")
         """Set the failed status."""
         self.failed = failed
+        self.failed_message = failed_message
 
     def get_current_training_instance_id(self) -> int:
         # logger.debug("get_current_training_instance_id")

@@ -75,13 +75,14 @@ def training_page():
 
     # Check if user has already failed due to too many mistakes
     if training_state.is_failed() or training_state.should_fail_due_to_mistakes():
-        training_state.set_failed(True)
-        logger.info(f'User {username} (Session ID {session_id}) has failed training due to too many mistakes')
+        failed_message = "You have exceeded the maximum number of allowed mistakes and cannot continue."
+        training_state.set_failed(True, failed_message)
+        logger.info(f'User {username} (Session ID {session_id}) - Training failed: total_mistakes {training_state.total_mistakes} exceeded max_mistakes ({training_state.max_mistakes})')
 
         # Move to DONE phase (kick out)
         user_state.set_current_phase_and_page(UserPhase.DONE, "done")
         return render_template("training_failed.html",
-                               message="You have exceeded the maximum number of allowed mistakes and cannot continue.",
+                               message=training_state.failed_message,
                                total_mistakes=training_state.get_total_mistakes(),
                                max_mistakes=training_state.max_mistakes,
                                annotation_task_name=config.get("annotation_task_name", "Annotation Platform"),
@@ -161,7 +162,7 @@ def submit_answer():
 
     current_instance = training_state.get_current_training_instance()
     if not current_instance:
-        logger.error(f'User {username} (Session ID {session_id}): No training instance available')
+        logger.error(f'User {username} (Session ID {session_id}) - No training instance available')
         return render_template("error.html", message="No training instance available")
 
     instance_id = current_instance.get_id()
@@ -169,11 +170,9 @@ def submit_answer():
     # Get correct answers for this training instance
     correct_answers = current_instance.get_data().get('correct_answers', None)
     if not correct_answers:
-        logger.error(f'User {username} (Session ID {session_id}): No correct answers found for training instance {instance_id}')
+        logger.error(f'User {username} (Session ID {session_id}) - No correct answers found for training instance {instance_id}')
         return render_template("error.html", message="Training data error")
 
-    #logger.debug(f"annotation_data: {annotation_data}")
-    #logger.debug(f"correct_answers: {correct_answers}")
     is_correct = check_training_answer(annotation_data, correct_answers)
 
     training_state.commit_annotation(instance_id, is_correct)
@@ -192,12 +191,10 @@ def submit_answer():
         if training_state.get_correct_answer_count() >= min_correct:
             # User has passed training
             training_state.set_passed(True)
-
-            logger.info(f'User {username} (Session ID {session_id}) passed training with {training_state.get_correct_answer_count()} correct answers')
+            logger.info(f'User {username} (Session ID {session_id}) - Training passed: {training_state.get_correct_answer_count()} correct answers')
 
             user_state = get_user_state_manager().get_user_state(username, session_id)
             get_user_state_manager().save_user_state(user_state)
-            #logger.debug(f"User {username} (Session ID {session_id}) state saved")
 
             return redirect(url_for('training.training_summary'))
 
@@ -208,7 +205,6 @@ def submit_answer():
 
             user_state = get_user_state_manager().get_user_state(username, session_id)
             get_user_state_manager().save_user_state(user_state)
-            #logger.debug(f"User {username} (Session ID {session_id}) state saved")
 
             return redirect(url_for('training.training_page'))
 
@@ -217,25 +213,26 @@ def submit_answer():
             require_all = passing_criteria.get('require_all_correct', False)
             total_questions = len(training_state.get_training_instance_ids())
 
+            # Check if user didn't get all correct
             if require_all and training_state.get_correct_answer_count() < total_questions:
-                # User didn't get all correct
-                training_state.set_failed(True)
-                user_state.set_current_phase_and_page(UserPhase.DONE, "done")
+                failed_message = "You did not answer all questions correctly and cannot continue."
+                training_state.set_failed(True, failed_message)
+                logger.info(f'User {username} (Session ID {session_id}) - Training failed: Not all questions were answered correctly')
 
+                # Move to DONE phase (kick out)
+                user_state.set_current_phase_and_page(UserPhase.DONE, "done")
                 user_state = get_user_state_manager().get_user_state(username, session_id)
                 get_user_state_manager().save_user_state(user_state)
-                #logger.debug(f"User {username} (Session ID {session_id}) state saved")
 
-                return redirect(url_for('training.training_summary'))
+                return redirect(url_for('done'))
 
             else:
                 # Training completed successfully
                 training_state.set_passed(True)
-                logger.info(f'User {username} (Session ID {session_id}) completed training successfully')
+                logger.info(f'User {username} (Session ID {session_id}) - Training passed: {training_state.get_correct_answer_count()} correct answers')
 
                 user_state = get_user_state_manager().get_user_state(username, session_id)
                 get_user_state_manager().save_user_state(user_state)
-                #logger.debug(f"User {username} (Session ID {session_id}) state saved")
 
                 return redirect(url_for('training.training_summary'))
 
@@ -244,27 +241,29 @@ def submit_answer():
 
         # Check if user should fail due to too many mistakes
         if training_state.should_fail_due_to_mistakes():
-            training_state.set_failed(True)
-            logger.info(f'User {username} (Session ID {session_id}) failed training - exceeded max_mistakes ({training_state.max_mistakes})')
-            user_state.set_current_phase_and_page(UserPhase.DONE, "done")
+            failed_message = "You have exceeded the maximum number of allowed mistakes and cannot continue."
+            training_state.set_failed(True, failed_message)
+            logger.info(f'User {username} (Session ID {session_id}) - Training failed: exceeded max_mistakes ({training_state.max_mistakes}) on {instance_id}')
 
+            # Move to DONE phase (kick out)
+            user_state.set_current_phase_and_page(UserPhase.DONE, "done")
             user_state = get_user_state_manager().get_user_state(username, session_id)
             get_user_state_manager().save_user_state(user_state)
-            #logger.debug(f"User {username} (Session ID {session_id}) state saved")
 
-            return redirect(url_for('training.training_summary'))
+            return redirect(url_for('done'))
 
         # Check if user should fail due to too many mistakes on this question
         if training_state.should_fail_training_instance_due_to_mistakes(instance_id):
-            training_state.set_failed(True)
-            logger.info(f'User {username} (Session ID {session_id}) failed training - exceeded max_mistakes_per_question on {instance_id}')
-            user_state.set_current_phase_and_page(UserPhase.DONE, "done")
+            failed_message = "You have exceeded the maximum number of allowed mistakes per question and cannot continue."
+            training_state.set_failed(True, failed_message)
+            logger.info(f'User {username} (Session ID {session_id}) - Training failed: exceeded max_mistakes_per_question ({training_state.max_mistakes_per_question}) on {instance_id}')
 
+            # Move to DONE phase (kick out)
+            user_state.set_current_phase_and_page(UserPhase.DONE, "done")
             user_state = get_user_state_manager().get_user_state(username, session_id)
             get_user_state_manager().save_user_state(user_state)
-            #logger.debug(f"User {username} (Session ID {session_id}) state saved")
 
-            return redirect(url_for('training.training_summary'))
+            return redirect(url_for('done'))
 
         # Get explanation for incorrect answer
         explanation = current_instance.get_data().get('explanation', "???")
@@ -276,7 +275,6 @@ def submit_answer():
 
             user_state = get_user_state_manager().get_user_state(username, session_id)
             get_user_state_manager().save_user_state(user_state)
-            #logger.debug(f"User {username} (Session ID {session_id}) state saved")
 
             return redirect(url_for('training.training_page'))
 
