@@ -232,9 +232,13 @@ def navigate_to_next():
     if not username or not session_id:
         return jsonify({"error": "Not authenticated"}), 401
 
-    data = request.get_json()
+    # Process the annotation
+    if request.is_json:
+        annotation_data = request.get_json()
+    else:
+        annotation_data = dict(request.form)
 
-    logger.debug(f"data: {data}")
+    logger.debug(f"data: {annotation_data}")
 
     return redirect(url_for('annotation.annotation_page'))
 
