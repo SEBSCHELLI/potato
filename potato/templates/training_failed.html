@@ -16,6 +16,17 @@
 
     <!-- Training Failed specific styles -->
     <style>
+        body {
+            background-color: var(--primary-bg-color);
+        }
+
+        .navbar {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+        }
+
         .failed-header {
             background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
             color: white;
@@ -25,9 +36,6 @@
         }
 
         .failed-content {
-            background-color: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 0.5rem;
             padding: 2rem;
             margin-bottom: 1.5rem;
             text-align: center;
@@ -79,12 +87,30 @@
             padding: 1rem;
             margin-top: 1.5rem;
         }
+
+        .button {
+            background-color: var(--light-color);
+            color: var(--secondary-color);
+            height: auto;
+            padding: 0.25rem 0.75rem;
+            font-size: 1rem;
+            min-width: 60px;
+            text-align: center;
+            border: none;
+            border-radius: 0.2rem;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background-color: var(--interact-color);
+            color: white;
+        }
     </style>
 </head>
 
 <body>
     <!-- Header navigation bar -->
-    <nav class="navbar sticky-top shadow-sm" style="background-color: var(--primary-color); padding: 0.75rem 1rem; margin-bottom: 1.5rem;">
+    <nav class="navbar sticky-top shadow-sm">
         <div class="container-fluid d-flex align-items-center">
             <!-- Task name (left aligned) -->
             <div class="navbar-brand">
@@ -99,8 +125,7 @@
             </div>
 
             <!-- User info and logout (right aligned) -->
-            <div class="d-flex align-items-center"
-                 style="background-color: rgba(255, 255, 255, 0.15); padding: 0.5rem 1rem; border-radius: var(--radius);">
+            <div class="d-flex align-items-center" style="padding: 0.5rem 1rem;">
                 <div class="me-3" style="color: var(--light-color)">
                     <span>Logged in as <span class="fw-medium">{{username}}</span></span>
                 </div>
@@ -205,14 +230,11 @@
         </div>
 
         <!-- Footer -->
-        <hr style="color: var(--border)">
-        <footer class="py-2 text-center" style="font-size: 0.75rem; color: var(--muted-foreground)">
-            Copyright &copy; 2025
-            <a href="https://blablablab.si.umich.edu/" style="color: var(--primary); text-decoration: none">Blablablab</a>
+        <hr style="color: var(--footer-border)">
+        <footer class="py-2 text-center" style="font-size: 0.75rem">
+            <a href="https://www.gesis.org/en/institute/about-us/staff/person/Sebastian.Schellhammer/" style="color: var(--primary); text-decoration: none">Contact</a>
             <span class="mx-2">|</span>
-            <a href="https://github.com/davidjurgens/potato" style="color: var(--primary); text-decoration: none">Chat with us on GitHub</a>
-            <span class="mx-2">|</span>
-            <a href="https://github.com/davidjurgens/potato#cite-us" style="color: var(--primary); text-decoration: none">Cite Us</a>
+            <a href="https://github.com/davidjurgens/potato" style="color: var(--primary); text-decoration: none">Powered by POTATO</a>
         </footer>
     </div>
 
