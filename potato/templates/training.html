@@ -268,7 +268,7 @@
     <script type="text/javascript">
         window.config = {
             annotation_task_name: "{{ annotation_task_name }}",
-            debug: false,
+            debug: {{ 'true' if debug_mode else 'false' }},
             api_key: "test_api_key",
             username: "{{ username }}"
         };
