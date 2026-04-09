@@ -62,7 +62,11 @@ def instructions_page():
                            ui_debug=config.get("ui_debug", False),
                            server_debug=config.get("server_debug", False),
                            debug_phase=config.get("debug_phase"),
-                           ui_config=config.get("ui_config", {}))
+                           ui_config=config.get("ui_config", {}),
+                           min_correct="?????",
+                           n_train_items="?????",
+                           n_items_to_annotate="????",
+                           coin_to_money="???")
 
 # POST: User clicks on continue button
 @instructions_bp.route("/continue_instructions", methods=["POST"])
