@@ -163,7 +163,7 @@ def done():
                 # Build the Prolific completion URL (only if using Prolific-style URL argument)
                 url_argument = login_config.get('url_argument', 'PROLIFIC_PID')
                 if url_argument in ['PROLIFIC_PID', 'prolific_pid']:
-                    prolific_redirect_url = f"https://app.prolific.co/submissions/complete?cc={training_failed_completion_code}"
+                    prolific_redirect_url = f"https://app.prolific.com/submissions/complete?cc={training_failed_completion_code}"
 
 
             return render_template("training_failed.html",
@@ -188,7 +188,7 @@ def done():
         url_argument = login_config.get('url_argument', 'PROLIFIC_PID')
         if url_argument in ['PROLIFIC_PID', 'prolific_pid']:
             # Format: https://app.prolific.co/submissions/complete?cc=YOUR_CODE
-            prolific_redirect_url = f"https://app.prolific.co/submissions/complete?cc={completion_code}"
+            prolific_redirect_url = f"https://app.prolific.com/submissions/complete?cc={completion_code}"
 
     # Get MTurk submission parameters from session
     mturk_submit_url = session.get('mturk_submit_to')
