@@ -33,7 +33,7 @@ def phase_required(required_phase):
             if current_phase != required_phase:
                 # Optionally flash a message
                 logger.debug(f'User {username} (Session ID {session_id}) not in {required_phase} phase, redirecting')
-                logger.debug("TODO: Implement redirect to a /home")
+                redirect(url_for("home"))
 
             return f(*args, **kwargs)
         return wrapped
@@ -74,14 +74,8 @@ def training_page():
         training_state.set_training_instance_ids([item.get_id() for item in training_instances])
 
     # Check if user has already failed due to too many mistakes
-    if training_state.is_failed() or training_state.should_fail_due_to_mistakes():
-        failed_message = "You have exceeded the maximum number of allowed mistakes and cannot continue."
-        training_state.set_failed(True, failed_message)
-        logger.info(f'User {username} (Session ID {session_id}) - Training failed: total_mistakes {training_state.total_mistakes} exceeded max_mistakes ({training_state.max_mistakes})')
-
-        # Move to DONE phase (kick out)
-        user_state.completed_phase_and_pages.append(user_state.get_current_phase_and_page())
-        user_state.set_current_phase_and_page(UserPhase.DONE, "done")
+    if training_state.is_failed():
+        logger.warning(f'User {username} (Session ID {session_id}) - Training failed')
         return render_template("training_failed.html",
                                message=training_state.failed_message,
                                total_mistakes=training_state.get_total_mistakes(),
@@ -398,7 +392,7 @@ def training_summary():
                                username=username)
     else:
         return render_template("training_failed.html",
-                               message="You have exceeded the maximum number of allowed mistakes and cannot continue.",
+                               message=training_state.failed_message,
                                total_mistakes=training_state.get_total_mistakes(),
                                max_mistakes=training_state.max_mistakes,
                                annotation_task_name=config.get("annotation_task_name", "Annotation Platform"),
