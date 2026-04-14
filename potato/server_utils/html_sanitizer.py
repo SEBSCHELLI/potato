@@ -322,9 +322,13 @@ def md(text):
             "sane_lists"    # better list handling
         ]
     )
-    print(text)
-    print(Markup(html))
+    #print(text)
+    #print(Markup(html))
     return Markup(html)
+
+text = """+0.2±0.11 Wm −2 averaged over the global ocean. The amount of radiative forcing could lead to a doubling (or more) of the warming rate in the 2020 s compared with the rate since 1980 with strong spatiotemporal heterogeneity. The warming effect is consistent with the recent observed strong warming in 2023 and expected to make the 2020 s anomalously warm. The forcing is equivalent in magnitude to 80% of the measured increase in planetary heat uptake since 2020. The radiative forcing also has strong hemispheric contrast, which has important implications for precipitation pattern changes. Our result suggests marine cloud brightening may be a viable geoengineering method in temporarily cooling the climate that has its unique challenges due to inherent spatiotemporal heterogeneity." style="position: relative; z-index: 1; pointer-events: auto;">Human activities affect the Earth’s climate through modifying the composition of the atmosphere, which then creates radiative forcing that drives climate change. The warming effect of anthropogenic greenhouse gases has been partially balanced by the cooling effect of anthropogenic aerosols. In 2020, fuel regulations abruptly reduced the emission of sulfur dioxide from international shipping by about 80% and created an inadvertent geoengineering termination shock with global impact. Here we estimate the regulation leads to a radiative forcing of $$+0.2\pm 0.11$$ +0.2±0.11 Wm −2 averaged over the global ocean. The amount of radiative forcing could lead to a doubling (or more) of the warming rate in the 2020 s compared with the rate since 1980 with strong spatiotemporal heterogeneity. The warming effect is consistent with the recent observed strong warming in 2023 and expected to make the 2020 s anomalously warm. The forcing is equivalent in magnitude to 80% of the measured increase in planetary heat uptake since 2020. The radiative forcing also has strong hemispheric contrast, which has important implications for precipitation pattern changes. Our result suggests marine cloud brightening may be a viable geoengineering method in temporarily cooling the climate that has its unique challenges due to inherent spatiotemporal heterogeneity."""
+
+md(text)
 
 #a = md(text)
 
