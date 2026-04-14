@@ -97,6 +97,25 @@ def shutdown():
     return jsonify({'status': 'Server shutting down...'})
 
 
+@admin_bp.route("/delete_user_session", methods=["GET"])
+@is_admin()
+def delete_user_session():
+    """
+    Deletes a user session based on query parameters.
+
+    Query Parameters:
+        userid (str): The ID of the user.
+        sessionid (str): The ID of the session to delete.
+
+    Returns:
+        Response: Placeholder for the HTTP response.
+    """
+    userid = request.args.get("userid")
+    sessionid = request.args.get("sessionid")
+
+    if userid and sessionid:
+
+
 def get_admin_api_key():
     # Check config first
     configured_key = config.get("admin_api_key")

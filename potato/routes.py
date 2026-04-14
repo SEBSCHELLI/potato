@@ -81,48 +81,6 @@ def home():
     return render_template("error.html", message="Invalid application state")
 
 
-
-@app.route("/api/current_instance", methods=["GET"])
-def get_current_instance():
-    """Get the current instance information for the current user."""
-    return jsonify({"error": "error"}), 500
-    """
-    logger.debug(f"=== GET_CURRENT_INSTANCE START ===")
-
-    if 'username' not in session:
-        logger.warning("Get current instance without active session")
-        return jsonify({"error": "No active session"}), 401
-
-    username = session['username']
-    session_id = session['session_id']
-    logger.debug(f"Username: {username}")
-    
-    try:
-        usm = get_user_state_manager()
-        user_state = usm.get_user_state(username, session_id)
-        if not user_state:
-            logger.error(f"User state not found for user: {username}")
-            return jsonify({"error": "User state not found"}), 404
-
-        current_instance = user_state.get_current_instance()
-        if not current_instance:
-            logger.error(f"No current instance for user: {username}")
-            return jsonify({"error": "No current instance"}), 404
-
-        instance_id = current_instance.get_id()
-        logger.debug(f"Current instance ID: {instance_id}")
-
-        return jsonify({
-            "instance_id": instance_id,
-            "current_index": user_state.get_current_instance_index(),
-            "total_instances": len(user_state.instance_id_ordering)
-        })
-
-    except Exception as e:
-        logger.error(f"Error getting current instance: {e}")
-        return jsonify({"error": str(e)}), 500"""
-
-
 @app.route("/done", methods=["GET", "POST"])
 def done():
     """

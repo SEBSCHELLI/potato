@@ -122,6 +122,13 @@
             color: white;
         }
 
+        .blockquote {
+            border-inline-start: 5px solid lightgray;
+            margin: .5rem 0 1rem .5rem;
+            padding: .5rem 1rem;
+            background: 0 0;
+        }
+
     </style>
 
     <!-- jQuery -->
@@ -217,7 +224,7 @@
                 <!-- Note: sanitize_html filter allows safe span annotation HTML while blocking XSS -->
                 <!-- data-original-text uses plain text (no span HTML) for correct position calculations -->
                 <!-- DOM content uses rendered HTML with span tags for visual display -->
-                <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">{{instance_text | safe}}</div>
+                <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">{{instance_text | markdown}}</div>
                 <!-- Span overlays layer for span annotation -->
             </div>
 

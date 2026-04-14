@@ -20,6 +20,7 @@ import html
 import logging
 from typing import Set, Dict, List, Tuple
 from markupsafe import Markup
+import markdown
 
 logger = logging.getLogger(__name__)
 
@@ -301,6 +302,28 @@ def escape_for_attribute(text: str) -> str:
         .replace('$', '&#36;')
     )
 
+#text = ">The replacement of red meat with equicaloric amounts of vegetables and fruit led to a net increase in modeled GHGEs\n\nUpsy daisy...don't tell the vegans\n\n&#x200B;\n\n>The data used in the current study did not account for protein quality or bioavailability measures for calcium and iron.\n\nI'd imagine that taking protein digestibility and bioavailability into account would impact grains and vegetables quite negatively in this analysis.\n\n&#x200B;\n\n>In conclusion, analyses of ND \\[nutrient density\\] and GHGEs for a large number of foods and beverages revealed that many foods with *low GHGEs also had relatively low nutritional values*. In particular, some of the *lowest GHGE values were observed not for processed fruit and vegetables but for sugar and sweets*. By contrast, higher GHGEs associated with meat and dairy products were linked to their higher ND.\n\nWant to 'save the enviroment' with your diet choices? Great, just eat junk food and forget about your health.\n\n&#x200B;"
+
+def md(text):
+    if not text:
+        return ""
+
+    # remove Reddit zero-width space hack
+    text = text.replace("&#x200B;", "")
+
+    # convert Markdown → HTML
+    html = markdown.markdown(
+        text,
+        extensions=[
+            "extra",        # tables, fenced code blocks, etc.
+            "nl2br",        # newline → <br>
+            "sane_lists"    # better list handling
+        ]
+    )
+
+    return Markup(html)
+
+#a = md(text)
 
 # Register as Jinja2 filter
 def register_jinja_filters(app):
@@ -315,5 +338,6 @@ def register_jinja_filters(app):
         app: Flask application instance
     """
     app.jinja_env.filters['sanitize_html'] = sanitize_html
+    app.jinja_env.filters['markdown'] = md
     app.jinja_env.filters['escape_attr'] = escape_for_attribute
     logger.info("Registered HTML sanitization Jinja2 filters")
