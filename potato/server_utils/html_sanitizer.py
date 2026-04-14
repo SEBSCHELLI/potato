@@ -343,4 +343,4 @@ def register_jinja_filters(app):
     app.jinja_env.filters['sanitize_html'] = sanitize_html
     app.jinja_env.filters['markdown'] = md
     app.jinja_env.filters['escape_attr'] = escape_for_attribute
-    logger.info("Registered HTML sanitization Jinja2 filters")
+    logger.info(f"Registered HTML sanitization Jinja2 filters: {app.jinja_env.filters}")
