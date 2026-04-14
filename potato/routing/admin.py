@@ -113,8 +113,6 @@ def delete_user_session():
     userid = request.args.get("userid")
     sessionid = request.args.get("sessionid")
 
-    if userid and sessionid:
-
 
 def get_admin_api_key():
     # Check config first
