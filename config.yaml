@@ -86,7 +86,7 @@ training:
   data_file: "data/twitter_training_data.json"
   annotation_schemes: ["stance"]
   passing_criteria:
-    min_correct: 6
+    min_correct: 10
     require_all_correct: true
     max_mistakes: 2
   allow_retry: true
