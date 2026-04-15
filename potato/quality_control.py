@@ -286,7 +286,7 @@ class QualityControlManager:
             expected=expected,
             actual=response,
             response_time_seconds=response_time_seconds,
-            timestamp=timestamp
+            timestamp=DateHandler.timestamp_to_datetime(timestamp)
         )
 
         with self._lock:
