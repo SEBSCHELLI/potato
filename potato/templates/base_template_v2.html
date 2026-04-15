@@ -286,8 +286,8 @@
                                 <!-- Note: sanitize_html filter allows safe span annotation HTML while blocking XSS -->
                                 <!-- data-original-text uses plain text (no span HTML) for correct position calculations -->
                                 <!-- DOM content uses rendered HTML with span tags for visual display -->
-                                <div id="text-content" data-original-text="{{instance_plain_text | sanitize_html}}" style="position: relative; z-index: 1; pointer-events: auto;">
-                                    {{instance_text | sanitize_html}}
+                                <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">
+                                    {{instance_text | markdown}}
                                 </div>
                                 <!-- Span overlays layer for span annotation -->
                                 <div id="span-overlays" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 2;">
@@ -297,13 +297,12 @@
 
                             <br>
                             <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Paper:</h5>
-                            <h6 data-original-text="{{paper_title | sanitize_html}}">Title: {{paper_title | sanitize_html}}</h6>
-                            <!--- <h6 style="display: inline;" data-original-text="Link:">Link:</h6> <a href={{paper_url}} id="publicationlink" target='_blank'>Link to publication</a>-->
+                            <h6>Title: {{paper_title | markdown}}</h6>
                             <h6 style="margin-top: 0.5rem;">Abstract:</h6>
                             <div id="instance-text" class="p-3 border rounded instance-text-container"
                                  style="background-color: var(--light-bg); min-height: 0px; position: relative;">
-                                <div id="text-content" data-original-text="{{paper_abstract | sanitize_html}}" style="position: relative; z-index: 1; pointer-events: auto;">
-                                    {{paper_abstract | sanitize_html}}
+                                <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">
+                                    {{paper_abstract | markdown}}
                                 </div>
 
                             </div>
