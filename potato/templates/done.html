@@ -81,7 +81,7 @@
             {% if completion_code %}
             <div class="mb-4">
                 <h5 class="mb-3">Your Completion Code:</h5>
-                <div class="completion-code-box" id="completion-code" onclick="copyCode()" title="Click to copy">
+                <div class="completion-code-box" id="completion-code" data-code="{{ completion_code }}" onclick="copyCode()" title="Click to copy">
                     {{ completion_code }}
                 </div>
                 <p class="copy-hint">
@@ -140,21 +140,33 @@
     </div>
 
     <script>
+        let copyTimeout = null;
+
         function copyCode() {
-            const code = document.getElementById('completion-code').innerText.trim();
-            navigator.clipboard.writeText(code).then(function() {
+            const codeBox = document.getElementById('completion-code');
+
+            // Always get the REAL code from data attribute
+            const realCode = codeBox.getAttribute('data-code');
+
+            navigator.clipboard.writeText(realCode).then(function() {
+
+                // Clear any existing timeout so repeated clicks reset timer
+                if (copyTimeout) {
+                    clearTimeout(copyTimeout);
+                }
+
                 // Show feedback
-                const codeBox = document.getElementById('completion-code');
-                const originalText = codeBox.innerText;
                 codeBox.innerHTML = '<i class="fas fa-check me-2"></i>Copied!';
                 codeBox.style.backgroundColor = '#d4edda';
                 codeBox.style.color = '#155724';
 
-                setTimeout(function() {
-                    codeBox.innerText = originalText;
+                // Restore original text after 3 seconds
+                copyTimeout = setTimeout(function() {
+                    codeBox.innerText = realCode;
                     codeBox.style.backgroundColor = '';
                     codeBox.style.color = '';
-                }, 2000);
+                }, 3000);
+
             }).catch(function(err) {
                 console.error('Failed to copy: ', err);
                 alert('Failed to copy code. Please select and copy manually.');
