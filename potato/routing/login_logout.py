@@ -38,7 +38,7 @@ def prolific_login():
 
     # Check if all Prolific URL parameters are present
     if not all(k in request.args for k in ("PROLIFIC_PID", "STUDY_ID", "SESSION_ID")):
-        logger.warning(f"Prolific parameters missing: {str(request.arg)}")
+        logger.warning(f"Prolific parameters missing: {str(request.args)}")
         return render_template("error.html", error_message="Prolific parameters missing.")
 
     # Get Prolific URL parameters

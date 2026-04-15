@@ -471,9 +471,9 @@ class ItemStateManager:
                 if not already_labeled:
                     unlabeled_items.append(iid)
 
-            self.logger.debug(f"User {user_state.user_id} (Session ID {iter_session_id}) - Number unlabeled items: {len(unlabeled_items)}")
+            self.logger.debug(f"User {user_state.user_id} (Session ID {user_state.session_id}) - Number unlabeled items: {len(unlabeled_items)}")
             if not unlabeled_items:
-                self.logger.info(f"User {user_state.user_id} (Session ID {iter_session_id}) - No unlabeled items available")
+                self.logger.info(f"User {user_state.user_id} (Session ID {user_state.session_id}) - No unlabeled items available")
                 return 0
 
             if self.assignment_strategy == AssignmentStrategy.RANDOM:
