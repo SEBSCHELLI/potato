@@ -11,7 +11,7 @@ data_files:
   - "data/twitter_data.json"
 
 item_properties:
-  id_key: tweetid
+  id_key: id
   text_key: text
   kwargs:
     - paper_title
@@ -50,8 +50,8 @@ training_failed_completion_code: "TRAINING_FAILED_E78XH"
 # Automatic task assignment for crowdsourcing
 assignment_strategy: random
 random_seed: 0
-max_annotations_per_user: 7
-max_annotations_per_item: 5
+max_annotations_per_user: 5
+max_annotations_per_item: 2
 
 jumping_to_id_disabled: true
 hide_navbar: true
@@ -88,7 +88,7 @@ training:
   passing_criteria:
     min_correct: 10
     require_all_correct: true
-    max_mistakes: 2
+    max_mistakes: 3
   allow_retry: true
   failure_action: "move_to_done"  # or "advance"
 
