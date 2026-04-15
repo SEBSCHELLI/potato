@@ -24,6 +24,8 @@ import markdown
 
 logger = logging.getLogger(__name__)
 
+logging.getLogger("MARKDOWN").setLevel(logging.WARNING)
+
 # Elements allowed in sanitized HTML
 ALLOWED_ELEMENTS: Set[str] = {
     # Span annotations
