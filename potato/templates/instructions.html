@@ -13,7 +13,7 @@
 
     <!-- Custom Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <!-- <link rel="stylesheet" href="http://localhost:63342/NewOrder_Intern/potato/static/styles.css"> -->
+    <link rel="stylesheet" href="http://localhost:63342/NewOrder_Intern/potato/static/styles.css">
     <!-- Colors
     https://www.gesis.org/styleguide/farben
 
@@ -75,7 +75,7 @@
 
         .criteria-box {
             background-color: #fff;
-            margin-left: 2rem;
+            margin-left: 4rem;
             margin-right: 2rem;
             border-radius: 0.5rem;
             margin-bottom: 2rem;
@@ -149,6 +149,7 @@
         .button_on_bg:hover {
             background-color: var(--interact-color);
         }
+
         .training-instance {
             background-color: #f8f9fa;
             border: 2px solid #e9ecef;
@@ -245,12 +246,12 @@
             <span class="fw-bold">{{annotation_task_name}}</span>
         </div>
 
-        <!-- Middle section with instructions progress -->
+        <!-- Middle section with instructions progress
         <div class="d-flex align-items-center justify-content-center flex-grow-1">
             <div class="d-flex align-items-center">
                 <span><i class="fas fa-graduation-cap me-2"></i>Instructions</span>
             </div>
-        </div>
+        </div>-->
 
         <!-- User info and logout (right aligned) -->
         <div class="d-flex align-items-center" style="padding: 0.5rem 1rem;">
@@ -717,7 +718,7 @@
         </div>
         <div>
             <div class="criteria-box">
-                <div class="criteria-headline">Post reports or summarizes the study or parts of it</div>
+                <div class="criteria-headline">Post reports on or summarizes the study or parts of it</div>
                 <div class="examples-div">
                     <details class="examples-details">
                         <summary class="examples-details-summary">
@@ -726,7 +727,7 @@
                         <div class="examples-details-div">
                             <div class="example-container">
                                 <h6 class="criteria-text">
-                                    Post reports parts of the study
+                                    Post reports on parts of the study
                                 </h6>
                                 <div class="training-instance">
                                     <h5 class="mb-3 post-heading" >Post:</h5>
@@ -918,7 +919,7 @@
     <h4 style="margin-left: 2rem; color: var(--secondary-color); font-weight: bold;">Step-by-step Decision</h4>
     <div class="text-box">
         <p>
-            To arrive at consistent decisions, always follow the these steps:
+            To arrive at consistent decisions, always follow these steps:
         </p>
         <p style="margin-left: 1rem;">
             Check for a 🔴 Negative Citation
