@@ -465,12 +465,12 @@
 
                             <br>
                             <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Paper:</h5>
-                            <h6>Title: {{paper_title | markdown}}</h6>
+                            <h6>Title: {{paper_title | markdown | replace('<p>', '') | replace('</p>', '')}}</h6>
                             <h6 style="margin-top: 0.5rem;">Abstract:</h6>
                             <div id="instance-text" class="p-3 border rounded instance-text-container"
                                  style="background-color: var(--light-bg); min-height: 0px; position: relative;">
                                 <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">
-                                    {{paper_abstract | markdown}}
+                                    {{paper_abstract | markdown | replace('<p>', '<p style="margin-bottom:0px;">')}}
                                 </div>
 
                             </div>
