@@ -17,7 +17,6 @@
     <!-- Localhost-->
     <!-- <link rel="stylesheet" href="http://localhost:63342/NewOrder_Intern/potato/static/styles.css"> -->
 
-
     <style>
         body {
             background-color: var(--primary-bg-color);
@@ -359,81 +358,57 @@
         <div class="cheat-sheet-container" style="position: relative; min-height: 100px;">
                 <div class="cheat-sheet">
                 <h2 style="color: var(--secondary-color); font-weight: bold;">Quick Guide</h2>
-                Click <span class="trigger" onclick="openModal()">here</span> top open detailed annotation protocol pop-up.
+                Click <span class="trigger" onclick="openModal()">here</span> to open detailed annotation protocol pop-up.
 
-                <h6 style="color: var(--secondary-color); font-weight: bold; margin-top:1rem;">🔴 Negative Citation:</h6>
-                <div class="text-box">
-                    <p>A negative citation occurs when a social media post encourages readers to partially or fully question, doubt, or dismiss the conclusions of the referenced study.</p>
-                    Examples:
+                <h6 style="color: var(--secondary-color); font-weight: bold; margin-top:1rem;">🔴 Negative Citation</h6>
+                <div class="text-box" style="margin-bottom: 1rem;">
+                    <p>if the reply post encourages readers to question, doubt, or dismiss all or part of the conclusions of the referenced study.</p>
+                    <u>Criteria</u>:
                     <ul style="padding-left: 0.5rem; margin-bottom: 0rem;">
-                        <li>Post mentions flaws in the study design (e.g., sample too small, wrong method)</li>
-                        <li>Post proposes better study design (e.g., better method, different sample) </li>
-                        <li>Post selectively quotes study to cast doubt (e.g., from limitations, disclaimer)</li>
-                        <li>Post criticizes the study's authors (e.g., mentions conflicts of interest)</li>
-                        <li>Post criticizes the study's source (e.g., not peer-reviewed, questionable journal/venue)</li>
-                        <li>Post provides counter-evidence (e.g., anecdotal evidence, studies, news)</li>
-                        <li>Post calls the study outdated, implying findings superseded, or no longer true</li>
-                        <li>Post criticizes generalizability (e.g., basic research vs. real-world scenarios)</li>
-                        <li>Post downplays the significance of the study to cast doubt</li>
+                        <li>Post criticizes the study’s data, methodology, or interpretations</li>
+                        <li>Post criticizes the study’s authors or source</li>
+                        <li>Post provides counter-evidence and/or implies the existence of more recent evidence</li>
+                        <li>Post questions the study’s relevance or applicability</li>
                         <li>Post uses sarcasm to dismiss, question or cast doubt on the study's conclusions</li>
                         <li>Post uses questions to dismiss, question or cast doubt on the study's conclusions</li>
                     </ul>
                 </div>
 
-                <h6 style="color: var(--secondary-color); font-weight: bold;">🟢 Non-negative Citation:</h6>
-                <div class="text-box">
-                    <p>A non-negative citation occurs when a social media post treats the study as neutral, valid, or acceptable.</p>
-                    Examples:
+                <h6 style="color: var(--secondary-color); font-weight: bold;">🟢 Non-negative Citation</h6>
+                <div class="text-box" style="margin-bottom: 1rem;">
+                    <p>if the reply post treats the study as neutral, valid, or acceptable.</p>
+                    <u>Criteria</u>:
                     <ul style="padding-left: 0.5rem; margin-bottom: 0rem;">
-                        <li>Post reports on parts of the study</li>
-                        <li>Post summarizes the study</li>
-                        <li>Post agrees with the study (e.g. with conclusions, implications)</li>
-                        <li>Post endorses the study</li>
-                        <li>Post applies the study's findings (e.g., take actions based on study results)</li>
-                        <li>Post agrees by claiming findings are "obvious" (e.g., "common sense", "old news")</li>
+                        <li>Post reports on or summarizes the study without expressing doubt or criticism</li>
+                        <li>Post agrees with the study or endorses it</li>
                     </ul>
                 </div>
 
-                <h6 style="color: var(--secondary-color); font-weight: bold;">🟡 Uncertain:</h6>
-                <div class="text-box">
-                    <p>Use the Uncertain option if there is not enough information to determine whether it is a Negative Citation or Non-negative Citation.</p>
-                    Examples:
+                <h6 style="color: var(--secondary-color); font-weight: bold;">🟡 Uncertain</h6>
+                <div class="text-box" style="margin-bottom: 1rem;">
+                    <p>if there is not enough information to determine whether it is a Negative Citation or a Non-negative Citation.</p>
+                    <u>Examples</u>:
                     <ul style="padding-left: 0.5rem; margin-bottom: 0rem;">
-                        <li>Pure mention without reporting or summarizing the study content: "This paper was already shared in another post yesterday"</li>
-                        <li>Vague language/tone: "Another 'groundbreaking' study…"</li>
+                        <li>Pure mention: "This paper was already shared in another post yesterday"</li>
+                        <li>Vague language/tone: "Another 'groundbreaking' study"</li>
                         <li>Unclear connection to the paper: "Why doesn't the media report about it?"</li>
                         <li>User-to-User Interaction: "@userABC, why do you think that?"</li>
                     </ul>
                 </div>
 
                 <h6 style="color: var(--secondary-color); font-weight: bold;">Step-by-step Decision</h6>
-                <div class="text-box" style="margin-bottom: 0rem;">
+                <div class="text-box">
                     <p>To arrive at consistent decisions, always follow these steps:</p>
                     <p style="margin-left: 0rem;">
-                        Check for a 🔴 Negative Citation
+                        1. Does this post encourage readers to question, doubt, or dismiss all or part of the conclusions of the referenced study? (see criteria above) ->  🔴 Negative Citation
                     </p>
-                    <p style="margin-left: 1rem;">
-                        If you find any of the negative citation criteria to be met, label the post as a 🔴 Negative Citation.
+                    <p style="margin-left: 0rem;">
+                        2. If not, does this post treat the study as neutral, valid, or acceptable? (see criteria above) ->  🟢 Non-negative Citation
                     </p>
-                    <p style="margin-left: 1rem;">
-                        If you do not, ask yourself:
+                    <p style="margin-left: 0rem;">
+                        3. If not ->  🟡 Uncertain
                     </p>
-                    <p style="margin-left: 2rem;">
-                        "Does this post encourage readers to partially or fully question, doubt, or dismiss the conclusions of the referenced study?"
-                    </p>
-                    <p style="margin-left: 2rem;">
-                        If yes, label the post as a 🔴 Negative Citation.
-                    </p>
-                    <p style="margin-top: 0rem; margin-left: 0rem;">
-                        If no, check for a 🟢 Non-negative Citation
-                    </p>
-                    <p style="margin-left: 1rem;">
-                        If you find any of the non-negative citation criteria to be met, label the post as a 🟢 Non-negative Citation.
-                    </p>
-                    <p style="margin-top: 0rem; margin-left: 0rem;">
-                        If you do not, label as 🟡 Uncertain
-                    </p>
-                    <p style="margin-top: 0rem;">
+                    <p style="margin-top: 0rem; margin-bottom: 0rem;">
                         <u>Note</u>: posts might combine praise and criticism, so that both Negative Citation criteria and Non-negative Citation criteria are met.
                         For this task, Negative Citation criteria take precedence if the criticism is used to make readers question the study's conclusions.
                         As a heuristic, ask "If a reader saw only this comment, would they trust the study's conclusions less?"
@@ -443,14 +418,10 @@
                         <br>🔴 Negative Citation: "Great study, but the sample is too small to really trust these results."
                         <br>🟢 Non-negative Citation: "Great study! Although sample is quite small, it provides a crucial proof-of-concept."
                     </p>
-                    <p style="margin-top: 2rem;">
-                        Visualization of the decision process:
-                    </p>
-        <img class="task-image" width="100%" height="auto" style="padding: 0px;max-width: 96%; max-width: 1000px; display: block;margin: auto;" src="/static/img/annotation_flow_final.png" alt="annotation_flow_final.png">
                 </div>
+            </div>
+            </div>
 
-            </div>
-            </div>
         <div id="right">
             <!-- Main annotation area -->
             <div id="task_layout"
