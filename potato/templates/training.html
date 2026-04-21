@@ -34,7 +34,7 @@
         .training-header {
             background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 50%, var(--secondary-color) 100%);
             color: white;
-            padding: 2rem 0;
+            padding: 0.5rem 0;
             margin-bottom: 2rem;
             border-radius: 0.5rem;
         }
@@ -144,14 +144,21 @@
         }
 
         .cheat-sheet {
-            position: sticky;
-            top: 10px;
-            max-width: 30%; /* Adjust for the left half */
-            height: 95vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            /*position: sticky;
+            top: 10px;*/
+            /*height: 95vh;*/
             overflow-y: auto;
             border-right: 2px solid #ccc;
-            padding: 15px;
+            padding-left: 15px;
+            padding-right: 15px;
             font-size: 0.8em;
+            flex:1;
+            margin-left: 0rem;
         }
 
         /* The clickable word */
@@ -363,12 +370,14 @@
             </div>
         </div>
 
-        <div style="display: flex; gap: 1rem;">
-            <div class="cheat-sheet" style="flex:1; margin-left: 0rem;">
+        <div style="display: grid; gap: 1rem; grid-template-columns: 30% 70%;">
+
+            <div class="cheat-sheet-container" style="position: relative; min-height: 100px;">
+                <div class="cheat-sheet">
                 <h2 style="color: var(--secondary-color); font-weight: bold;">Quick Guide</h2>
                 Click <span class="trigger" onclick="openModal()">here</span> top open detailed annotation protocol pop-up.
 
-                <h5 style="color: var(--secondary-color); font-weight: bold; margin-top:1rem;">🔴 Negative Citation:</h5>
+                <h6 style="color: var(--secondary-color); font-weight: bold; margin-top:1rem;">🔴 Negative Citation:</h6>
                 <div class="text-box">
                     <p>A negative citation occurs when a social media post encourages readers to partially or fully question, doubt, or dismiss the conclusions of the referenced study.</p>
                     Examples:
@@ -387,8 +396,7 @@
                     </ul>
                 </div>
 
-
-                <h5 style="color: var(--secondary-color); font-weight: bold;">🟢 Non-negative Citation:</h5>
+                <h6 style="color: var(--secondary-color); font-weight: bold;">🟢 Non-negative Citation:</h6>
                 <div class="text-box">
                     <p>A non-negative citation occurs when a social media post treats the study as neutral, valid, or acceptable.</p>
                     Examples:
@@ -402,7 +410,7 @@
                     </ul>
                 </div>
 
-                <h5 style="color: var(--secondary-color); font-weight: bold;">🟡 Uncertain:</h5>
+                <h6 style="color: var(--secondary-color); font-weight: bold;">🟡 Uncertain:</h6>
                 <div class="text-box">
                     <p>Use the Uncertain option if there is not enough information to determine whether it is a Negative Citation or Non-negative Citation.</p>
                     Examples:
@@ -414,8 +422,8 @@
                     </ul>
                 </div>
 
-                <h5 style="color: var(--secondary-color); font-weight: bold;">Step-by-step Decision</h5>
-                <div class="text-box">
+                <h6 style="color: var(--secondary-color); font-weight: bold;">Step-by-step Decision</h6>
+                <div class="text-box" style="margin-bottom: 0rem;">
                     <p>To arrive at consistent decisions, always follow these steps:</p>
                     <p style="margin-left: 0rem;">
                         Check for a 🔴 Negative Citation
@@ -458,8 +466,9 @@
                 </div>
 
             </div>
+            </div>
 
-            <div style="flex:1;">
+            <div>
                 <!-- Feedback alert (shown when feedback is available) -->
                 {% if show_feedback %}
                 <div class="feedback-alert {% if feedback_type == 'success' %}feedback-correct{% elif feedback_type == 'warning' %}feedback-warning{% else %}feedback-incorrect{% endif %}" style="margin-left: 0.5rem; margin-right: 2rem;">
@@ -504,7 +513,7 @@
                     </div>
                 </div>
 
-                <div class="training-instance" style="margin-left: 0.5rem; margin-right: 2rem;">
+                <div class="training-instance" style="margin-left: 0.5rem; margin-right: 2rem; margin-bottom: 0px;">
                     <!-- Annotation form -->
                     <form method="POST" id="training-form" action="/training/answer">
                         <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Annotation:</h5>
