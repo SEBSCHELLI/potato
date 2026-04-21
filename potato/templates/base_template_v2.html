@@ -361,7 +361,7 @@
                 Click <span class="trigger" onclick="openModal()">here</span> to open detailed annotation protocol pop-up.
 
                 <h6 style="color: var(--secondary-color); font-weight: bold; margin-top:1rem;">🔴 Negative Citation</h6>
-                <div class="text-box" style="margin-bottom: 1rem;">
+                <div class="text-box" style="margin-bottom: 1rem; padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
                     <p>if the reply post encourages readers to question, doubt, or dismiss all or part of the conclusions of the referenced study.</p>
                     <u>Criteria</u>:
                     <ul style="padding-left: 0.5rem; margin-bottom: 0rem;">
@@ -375,7 +375,7 @@
                 </div>
 
                 <h6 style="color: var(--secondary-color); font-weight: bold;">🟢 Non-negative Citation</h6>
-                <div class="text-box" style="margin-bottom: 1rem;">
+                <div class="text-box" style="margin-bottom: 1rem; padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
                     <p>if the reply post treats the study as neutral, valid, or acceptable.</p>
                     <u>Criteria</u>:
                     <ul style="padding-left: 0.5rem; margin-bottom: 0rem;">
@@ -385,7 +385,7 @@
                 </div>
 
                 <h6 style="color: var(--secondary-color); font-weight: bold;">🟡 Uncertain</h6>
-                <div class="text-box" style="margin-bottom: 1rem;">
+                <div class="text-box" style="margin-bottom: 1rem; padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
                     <p>if there is not enough information to determine whether it is a Negative Citation or a Non-negative Citation.</p>
                     <u>Examples</u>:
                     <ul style="padding-left: 0.5rem; margin-bottom: 0rem;">
@@ -397,7 +397,7 @@
                 </div>
 
                 <h6 style="color: var(--secondary-color); font-weight: bold;">Step-by-step Decision</h6>
-                <div class="text-box">
+                <div class="text-box" style="padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
                     <p>To arrive at consistent decisions, always follow these steps:</p>
                     <p style="margin-left: 0rem;">
                         1. Does this post encourage readers to question, doubt, or dismiss all or part of the conclusions of the referenced study? (see criteria above) ->  🔴 Negative Citation
@@ -470,7 +470,7 @@
                             <div id="instance-text" class="p-3 border rounded instance-text-container"
                                  style="background-color: var(--light-bg); min-height: 0px; position: relative;">
                                 <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">
-                                    {{paper_abstract | markdown | replace('<p>', '<p style="margin-bottom:0px;">')}}
+                                    {{paper_abstract | markdown}}
                                 </div>
 
                             </div>
