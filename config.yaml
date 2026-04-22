@@ -8,7 +8,7 @@ task_dir: "."
 site_dir: "templates"
 # Data configuration
 data_files:
-  - "data/twitter_data.json"
+  - "data/reddit_climate_sample.json"
 
 item_properties:
   id_key: id
@@ -96,7 +96,7 @@ attention_checks:
   enabled: true
 
   # Path to JSON file containing attention check items
-  items_file: "data/gold_data.json"
+  items_file: "data/reddit_climate_gold_data.json"
 
   # How often to inject attention checks
   #frequency: 2
