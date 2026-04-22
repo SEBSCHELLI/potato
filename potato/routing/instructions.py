@@ -67,7 +67,8 @@ def instructions_page():
                            max_mistakes=config["training"]["passing_criteria"]["max_mistakes"],
                            n_train_items=config["n_train_items"],
                            n_items_to_annotate=config["n_items_to_annotate"],
-                           coin_to_money=config["coin_to_money"])
+                           coin_to_money=config["coin_to_money"],
+                           n_attention_checks=config["n_attention_checks"])
 
 # POST: User clicks on continue button
 @instructions_bp.route("/continue_instructions", methods=["POST"])
