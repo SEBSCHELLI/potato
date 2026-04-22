@@ -307,8 +307,6 @@ def escape_for_attribute(text: str) -> str:
 #text = ">The replacement of red meat with equicaloric amounts of vegetables and fruit led to a net increase in modeled GHGEs\n\nUpsy daisy...don't tell the vegans\n\n&#x200B;\n\n>The data used in the current study did not account for protein quality or bioavailability measures for calcium and iron.\n\nI'd imagine that taking protein digestibility and bioavailability into account would impact grains and vegetables quite negatively in this analysis.\n\n&#x200B;\n\n>In conclusion, analyses of ND \\[nutrient density\\] and GHGEs for a large number of foods and beverages revealed that many foods with *low GHGEs also had relatively low nutritional values*. In particular, some of the *lowest GHGE values were observed not for processed fruit and vegetables but for sugar and sweets*. By contrast, higher GHGEs associated with meat and dairy products were linked to their higher ND.\n\nWant to 'save the enviroment' with your diet choices? Great, just eat junk food and forget about your health.\n\n&#x200B;"
 
 def md(text):
-    print(text)
-
     if not text:
         return ""
 
