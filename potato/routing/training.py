@@ -267,7 +267,7 @@ def submit_answer():
 
         # Check if user should be allowed to retry
         if training_state.allow_retry:
-            training_state.set_feedback(True, f"Incorrect. {explanation}", "error")
+            training_state.set_feedback(True, f"Incorrect.\n{explanation}", "error")
             training_state.needs_retry = True
 
             user_state = get_user_state_manager().get_user_state(username, session_id)

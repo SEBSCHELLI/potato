@@ -445,8 +445,8 @@
                     <div class="d-flex align-items-start">
                         <i class="fas {% if feedback_type == 'success' %}fa-check-circle{% elif feedback_type == 'warning' %}fa-exclamation-triangle{% else %}fa-exclamation-circle{% endif %} me-3 mt-1"></i>
                         <div>
-                            <h6 class="mb-2">{{ feedback }}</h6>
-                            {% if allow_retry %}
+                            <h6 class="mb-2">{{ feedback | markdown }}</h6>
+                            {% if needs_retry %}
                             <p class="mb-0">Please review the explanation and try again.</p>
                             {% endif %}
                         </div>
