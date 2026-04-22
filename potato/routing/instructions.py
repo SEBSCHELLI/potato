@@ -64,6 +64,7 @@ def instructions_page():
                            debug_phase=config.get("debug_phase"),
                            ui_config=config.get("ui_config", {}),
                            min_correct=config["training"]["passing_criteria"]["min_correct"],
+                           max_mistakes=config["training"]["passing_criteria"]["max_mistakes"],
                            n_train_items=config["n_train_items"],
                            n_items_to_annotate=config["n_items_to_annotate"],
                            coin_to_money=config["coin_to_money"])
