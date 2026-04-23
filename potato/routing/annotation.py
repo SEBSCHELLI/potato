@@ -468,6 +468,7 @@ def _inject_quality_control_item_if_needed(username, session_id, user_state):
         #user_state.instance_id_to_order = user_state.generate_id_order_mapping(user_state.instance_id_ordering)
         return True
 
+    logger.debug(f"User {username} (Session ID {session_id}) - Check if Attention Check should be injected")
     if qc_manager.should_inject_attention_check(user_state):
         #logger.debug(f"User {username} (Session ID {session_id}) - should_inject_attention_check = True")
         attention_item = qc_manager.get_attention_check_item(username)

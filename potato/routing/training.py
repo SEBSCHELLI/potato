@@ -1,4 +1,4 @@
-from flask import session, render_template, request, redirect, url_for, Blueprint
+from flask import session, render_template, request, redirect, url_for, Blueprint, flash
 from functools import wraps
 
 from potato.flask_server import config
@@ -166,6 +166,12 @@ def submit_answer():
     if not correct_answers:
         logger.error(f'User {username} (Session ID {session_id}) - No correct answers found for training instance {instance_id}')
         return render_template("error.html", message="Training data error")
+
+    logger.debug(f'User {username} (Session ID {session_id}) - annotation_data: {annotation_data}')
+
+    if not annotation_data.get("stance", None):
+        flash("Could not navigate to next item. Annotate first", "error")
+        return redirect(url_for('training.training_page'))
 
     is_correct = check_training_answer(annotation_data, correct_answers)
 
