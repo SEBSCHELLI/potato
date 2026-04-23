@@ -262,6 +262,7 @@ def navigate_to_next():
     if not instance_has_annotations:
         logger.error(f'User {username} (Session ID {session_id}) - No annotation, cannot navigate to next instance')
         flash("Could not navigate to next item. Annotate first", "error")
+        return redirect(url_for('annotation.annotation_page'))
 
     if str(instance_id).startswith("GOLD"):
         logger.debug(f"User {username} (Session ID {session_id}) - user_state.instance_id_ordering {user_state.instance_id_ordering}")
