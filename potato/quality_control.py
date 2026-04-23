@@ -208,8 +208,17 @@ class QualityControlManager:
         with self._lock:
             # Frequency-based injection
             if self.qc_config.attention_frequency:
-                items_since = user_state.attention_check_state.n_items_since_last_check
-                return items_since >= self.qc_config.attention_frequency
+                min_items = self.qc_config.attention_frequency-2
+                max_items = self.qc_config.attention_frequency+2
+                threshold = random.randint(min_items, max_items)
+
+                if user_state.attention_check_state.n_items_since_last_check >= threshold:
+                    return True
+                else:
+                    return False
+
+                #items_since = user_state.attention_check_state.n_items_since_last_check
+                #return items_since >= self.qc_config.attention_frequency
 
             # Probability-based injection
             if self.qc_config.attention_probability:
