@@ -168,7 +168,6 @@ def submit_answer():
         return render_template("error.html", message="Training data error")
 
     logger.debug(f'User {username} (Session ID {session_id}) - annotation_data: {annotation_data}')
-
     if not annotation_data.get("stance", None):
         flash("Could not navigate to next item. Annotate first", "error")
         return redirect(url_for('training.training_page'))

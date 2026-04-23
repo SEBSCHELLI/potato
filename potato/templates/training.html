@@ -107,6 +107,16 @@
             color: white;
         }
 
+        .submit-button:disabled {
+            cursor: not-allowed;
+            background-color: #d6d6d6;
+        }
+
+        .submit-button:disabled:hover {
+            cursor: not-allowed;
+            background-color: #d6d6d6;
+        }
+
         .button {
             background-color: var(--light-color);
             color: var(--secondary-color);
@@ -1203,6 +1213,57 @@
                 submitBtn.html('<i class="fas fa-spinner fa-spin me-2"></i>Processing...');
                 submitBtn.prop('disabled', true);
             });
+        });
+    </script>
+    <script>
+        const form = document.getElementById("annotation-form");
+        const btn = document.getElementById("training_submit_button");
+
+        function log(event, data = {}) {
+            console.log("[VALIDATION LOG]", {
+                event,
+                timestamp: new Date().toISOString(),
+                ...data
+            });
+        }
+
+        function checkValid() {
+            const inputs = form.querySelectorAll("input, select, textarea");
+            let valid = false;
+
+            inputs.forEach(el => {
+                if (el.type === "radio" && el.checked) {
+                    valid = true;
+                }
+            });
+
+            const prevState = btn.disabled;
+            const newState = !valid;
+
+            btn.disabled = newState;
+
+            // log only when state changes (avoids spam)
+            if (prevState !== newState) {
+                log("button_state_changed", {
+                    valid,
+                    disabled: newState
+                });
+            }
+        }
+
+        form.addEventListener("change", (e) => {
+            log("form_change", {
+                type: e.target.type,
+                name: e.target.name,
+                value: e.target.value
+            });
+
+            checkValid();
+        });
+
+        window.addEventListener("load", () => {
+            log("page_load_validation");
+            checkValid();
         });
     </script>
 </body>

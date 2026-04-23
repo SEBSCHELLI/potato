@@ -1009,7 +1009,7 @@ def run_server(args):
     # Set up centralized logging with appropriate verbosity
     setup_logging(
         verbose=config.get("verbose", False),
-        debug=config.get("debug", False) or config.get("very_verbose", False),
+        debug=config.get("debug", False) or config.get("very_verbose", False) or True,
         debug_log=config.get("debug_log"),
         log_dir=config.get("output_annotation_dir"),
     )
