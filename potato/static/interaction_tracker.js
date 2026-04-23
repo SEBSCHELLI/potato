@@ -24,7 +24,7 @@ class InteractionTracker {
         this.flushInterval = 5000; // Flush every 5 seconds
         this.lastFlush = Date.now();
         this.isInitialized = false;
-        this.debugMode = true;
+        this.debugMode = false;
 
         // Don't auto-init - wait for explicit init call or DOMContentLoaded
         if (document.readyState === 'loading') {
