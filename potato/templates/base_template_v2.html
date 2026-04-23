@@ -1240,10 +1240,7 @@
             let valid = false;
 
             inputs.forEach(el => {
-                if ((el.type === "radio" || el.type === "checkbox") && el.checked) {
-                    valid = true;
-                }
-                if (el.value && el.type !== "hidden") {
+                if (el.type === "radio" && el.checked) {
                     valid = true;
                 }
             });
