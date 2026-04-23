@@ -406,8 +406,6 @@ document.addEventListener('DOMContentLoaded', function () {
     setupEventListeners();
     // Initial validation check
     validateRequiredFields();
-    // Initialize span manager integration
-    initializeSpanManagerIntegration();
     // Initialize display logic for conditional schemas
     if (typeof initDisplayLogic === 'function') {
         initDisplayLogic();
@@ -419,7 +417,7 @@ document.addEventListener('DOMContentLoaded', function () {
         window.formLayoutManager.initialize(layoutConfig);
     }
     // Initialize pairwise annotation
-    initPairwiseAnnotation();
+    // initPairwiseAnnotation();
 });
 
 /**

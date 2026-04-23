@@ -1170,29 +1170,6 @@
       }
     </script>
 
-    <script>
-        const form = document.getElementById("annotation-form");
-        const btn = document.getElementById("next-btn");
-
-        function checkValid() {
-            const inputs = form.querySelectorAll("input, select, textarea");
-            let valid = false;
-
-            inputs.forEach(el => {
-                if ((el.type === "radio" || el.type === "checkbox") && el.checked) {
-                    valid = true;
-                }
-                if (el.value && el.type !== "hidden") {
-                    valid = true;
-                }
-            });
-            btn.disabled = !valid;
-        }
-
-        form.addEventListener("change", checkValid);
-        window.addEventListener("load", checkValid);
-    </script>
-
     <!-- Configuration from server -->
     <script type="text/javascript">
         window.config = {
@@ -1247,24 +1224,57 @@
     </script>
 
     <script>
-        const divider = document.getElementById("divider");
-        const left = document.getElementById("left");
+        const form = document.getElementById("annotation-form");
+        const btn = document.getElementById("next-btn");
 
-        let isDragging = false;
+        function log(event, data = {}) {
+            console.log("[VALIDATION LOG]", {
+                event,
+                timestamp: new Date().toISOString(),
+                ...data
+            });
+        }
 
-        divider.addEventListener("mousedown", () => {
-            isDragging = true;
+        function checkValid() {
+            const inputs = form.querySelectorAll("input, select, textarea");
+            let valid = false;
+
+            inputs.forEach(el => {
+                if ((el.type === "radio" || el.type === "checkbox") && el.checked) {
+                    valid = true;
+                }
+                if (el.value && el.type !== "hidden") {
+                    valid = true;
+                }
+            });
+
+            const prevState = btn.disabled;
+            const newState = !valid;
+
+            btn.disabled = newState;
+
+            // log only when state changes (avoids spam)
+            if (prevState !== newState) {
+                log("button_state_changed", {
+                    valid,
+                    disabled: newState
+                });
+            }
+        }
+
+        form.addEventListener("change", (e) => {
+            log("form_change", {
+                type: e.target.type,
+                name: e.target.name,
+                value: e.target.value
+            });
+
+            checkValid();
         });
 
-        document.addEventListener("mousemove", (e) => {
-            if (!isDragging) return;
-
-            // Set new width of left panel
-            left.style.width = e.clientX + "px";
-        });
-
-        document.addEventListener("mouseup", () => {
-            isDragging = false;
+        window.addEventListener("load", () => {
+            log("page_load_validation");
+            checkValid();
         });
     </script>
 </body>
