@@ -214,9 +214,12 @@ class QualityControlManager:
             # Probability-based injection
             if self.qc_config.attention_probability:
                 r = random.random()
-                logger.error(f'User {user_state.user_id} (Session ID {user_state.session_id}) - r: {r}')
+                p = self.qc_config.attention_probability
 
-                return r < self.qc_config.attention_probability
+                result = r < p
+
+                logger.debug(f'User {user_state.user_id} (Session ID {user_state.session_id}) - r={r}, p={p}, pass={result}')
+                return result
 
         return False
 
