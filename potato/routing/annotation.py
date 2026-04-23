@@ -1,4 +1,4 @@
-from flask import session, render_template, request, redirect, url_for, jsonify, Blueprint
+from flask import session, render_template, request, redirect, url_for, jsonify, Blueprint, flash
 from functools import wraps
 from bs4 import BeautifulSoup
 
@@ -261,7 +261,7 @@ def navigate_to_next():
     instance_has_annotations = user_state.has_annotated(instance_id)
     if not instance_has_annotations:
         logger.error(f'User {username} (Session ID {session_id}) - No annotation, cannot navigate to next instance')
-        return jsonify({"status": "error", "message": "Could not navigate to next. Annotate first"}), 400
+        flash("Could not navigate to next item. Annotate first", "error")
 
     if str(instance_id).startswith("GOLD"):
         logger.debug(f"User {username} (Session ID {session_id}) - user_state.instance_id_ordering {user_state.instance_id_ordering}")
