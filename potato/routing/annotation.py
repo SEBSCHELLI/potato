@@ -56,7 +56,7 @@ def annotation_page():
     session_id = session["session_id"]
     user_state = get_user_state_manager().get_user_state(username, session_id)
 
-    logger.debug(f"User {username} (Session ID {session_id}) - Render annotation page")
+    #logger.debug(f"User {username} (Session ID {session_id}) - Render annotation page")
 
     # Get all existing user states for current user
     all_user_states_for_cur_user = get_user_state_manager().get_all_user_states(username)
@@ -265,11 +265,11 @@ def navigate_to_next():
         return redirect(url_for('annotation.annotation_page'))
 
     if str(instance_id).startswith("GOLD"):
-        logger.debug(f"User {username} (Session ID {session_id}) - user_state.instance_id_ordering {user_state.instance_id_ordering}")
+        #logger.debug(f"User {username} (Session ID {session_id}) - user_state.instance_id_ordering {user_state.instance_id_ordering}")
         user_state.instance_id_ordering = [iid for iid in user_state.instance_id_ordering if not str(iid).startswith("GOLD")]
-        logger.debug(f"User {username} (Session ID {session_id}) - user_state.instance_id_ordering {user_state.instance_id_ordering}")
+        #logger.debug(f"User {username} (Session ID {session_id}) - user_state.instance_id_ordering {user_state.instance_id_ordering}")
         user_state.current_instance_index = user_state.current_instance_index - 1
-        logger.debug(f"User {username} (Session ID {session_id}) - user_state.current_instance_index {user_state.current_instance_index}")
+        #logger.debug(f"User {username} (Session ID {session_id}) - user_state.current_instance_index {user_state.current_instance_index}")
 
     success = move_to_next_instance(username, session_id)
 
@@ -373,12 +373,12 @@ def get_annotations_for_user_on(username, instance_id):
 
 def move_to_next_instance(username, session_id) -> bool:
     '''Moves the user forward to the next instance and returns True if successful'''
-    logger.debug(f"=== MOVE_TO_NEXT_INSTANCE START ===")
-    logger.debug(f"User {username}, Session ID: {session_id}")
+    #logger.debug(f"=== MOVE_TO_NEXT_INSTANCE START ===")
+    #logger.debug(f"User {username}, Session ID: {session_id}")
 
     user_state = get_user_state_manager().get_user_state(username, session_id)
-    logger.debug(f"User {username} (Session ID {session_id}) - Instance Index before navigation: {user_state.get_current_instance_index()}")
-    logger.debug(f"User {username} (Session ID {session_id}) - Instance Indices before navigation: {user_state.instance_id_ordering}")
+    #logger.debug(f"User {username} (Session ID {session_id}) - Instance Index before navigation: {user_state.get_current_instance_index()}")
+    #logger.debug(f"User {username} (Session ID {session_id}) - Instance Indices before navigation: {user_state.instance_id_ordering}")
 
     # User does not have open assignments
     user_is_finished = False
@@ -401,17 +401,17 @@ def move_to_next_instance(username, session_id) -> bool:
         # Save state
         user_state = get_user_state_manager().get_user_state(username, session_id)
         get_user_state_manager().save_user_state(user_state)
-        logger.debug(f"User {username} (Session ID {session_id}) - State saved")
+        #logger.debug(f"User {username} (Session ID {session_id}) - State saved")
 
         #return redirect(url_for("home"))
         return "finished"
 
     result = user_state.go_forward()
-    logger.debug(f"User {username} (Session ID {session_id}) - Instance Index after navigation: {user_state.get_current_instance_index()}")
-    logger.debug(f"User {username} (Session ID {session_id}) - Instance Indices after navigation: {user_state.instance_id_ordering}")
-    logger.debug(f"User {username} (Session ID {session_id}) - Navigation result: {result}")
+    #logger.debug(f"User {username} (Session ID {session_id}) - Instance Index after navigation: {user_state.get_current_instance_index()}")
+    #logger.debug(f"User {username} (Session ID {session_id}) - Instance Indices after navigation: {user_state.instance_id_ordering}")
+    #logger.debug(f"User {username} (Session ID {session_id}) - Navigation result: {result}")
 
-    logger.debug(f"=== MOVE_TO_NEXT_INSTANCE END ===")
+    #logger.debug(f"=== MOVE_TO_NEXT_INSTANCE END ===")
     return result
 
 

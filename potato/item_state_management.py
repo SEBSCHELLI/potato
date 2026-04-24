@@ -457,7 +457,7 @@ class ItemStateManager:
                 if self.max_annotations_per_item >= 0 and annotation_count >= self.max_annotations_per_item:
                     if iid in self.remaining_item_ids:
                         self.remaining_item_ids.remove(iid)
-                        self.logger.debug(f"[ASSIGNMENT] Skipping {iid}: reached annotation cap. Remove from remaining_item_ids")
+                        #self.logger.debug(f"[ASSIGNMENT] Skipping {iid}: reached annotation cap. Remove from remaining_item_ids")
                     continue
 
                 already_labeled = False
@@ -465,7 +465,7 @@ class ItemStateManager:
                 for iter_session_id, iter_user_state in user_states.items():
                     if iter_user_state.has_annotated(iid):
                         already_labeled = True
-                        self.logger.debug(f"User {user_state.user_id} (Session ID {iter_session_id}) - Instance {iid} already annotated, skipping.")
+                        #self.logger.debug(f"User {user_state.user_id} (Session ID {iter_session_id}) - Instance {iid} already annotated, skipping.")
                         break
 
                 if not already_labeled:
