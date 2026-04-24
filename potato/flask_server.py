@@ -508,7 +508,6 @@ def init_prolific_study(config: dict) -> None:
         for k in keys:
             logger.info(f"prolific_study_instance[{k}]: {prolific_study_instance.study_info.get(k, 'UNK')}")
         
-        logger.info(f"Study info: {prolific_study_instance.get_basic_study_info()}")
         app.prolific_study_instance = prolific_study_instance
         logger.info(f"app.prolific_study_instance Study info: {app.prolific_study_instance.get_basic_study_info()}")
 
