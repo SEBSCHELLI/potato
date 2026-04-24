@@ -101,9 +101,6 @@ user_response_dicts_queue = defaultdict(deque)
 USER_CONFIG_PATH = "user_config.json"
 DEFAULT_LABELS_PER_INSTANCE = 3
 
-# Global Prolific study instance for API integration
-PROLIFIC_STUDY_INSTANCE = None
-
 
 def load_instance_data(config: dict):
     """
@@ -458,7 +455,6 @@ def init_prolific_study(config: dict) -> None:
         - May start workload checker thread
     """
     logger.info("=== INIT PROLIFIC STUDY STARTS ===")
-    global PROLIFIC_STUDY_INSTANCE
 
     prolific_config = config.get('prolific', {})
     if not prolific_config:
@@ -498,7 +494,7 @@ def init_prolific_study(config: dict) -> None:
     saving_dir = config.get('output_annotation_dir', 'annotation_output')
 
     try:
-        PROLIFIC_STUDY_INSTANCE = ProlificStudy(
+        prolific_study_instance = ProlificStudy(
             token=token,
             study_id=study_id,
             saving_dir=saving_dir,
@@ -510,13 +506,14 @@ def init_prolific_study(config: dict) -> None:
 
         keys = ['id', 'name', 'internal_name', 'reward', 'average_reward_per_hour', 'external_study_url', 'status', 'total_available_places', 'places_taken']
         for k in keys:
-            logger.info(f"PROLIFIC_STUDY_INSTANCE[{k}]: {PROLIFIC_STUDY_INSTANCE.study_info.get(k, 'UNK')}")
+            logger.info(f"prolific_study_instance[{k}]: {prolific_study_instance.study_info.get(k, 'UNK')}")
         
-        logger.info(f"Study info: {PROLIFIC_STUDY_INSTANCE.get_basic_study_info()}")
+        logger.info(f"Study info: {prolific_study_instance.get_basic_study_info()}")
+        app.prolific_study_instance = prolific_study_instance
 
     except Exception as e:
         logger.error(f"Failed to initialize Prolific study: {e}")
-        PROLIFIC_STUDY_INSTANCE = None
+        app.prolific_study_instance = None
 
     logger.info("=== INIT PROLIFIC STUDY ENDS ===")
 

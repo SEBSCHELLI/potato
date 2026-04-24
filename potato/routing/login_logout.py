@@ -1,6 +1,6 @@
 import datetime
-from flask import session, render_template, request, redirect, url_for, jsonify, Blueprint
-
+from flask import session, render_template, request, redirect, url_for, jsonify, Blueprint, current_app
+import requests
 from potato.flask_server import config
 from potato.authentication import UserAuthenticator
 from potato.phase import UserPhase
@@ -47,6 +47,10 @@ def prolific_login():
     session_id = request.args.get("SESSION_ID")
 
     logger.warning(f"TODO: Prolific Verification.")
+    verified = verify_prolific_login(url_username=username, url_study_id=study_id, url_session_id=session_id)
+    if not verified and "_INTERNAL" not in username:
+        return render_template("error.html", error_message="Prolific login URL is not working.")
+
     logger.info(f"Prolific login with user={username}, session_id={session_id}, study_id={study_id}")
 
     # Set session parameters
@@ -121,3 +125,27 @@ def logout():
     logger.debug(f"User {username} (Session ID {session_id}) - Logged out")
 
     return render_template("logged_out.html", message="Please use the study link in Prolific to log in again.")
+
+
+def verify_prolific_login(url_username, url_session_id, url_study_id):
+    prolific_study = getattr(current_app, "prolific_study_instance", None)
+
+    if prolific_study is None:
+        raise RuntimeError("Prolific study not initialized")
+
+    prolific_study_id = prolific_study.study_id
+
+    if url_study_id != prolific_study_id:
+        return False
+
+    prolific_submissions = prolific_study.get_submissions_from_study(prolific_study_id)
+    sessionid2userid = {r["id"]: r["participant_id"] for r in prolific_submissions}
+
+    if url_session_id not in sessionid2userid:
+        return False
+    else:
+        prolific_username = sessionid2userid[url_session_id]
+        if url_username != prolific_username:
+            return False
+
+    return True
