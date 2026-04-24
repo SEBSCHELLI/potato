@@ -128,10 +128,6 @@ def logout():
 
 
 def verify_prolific_login(url_username, url_session_id, url_study_id):
-    print("APP:", current_app)
-    print("HAS ATTR:", hasattr(current_app, "prolific_study_instance"))
-    print("DIR SAMPLE:", [x for x in dir(current_app) if "prolific" in x])
-
     prolific_study = getattr(current_app, "prolific_study_instance", None)
 
     if prolific_study is None:
