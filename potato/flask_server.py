@@ -510,6 +510,7 @@ def init_prolific_study(config: dict) -> None:
         
         logger.info(f"Study info: {prolific_study_instance.get_basic_study_info()}")
         app.prolific_study_instance = prolific_study_instance
+        logger.info(f"app.prolific_study_instance Study info: {app.prolific_study_instance.get_basic_study_info()}")
 
     except Exception as e:
         logger.error(f"Failed to initialize Prolific study: {e}")
