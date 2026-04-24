@@ -1,5 +1,5 @@
 import datetime
-from flask import session, render_template, request, redirect, url_for, jsonify, Blueprint, current_app
+from flask import session, render_template, request, redirect, url_for, jsonify, Blueprint, app
 import requests
 from potato.flask_server import config
 from potato.authentication import UserAuthenticator
@@ -128,7 +128,7 @@ def logout():
 
 
 def verify_prolific_login(url_username, url_session_id, url_study_id):
-    prolific_study = getattr(current_app, "prolific_study_instance", None)
+    prolific_study = getattr(app, "prolific_study_instance", None)
 
     if prolific_study is None:
         raise RuntimeError("Prolific study not initialized")
