@@ -477,7 +477,9 @@ class ItemStateManager:
                 return 0
 
             if self.assignment_strategy == AssignmentStrategy.RANDOM:
-                to_assign = self.random.sample(unlabeled_items, min(num_items_to_assign, len(unlabeled_items)))
+                #to_assign = self.random.sample(unlabeled_items, min(num_items_to_assign, len(unlabeled_items)))
+                to_assign = random.sample(unlabeled_items, min(num_items_to_assign, len(unlabeled_items)))
+
             else:
                 to_assign = unlabeled_items[:min(num_items_to_assign, len(unlabeled_items))]
 
