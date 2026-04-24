@@ -524,7 +524,6 @@ def load_all_data(config: dict):
     load_instance_data(config)
     load_training_data(config)
     load_user_data(config)
-    init_prolific_study(config)
 
 
 def load_phase_data(config: dict) -> None:
@@ -1093,6 +1092,8 @@ def run_server(args):
 
     # Create and configure the Flask app
     app = create_app()
+
+    init_prolific_study(config)
 
     logger.info(f"Open Routes: ")
     for rule in app.url_map.iter_rules():
