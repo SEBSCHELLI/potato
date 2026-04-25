@@ -45,27 +45,17 @@ from potato.interaction_tracking import BehavioralData
 from potato.quality_control import AttentionCheckResult
 from potato.server_utils.date_handler import DateHandler
 
-from dataclasses import dataclass, asdict
-
+from dataclasses import dataclass, asdict, field
 
 @dataclass
 class AttentionCheckState:
-    total_checks: int
-    passed_checks: int
-    failed_checks: int
+    total_checks: int = 0
+    passed_checks: int = 0
+    failed_checks: int = 0
+    n_items_since_last_check: int = 0
 
-    n_items_since_last_check: int
-    attention_instance_ids = List[str]
-    attention_instance_id_to_attention_check_result: Dict[str, AttentionCheckResult]
-
-    def __init__(self, total_checks=0, passed_checks=0, failed_checks=0, n_items_since_last_check=0, attention_instance_ids=[], attention_instance_id_to_attention_check_result={}):
-        self.total_checks = total_checks
-        self.passed_checks = passed_checks
-        self.failed_checks = failed_checks
-
-        self.n_items_since_last_check = n_items_since_last_check
-        self.attention_instance_ids = attention_instance_ids
-        self.attention_instance_id_to_attention_check_result = attention_instance_id_to_attention_check_result
+    attention_instance_ids: List[str] = field(default_factory=list)
+    attention_instance_id_to_attention_check_result: Dict[str, AttentionCheckResult] = field(default_factory=dict)
 
     def add_attention_check_result(self, attention_check_result):
         instance_id = attention_check_result.item_id
