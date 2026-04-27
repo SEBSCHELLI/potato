@@ -292,6 +292,7 @@ def load_user_data(config: dict):
 
     # For each user's directory, load in their state
     user_dirs = [d for d in os.listdir(user_data_dir) if os.path.isdir(os.path.join(user_data_dir, d))]
+    user_dirs = [d for d in user_dirs if d != "REMOVED"]
 
     logger.info(f"Load user data for the following users: {user_dirs}")
     for user_dir in user_dirs:
