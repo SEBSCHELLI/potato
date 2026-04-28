@@ -549,7 +549,7 @@ class UserStateManager:
         with self._state_lock:
             logger.debug(f"=== ADD USER START ===")
             logger.debug(f"Adding user {user_id} (Session ID: {session_id})")
-            logger.debug(f"Current users and sessions: {[f'{u} ({sid})' for u, s in self.user_to_annotation_state.items() for sid, _ in s.items()]}")
+            #logger.debug(f"Current users and sessions: {[f'{u} ({sid})' for u, s in self.user_to_annotation_state.items() for sid, _ in s.items()]}")
             # logger.debug(f"User already exists: {user_id in self.user_to_annotation_state}")
 
             if user_id in self.user_to_annotation_state and session_id in self.user_to_annotation_state.get(user_id, {}):
@@ -557,12 +557,12 @@ class UserStateManager:
                 raise ValueError(f'User "{user_id}" already exists in the user state manager with Session ID {session_id}')
 
             self.set_or_create_user_state_for_session(user_id, session_id)
-            logger.debug(f"Current users and sessions: {[f'{u} ({sid})' for u, s in self.user_to_annotation_state.items() for sid, _ in s.items()]}")
+            #logger.debug(f"Current users and sessions: {[f'{u} ({sid})' for u, s in self.user_to_annotation_state.items() for sid, _ in s.items()]}")
             logger.debug(f"=== ADD USER END ===")
 
     def set_or_create_user_state_for_session(self, user_id: str, session_id: str, user_state=None):
-        logger.debug(f"=== ADD USER STATE FOR SESSION START ===")
-        logger.debug(f"Adding user state for user {user_id} (Session ID: {session_id})")
+        #logger.debug(f"=== ADD USER STATE FOR SESSION START ===")
+        #logger.debug(f"Adding user state for user {user_id} (Session ID: {session_id})")
 
         # Create appropriate user state based on configuration
         if not user_state:
