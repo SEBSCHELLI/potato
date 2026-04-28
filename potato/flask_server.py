@@ -310,6 +310,7 @@ def load_user_data(config: dict):
     # ism.instance_annotators) works with pre-loaded annotation data.
     ism = get_item_state_manager()
     logger.info(f"Number of items {len(ism.remaining_item_ids)}")
+    logger.info(f"item_annotation_counts[item_id]: {ism.item_annotation_counts['165']}")
     for user_id, session_ids in usm.get_user_session_ids().items():
         for session_id in session_ids:
             user_state = usm.get_user_state(user_id, session_id)
@@ -319,7 +320,9 @@ def load_user_data(config: dict):
                         ism.register_annotator(instance_id, user_id)
                         if str(instance_id) == "165":
                             logger.info(f"165: {user_id}")
+                            logger.info(f"item_annotation_counts[item_id]: {ism.item_annotation_counts['165']}")
 
+    logger.info(f"item_annotation_counts[item_id]: {ism.item_annotation_counts['165']}")
     logger.info("Loaded user data for %d users" % len(usm.get_user_ids()))
     logger.info(f"Number of items remaining {len(ism.remaining_item_ids)}")
 
