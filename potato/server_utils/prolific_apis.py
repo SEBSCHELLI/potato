@@ -452,3 +452,12 @@ class ProlificStudy(ProlificBase):
         status = self.get_submission_from_id(user['SESSION_ID'])['status']
         self.sessions[user['SESSION_ID']] = {'username':user['PROLIFIC_PID'], 'status':status}
         self.session_status_dict[status].append(user['SESSION_ID'])
+
+
+#p = ProlificStudy(token="NgifG6gVrt09L5N8UYzmmDGNP78w4GPBMb_NdxOx9K8JKcjUGg2dTgoviUNVO6lDPTe480xm2dZkY_HRhaHeKiNqIbYhZD8z8UrTHeGlRIXh65h1ZDteOauK", study_id="69ef46c8d1c81cc46839bb5b", saving_dir="abc")
+
+#prolific_submissions = p.get_submissions_from_study(p.study_id)
+#prolific_submissions = p.get_recent_study_submissions(p.study_id)
+#sessionid2userid = {r["id"]: r["participant_id"] for r in prolific_submissions}
+
+#69e23326d691ccfeaaec5c85 (69ef90d8766afb9dbd2249dd)

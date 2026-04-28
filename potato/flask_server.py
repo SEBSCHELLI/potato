@@ -309,6 +309,7 @@ def load_user_data(config: dict):
     # adjudication build_queue() (and other code that relies on
     # ism.instance_annotators) works with pre-loaded annotation data.
     ism = get_item_state_manager()
+    logger.info(f"Number of items {len(ism.remaining_item_ids)}")
     for user_id, session_ids in usm.get_user_session_ids().items():
         for session_id in session_ids:
             user_state = usm.get_user_state(user_id, session_id)
@@ -316,6 +317,9 @@ def load_user_data(config: dict):
                 for instance_id in user_state.instance_id_to_label_to_value:
                     if instance_id in ism.item_id_to_item:
                         ism.register_annotator(instance_id, user_id)
+
+    logger.info("Loaded user data for %d users" % len(usm.get_user_ids()))
+    logger.info(f"Number of items remaining {len(ism.remaining_item_ids)}")
 
     tism = get_training_item_state_manager()
     for user_id, session_ids in usm.get_user_session_ids().items():
