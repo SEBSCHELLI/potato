@@ -317,6 +317,8 @@ def load_user_data(config: dict):
                 for instance_id in user_state.instance_id_to_label_to_value:
                     if instance_id in ism.item_id_to_item:
                         ism.register_annotator(instance_id, user_id)
+                        if str(instance_id) == "165":
+                            logger.info(f"165: {user_id}")
 
     logger.info("Loaded user data for %d users" % len(usm.get_user_ids()))
     logger.info(f"Number of items remaining {len(ism.remaining_item_ids)}")
