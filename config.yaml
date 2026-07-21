@@ -79,7 +79,7 @@ phases:
 training:
   enabled: true
   data_file: "data/training_data.json"
-  annotation_schemes: ["stance"]
+  annotation_schemes: ["stance", "comment"]
   passing_criteria:
     min_correct: 10
     require_all_correct: true
