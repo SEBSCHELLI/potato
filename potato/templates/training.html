@@ -497,15 +497,15 @@
                     <!-- Annotation form -->
                     <form method="POST" id="training-form" action="/training/answer">
                         <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Annotation:</h5>
-                        <div id="annotation-forms" style="display: flex; align-items: center;">
+                        <div id="annotation-forms" style="display: flex; flex-direction: column; min-height: 100%;">
                             {{ TASK_LAYOUT }}
 
                             {% if needs_retry %}
-                            <button id="training_retry_button" type="submit" class="btn retry-button me-2" style="margin-left: auto;">
+                            <button id="training_retry_button" type="submit" class="btn retry-button me-2" style="margin-left: auto; margin-top: 1rem;">
                                 <i class="fas fa-redo me-2"></i>Try Again
                             </button>
                             {% else %}
-                            <button id="training_submit_button" type="submit" class="btn submit-button" style="margin-left: auto;">
+                            <button id="training_submit_button" type="submit" class="btn submit-button" style="margin-left: auto; margin-top: 1rem;">
                                 <i class="fas fa-paper-plane me-2"></i>Submit Answer
                             </button>
                             {% endif %}
