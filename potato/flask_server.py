@@ -1027,6 +1027,7 @@ def run_server(args):
     logger.debug(f"base_html_dir: {base_html_dir}")
 
     logger.debug(f"args: {args}")
+    logger.debug(f"config: {config}")
 
 
     # Apply command line flags that override config settings

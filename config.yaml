@@ -1,3 +1,4 @@
+# Config for Reddit Climate Random
 port: 8946
 server_name: localhost
 task_name: "Negative Citation Annotation"
@@ -8,7 +9,7 @@ task_dir: "."
 site_dir: "templates"
 # Data configuration
 data_files:
-  - "data/reddit_climate_sample.json"
+  - "data/annotation_data.json"
 
 item_properties:
   id_key: id
@@ -28,9 +29,9 @@ annotation_schemes:
     name: stance
     description: "What is the stance?"
     labels:
-      - Negative
-      - Non-Negative
-      - Can't decide. There are reasons for both options
+      - Negative Citation
+      - Non-Negative Citation
+      - Uncertain
     sequential_key_binding: true
     horizontal: true
 
@@ -44,22 +45,17 @@ login:
 prolific:
   config_file_path: configs/prolific_config.yaml
 
-completion_code: "POTATO2026"
-training_failed_completion_code: "TRAINING_FAILED_E78XH"
+completion_code: "C1MDU4LQ"
+training_failed_completion_code: "C1QI5RLY"
 
 # Automatic task assignment for crowdsourcing
 assignment_strategy: random
 random_seed: 0
-max_annotations_per_user: 5
-max_annotations_per_item: 2
+max_annotations_per_user: 60
+max_annotations_per_item: 3
 
 jumping_to_id_disabled: true
 hide_navbar: true
-
-# Quality control
-#attention_checks:
-#  enabled: true
-#  frequency: 10
 
 phases:
   order:
@@ -80,27 +76,32 @@ phases:
     type: annotation
     task_layout: "layouts/task_layout.html"
 
-
 training:
   enabled: true
-  data_file: "data/twitter_training_data.json"
+  data_file: "data/training_data.json"
   annotation_schemes: ["stance"]
   passing_criteria:
     min_correct: 10
     require_all_correct: true
-    max_mistakes: 3
+    max_mistakes: 5
   allow_retry: true
   failure_action: "move_to_done"  # or "advance"
+
+n_train_items: 10
+n_items_to_annotate: 60
+n_attention_checks: 6
+coin_to_money: "£0.5"
+
 
 attention_checks:
   enabled: true
 
   # Path to JSON file containing attention check items
-  items_file: "data/reddit_climate_gold_data.json"
+  items_file: "data/gold_data.json"
 
   # How often to inject attention checks
-  #frequency: 2
-  probability: 0.33
+  # probability: 0.1
+  frequency: 10
 
   # Flag suspiciously fast responses
   min_response_time: 3.0
