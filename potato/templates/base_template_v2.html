@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
     <!-- Localhost-->
-    <!--<link rel="stylesheet" href="http://localhost:63342/NewOrder_Intern/potato/static/styles.css">-->
+    <link rel="stylesheet" href="http://localhost:63342/NewOrder_Intern/potato/static/styles.css">
 
     <style>
         body {
@@ -370,54 +370,72 @@
                 <h2 style="color: var(--secondary-color); font-weight: bold;">Quick Guide</h2>
                 Click <span class="trigger" onclick="openModal()">here</span> to open detailed annotation protocol pop-up.
 
-                <h6 style="color: var(--secondary-color); font-weight: bold; margin-top:1rem;">🔴 Negative Citation</h6>
+                <h6 style="color: var(--secondary-color); font-weight: bold; margin-top:1rem;">🔴 Negative Stance</h6>
                 <div class="text-box" style="margin-bottom: 1rem; padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
-                    <p>if the reply post encourages readers to question, doubt, or dismiss all or part of the conclusions of the referenced study.</p>
-                    <u>Criteria</u>:
-                    <ul style="padding-left: 0.5rem; margin-bottom: 0rem;">
-                        <li>Post criticizes the study’s data, methodology, or interpretations</li>
-                        <li>Post criticizes the study’s authors or source</li>
-                        <li>Post provides counter-evidence or calls the study outdated</li>
-                        <li>Post questions the study’s relevance or applicability</li>
-                        <li>Post uses sarcasm or questions to question or dismiss the study's conclusions</li>
+                    <p>if the reply post encourages readers to at least partially doubt, or dismiss the study's main conclusion.</p>
+                    <u>Common patterns</u> (not exhaustive - apply the definition above even if none of these match):
+
+                    <ul style="padding-left: 1rem; margin-bottom: 0rem;">
+                        <li>A1: Post criticizes the study’s data, methodology, or interpretations</li>
+                        <li>A2: Post criticizes the study’s authors, funding, or source</li>
+                        <li>A3: Post provides counter-evidence or calls the study outdated</li>
+                        <li>A4: Post questions the study’s relevance or applicability</li>
+                        <li>A5: Post uses sarcasm or rhetorical questions</li>
+                        <li>A6: Post dismisses the study without engaging with its content</li>
+                        <li>A7: Post casts generic doubt without a specific complaint</li>
                     </ul>
+                    <br>
+                    <u>Note</u>: Check if a pattern actually functions to lower trust in the conclusion. A post that raises one of these points and then explicitly rejects or outweighs it (e.g., "it's old, but still holds up") is NOT negative.
                 </div>
 
-                <h6 style="color: var(--secondary-color); font-weight: bold;">🟢 Non-negative Citation</h6>
+                <h6 style="color: var(--secondary-color); font-weight: bold;">🟢 Non-negative Stance</h6>
                 <div class="text-box" style="margin-bottom: 1rem; padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
-                    <p>if the reply post treats the study as neutral, valid, or acceptable.</p>
-                    <u>Criteria</u>:
-                    <ul style="padding-left: 0.5rem; margin-bottom: 0rem;">
-                        <li>Post reports on or summarizes the study without expressing doubt or criticism</li>
-                        <li>Post agrees with the study or endorses it</li>
+                    <p>if the reply post treats the study's main conclusion as neutral, valid, or acceptable.</p>
+                    <u>Common patterns</u> (not exhaustive):
+                    <ul style="padding-left: 1rem; margin-bottom: 0rem;">
+                        <li>B1: Post reports parts of the study or summarizes it without expressing doubt or criticism</li>
+                        <li>B2: Post agrees with the study's conclusion or endorses it</li>
+                        <li>B3: Post defends or supports the conclusion indirectly, e.g., by criticizing those who deny or attack it</li>
                     </ul>
                 </div>
 
                 <h6 style="color: var(--secondary-color); font-weight: bold;">🟡 Uncertain</h6>
                 <div class="text-box" style="margin-bottom: 1rem; padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
-                    <p>if there is not enough information to determine whether it is a Negative Citation or a Non-negative Citation.</p>
-                    <u>Examples</u>:
-                    <ul style="padding-left: 0.5rem; margin-bottom: 0rem;">
-                        <li>Pure mention: "This paper was already shared in another post yesterday"</li>
-                        <li>Vague language/tone: "Another 'groundbreaking' study"</li>
-                        <li>Unclear connection to the paper: "Why doesn't the media report about it?"</li>
-                        <li>User-to-User Interaction: "@userABC, why do you think that?"</li>
+                    <p>if there is not enough information to judge the reply post's stance.</p>
+                    <u>Common patterns</u> (not exhaustive):<br>
+                    Post does not engage with the study:
+                    <ul style="padding-left: 1rem; margin-bottom: 0rem;">
+                        <li>U1: Unclear connection to the paper: "Why doesn't the media report about it?"</li>
+                        <li>U2: User-to-User Interaction: "@userABC, why do you think that?"</li>
+                        <li>U3: Pure mention: "This paper was already shared yesterday"</li>
+                    </ul>
+                    <br>
+                    Post engages with the study, but direction is unclear:
+                    <ul style="padding-left: 1rem; margin-bottom: 0rem;">
+                        <li>U4: Vague language/tone: "This is wild"</li>
+                        <li>U5: Sarcasm but unclear what it targets: "oh good, it fixes itself \s"</li>
                     </ul>
                 </div>
 
                 <h6 style="color: var(--secondary-color); font-weight: bold;">Step-by-step Decision</h6>
                 <div class="text-box" style="padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
                     <p>To arrive at consistent decisions, always follow these steps:</p>
-                    <p style="margin-left: 0rem;">
-                        1. Does this post encourage readers to question, doubt, or dismiss all or part of the conclusions of the referenced study? (see criteria above) ->  🔴 Negative Citation
+                    <p style="margin-left: 0rem; margin-bottom: 0.2rem;">
+                        1. Does this post encourage readers to at least partially doubt, or dismiss the study's main conclusion? (see patterns above) ->  🔴 Negative Stance
+                    </p>
+                    <p style="margin-left: 1rem;">
+                        <u>Note</u>: posts may combine praise and criticism so that patterns from Negative Stance and Non-negative Stance are met. Negative Stance takes precedence if it is not rejected or outweighed within the post itself.
                     </p>
                     <p style="margin-left: 0rem;">
-                        2. If not, does this post treat the study as neutral, valid, or acceptable? (see criteria above) ->  🟢 Non-negative Citation
+                        2. If not, does this post treat the main conclusion as neutral, valid, or acceptable? (see patterns above) ->  🟢 Non-negative Stance
                     </p>
-                    <p style="margin-left: 0rem;">
-                        3. If not ->  🟡 Uncertain
+                    <p style="margin-left: 0rem; margin-bottom: 0.2rem;">
+                        3. Otherwise, if the post takes no stance toward the main conclusion, or the direction of the stance is unclear ->  🟡 Uncertain
                     </p>
-                    <p style="margin-top: 0rem; margin-bottom: 0rem;">
+                    <p style="margin-left: 1rem;">
+                        <u>Note</u>: being unsure is not a reason for Uncertain. Choose one of the two other options if you have a tendency.
+                    </p>
+                    <!--<p style="margin-top: 0rem; margin-bottom: 0rem;">
                         <u>Note</u>: posts might combine praise and criticism, so that both Negative Citation criteria and Non-negative Citation criteria are met.
                         For this task, Negative Citation criteria take precedence if the criticism is used to make readers question the study's conclusions.
                         As a heuristic, ask "If a reader saw only this comment, would they trust the study's conclusions less?"
@@ -426,7 +444,7 @@
                         For example:
                         <br>🔴 Negative Citation: "Great study, but the sample is too small to really trust these results."
                         <br>🟢 Non-negative Citation: "Great study! Although sample is quite small, it provides a crucial proof-of-concept."
-                    </p>
+                    </p>-->
                 </div>
             </div>
             </div>
