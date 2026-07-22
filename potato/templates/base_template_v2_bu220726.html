@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{annotation_task_name}}</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <!-- Localhost-->
+    <link rel="stylesheet" href="http://localhost:63342/NewOrder_Intern/potato/static/styles.css">
+
+    <style>
+        body {
+            background-color: var(--primary-bg-color);
+        }
+
+        .navbar {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .button {
+            background-color: var(--light-color);
+            color: var(--secondary-color);
+            height: auto;
+            padding: 0.25rem 0.75rem;
+            font-size: 1rem;
+            min-width: 60px;
+            text-align: center;
+            border: none;
+            border-radius: 0.2rem;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background-color: var(--interact-color);
+            color: white;
+        }
+
+        .prev-button {
+            background-color: var(--light-color);
+            color: var(--secondary-color);
+        }
+
+        .prev-button:hover {
+            background-color: var(--interact-color);
+            color: white;
+        }
+
+        .next-button {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .next-button:hover {
+            background-color: var(--interact-color);
+            color: white;
+        }
+
+        .next-button:disabled {
+            cursor: not-allowed;
+            background-color: #d6d6d6;
+        }
+
+        .next-button:disabled:hover {
+            cursor: not-allowed;
+            background-color: #d6d6d6;
+        }
+
+        .text-box {
+            background-color: #fff;
+            margin-left: 0rem;
+            margin-right: 0.5rem;
+            margin-bottom: 2rem;
+            border-radius: 0.5rem;
+            padding: 1rem 1rem 1rem 1rem;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.16);
+        }
+
+        .task-image {
+            border-radius: 0.5rem;
+            border: 2px solid white;
+            display: block;
+            margin: 0rem;
+        }
+
+        .criteria-box {
+            background-color: #fff;
+            margin-left: 2rem;
+            margin-right: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.16);
+        }
+
+        .criteria-headline {
+            font-size: 18px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+        }
+
+        .criteria-box ul {
+            font-size: 16px;
+            list-style-type: square; /* or circle, square */
+            margin-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .criteria-box li {
+            margin-bottom: 0.5em;
+        }
+
+        .instructions-instance h5 {
+            color: #495057;
+            margin-bottom: 1rem;
+        }
+
+        #left {
+            width: 40%;
+            padding: 10px;
+        }
+
+        #divider {
+            width: 2px;
+            cursor: col-resize;
+            background: #888;
+        }
+
+        #right {
+            flex: 1;
+            padding: 10px;
+        }
+
+        blockquote {
+            border-inline-start: 5px solid lightgray;
+            margin: .5rem 0 1rem .5rem;
+            padding: .5rem 1rem;
+            background: 0 0;
+        }
+
+        .cheat-sheet {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            /*position: sticky;
+            top: 10px;*/
+            /*height: 95vh;*/
+            overflow-y: auto;
+            border-right: 2px solid #ccc;
+            padding-left: 15px;
+            padding-right: 15px;
+            font-size: 0.8em;
+            flex:1;
+            margin-left: 0rem;
+        }
+
+        /* The clickable word */
+        .trigger {
+            color: blue;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* Dark background overlay */
+        .overlay {
+            display: none; /* hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1111;
+        }
+
+        /* Modal box */
+        .annotation_protocol_modal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--primary-bg-color);
+            padding: 20px 20px;
+            width: 95%;
+            max-width: 95%;
+            max-height: 95%;
+            border-radius: 10px;
+            overflow-y: auto;
+        }
+
+        /* Close button (X) */
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .criteria-box {
+            background-color: #fff;
+            margin-left: 2rem;
+            margin-right: 2rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.16);
+        }
+
+        .criteria-headline {
+            font-size: 18px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+        }
+
+        .criteria-text {
+            color: black;
+            font-size: 16px;
+            margin-bottom: 0rem;
+            /*margin-left: 2rem;*/
+            margin-right: 0rem;
+        }
+
+        .training-instance {
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .example-container {
+            /*background-color: #d9d9d9;
+            border: 2px solid #e9ecef;
+            border-radius: 0.5rem;*/
+            /*margin-left: 2rem;*/
+            margin-bottom: 1rem;
+            padding: 1rem;
+            margin-right: 2rem;
+            /*margin-top: 1rem;*/
+        }
+
+        .examples-details{
+            color: black;
+            font-size: 16px;
+            margin-left: 2rem;
+            padding-bottom: 0.5rem;
+            padding-top: 0.5rem;
+        }
+
+        .examples-details-div{
+            /*display: flex;
+            gap: 0rem;*/
+        }
+
+        .examples-details-summary{
+            color: var(--secondary-color);
+            font-weight: bold
+        }
+
+        .post-heading{
+            color: var(--secondary-color);
+            font-weight: bold
+        }
+
+        .paper-heading{
+            color: var(--secondary-color);
+            font-weight: bold
+        }
+
+        .post-text{
+            background-color: #ffffff;
+            min-height: 50px;
+            position: relative;
+            line-height: 1.4em;
+            border-radius: .25rem !important;
+            padding: 1rem !important;
+            border: 1px solid #dee2e6 !important;
+        }
+
+        .abstract-text{
+            background-color: #ffffff;
+            min-height: 50px;
+            position: relative;
+            line-height: 1.4em;
+            border-radius: .25rem !important;
+            padding: 1rem !important;
+            border: 1px solid #dee2e6 !important;
+        }
+
+        .blue-definition{
+            margin: 0px 1rem;
+            color: var(--secondary-color);
+            font-weight: bold;
+            /*font-size: 17px;*/
+        }
+
+    </style>
+
+    <!-- jQuery (required for span annotation) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+<!-- Header navigation bar -->
+    <nav class="navbar sticky-top shadow-sm">
+        <div class="container-fluid d-flex align-items-center">
+            <!-- Task name (left aligned) -->
+            <div class="navbar-brand">
+                <span class="fw-bold" style="color: var(--light-color); font-size: 1.25rem">{{annotation_task_name}}</span>
+            </div>
+
+            <!-- Middle section with progress and navigation -->
+            <div class="d-flex align-items-center justify-content-center flex-grow-1 gap-4">
+                <!-- Annotation status indicator -->
+                <div class="annotation-status-indicator" id="annotation-status" style="color: var(--light-color);">
+                        <span class="status-badge {{ 'labeled' if instance_has_annotations else 'unlabeled' }}">
+                            {{ 'Labeled' if instance_has_annotations else 'Not labeled' }}
+                        </span>
+                </div>
+
+                <!-- Progress counter -->
+                <div class="d-flex align-items-center" style="color: var(--light-color); margin-right: 10px">
+                    <span>Annotated: <span class="fw-medium" id="progress-counter">{{finished_count}}/{{total_count}}</span></span>
+                </div>
+
+                <!-- Passed Attention Checks counter -->
+                <div class="d-flex align-items-center" style="color: var(--light-color); margin-right: 40px">
+                    <span>Coins: <span class="fw-medium" id="ac-counter">{{totals_acs_passed}} <i class="fa-solid fa-coins", style="color: #ffd900"></i></span></span>
+                </div>
+
+            </div>
+
+            <!-- User info and logout (right aligned) -->
+            <div class="d-flex align-items-center" style="padding: 0.5rem 1rem;">
+                <div class="me-3" style="color: var(--light-color)">
+                    <span>Logged in as <span class="fw-medium">{{username}}</span></span>
+                </div>
+                <!--<div class="border-start" style="padding-left: 20px; height: 24px; display: flex; align-items: center;">
+                    <form action="/logout" method="POST">
+                        <button type="submit" class="button">
+                            Logout
+                        </button>
+                    </form>
+                </div>-->
+            </div>
+        </div>
+    </nav>
+
+<div class="container-fluid">
+    <!-- Hidden input for instance_id -->
+    <div style="display: grid; gap: 1rem; grid-template-columns: 30% 70%;">
+            <div class="cheat-sheet-container" style="position: relative; min-height: 100px;">
+                <div class="cheat-sheet">
+                <h2 style="color: var(--secondary-color); font-weight: bold;">Quick Guide</h2>
+                Click <span class="trigger" onclick="openModal()">here</span> to open detailed annotation protocol pop-up.
+
+                <h6 style="color: var(--secondary-color); font-weight: bold; margin-top:1rem;">🔴 Negative Stance</h6>
+                <div class="text-box" style="margin-bottom: 1rem; padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
+                    <p>if the reply post encourages readers to at least partially doubt, or dismiss the study's main conclusion.</p>
+                    <u>Common patterns</u> (not exhaustive - apply the definition above even if none of these match):
+
+                    <ul style="padding-left: 1rem; margin-bottom: 0rem;">
+                        <li>A1: Post criticizes the study’s data, methodology, or interpretations</li>
+                        <li>A2: Post criticizes the study’s authors, funding, or source</li>
+                        <li>A3: Post provides counter-evidence or calls the study outdated</li>
+                        <li>A4: Post questions the study’s relevance or applicability</li>
+                        <li>A5: Post uses sarcasm or rhetorical questions</li>
+                        <li>A6: Post dismisses the study without engaging with its content</li>
+                        <li>A7: Post casts generic doubt without a specific complaint</li>
+                    </ul>
+                    <br>
+                    <u>Note</u>: Check if a pattern actually functions to lower trust in the conclusion. A post that raises one of these points and then explicitly rejects or outweighs it (e.g., "it's old, but still holds up") is NOT negative.
+                </div>
+
+                <h6 style="color: var(--secondary-color); font-weight: bold;">🟢 Non-negative Stance</h6>
+                <div class="text-box" style="margin-bottom: 1rem; padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
+                    <p>if the reply is not negative toward the study's main conclusion: the post treats it as neutral, valid, or acceptable.</p>
+                    <p>This is the default when a post is clearly not negative, even if it expresses no explicit endorsement.</p>
+                    <u>Common patterns</u> (not exhaustive):
+                    <ul style="padding-left: 1rem; margin-bottom: 0rem;">
+                        <li>B1: Post reports parts of the study or summarizes it</li>
+                        <li>B2: Post agrees with the study's conclusion or endorses it</li>
+                        <li>B3: Post defends or supports the conclusion indirectly, e.g., by criticizing those who deny or attack it</li>
+                        <li>B4: Post accepts the conclusion as given (e.g., builds on it, presupposes it) or reacts to it ("nice study")</li>
+                    </ul>
+                </div>
+
+                <h6 style="color: var(--secondary-color); font-weight: bold;">🟡 Uncertain</h6>
+                <div class="text-box" style="margin-bottom: 1rem; padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
+                    <p>if the stance might be negative, but there is not enough information to confirm it. Use this only when the uncertainty is specifically about whether the stance is negative.</p>
+                    <u>Common patterns</u> (not exhaustive):<br>
+                    Post does not engage with the study:
+                    <ul style="padding-left: 1rem; margin-bottom: 0rem;">
+                        <li>U1: Unclear connection to the paper: "Why doesn't the media report about it?"</li>
+                        <li>U2: User-to-User Interaction: "@userABC, why do you think that?"</li>
+                        <li>U3: Pure mention: "This paper was already shared yesterday"</li>
+                    </ul>
+                    <br>
+                    Post engages with the study, but direction is unclear:
+                    <ul style="padding-left: 1rem; margin-bottom: 0rem;">
+                        <li>U4: Vague language/tone: "This is wild"</li>
+                        <li>U5: Sarcasm but unclear what it targets: "oh good, it fixes itself \s"</li>
+                    </ul>
+                </div>
+
+                <h6 style="color: var(--secondary-color); font-weight: bold;">Step-by-step Decision</h6>
+                <div class="text-box" style="padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
+                    <p>To arrive at consistent decisions, always follow these steps:</p>
+                    <p style="margin-left: 0rem; margin-bottom: 0.2rem;">
+                        1. Does this post encourage readers to at least partially doubt, or dismiss the study's main conclusion? (see patterns above) ->  🔴 Negative Stance
+                    </p>
+                    <p style="margin-left: 1rem;">
+                        <u>Note</u>: posts may combine praise and criticism so that patterns from Negative Stance and Non-negative Stance are met. Negative Stance takes precedence if it is not rejected or outweighed within the post itself.
+                    </p>
+                    <p style="margin-left: 0rem;">
+                        2. If not, does this post treat the main conclusion as neutral, valid, or acceptable? (see patterns above) ->  🟢 Non-negative Stance
+                    </p>
+                    <p style="margin-left: 0rem; margin-bottom: 0.2rem;">
+                        3. Otherwise, if the post takes no stance toward the main conclusion, or the direction of the stance is unclear ->  🟡 Uncertain
+                    </p>
+                    <p style="margin-left: 1rem;">
+                        <u>Note</u>: being unsure is not a reason for Uncertain. Choose one of the two other options if you have a tendency.
+                    </p>
+                    <!--<p style="margin-top: 0rem; margin-bottom: 0rem;">
+                        <u>Note</u>: posts might combine praise and criticism, so that both Negative Citation criteria and Non-negative Citation criteria are met.
+                        For this task, Negative Citation criteria take precedence if the criticism is used to make readers question the study's conclusions.
+                        As a heuristic, ask "If a reader saw only this comment, would they trust the study's conclusions less?"
+                        <br>
+                        <br>
+                        For example:
+                        <br>🔴 Negative Citation: "Great study, but the sample is too small to really trust these results."
+                        <br>🟢 Non-negative Citation: "Great study! Although sample is quite small, it provides a crucial proof-of-concept."
+                    </p>-->
+                </div>
+            </div>
+            </div>
+
+        <div id="right">
+            <!-- Main annotation area -->
+            <div id="task_layout"
+                 class="shadcn-card mb-2 text-annotation"
+                 style="margin-left: 0rem; margin-right: 2rem;">
+                <div class="shadcn-card-content" style="background-color: #f8f9fa; padding: 1.5rem;">
+                    <!-- Loading state -->
+                    <div id="loading-state" class="text-center py-5">
+                        <div class="loading-spinner mb-3"></div>
+                        <p>Loading Instance...</p>
+                    </div>
+
+                    <!-- Error state -->
+                    <div id="error-state" class="error-message" style="display: none;">
+                        <h5><i class="fas fa-exclamation-triangle me-2"></i>Error</h5>
+                        <p id="error-message-text"></p>
+                        <button class="shadcn-button shadcn-button-primary" onclick="loadCurrentInstance()">
+                            <i class="fas fa-redo me-2"></i>Retry
+                        </button>
+                    </div>
+
+                    <!-- Main content area -->
+                    <div id="main-content" style="display: none;">
+                        <!-- Instance display area -->
+                        <div class="mb-4" style="margin-bottom: 0rem !important;">
+                            <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Post:</h5>
+                            <div id="instance-text" class="p-3 border rounded instance-text-container"
+                                 style="background-color: var(--light-bg); min-height: 50px; position: relative;">
+                                <!-- Text content layer for span annotation -->
+                                <!-- Note: sanitize_html filter allows safe span annotation HTML while blocking XSS -->
+                                <!-- data-original-text uses plain text (no span HTML) for correct position calculations -->
+                                <!-- DOM content uses rendered HTML with span tags for visual display -->
+                                <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">
+                                    {{instance_text | markdown}}
+                                </div>
+                                <!-- Span overlays layer for span annotation -->
+                                <div id="span-overlays" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 2;">
+                                    <!-- Individual overlays will have pointer-events: auto -->
+                                </div>
+                            </div>
+
+                            <br>
+                            <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Paper:</h5>
+                            <h6>Title: {{paper_title | markdown | replace('<p>', '') | replace('</p>', '')}}</h6>
+                            <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                            <div id="instance-text" class="p-3 border rounded instance-text-container"
+                                 style="background-color: var(--light-bg); min-height: 0px; position: relative;">
+                                <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">
+                                    {{paper_abstract | markdown}}
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form method="POST" id="annotation-form" action="/annotation/navigate_to_next">
+                <input type="hidden" id="instance_id" name="instance_id" value="{{instance_id}}">
+                <div id="task_layout"
+                     class="shadcn-card mb-2 text-annotation"
+                     style="margin-left: 0rem; margin-right: 2rem; min-height: 0px;">
+                    <div class="shadcn-card-content" style="background-color: #f8f9fa; padding: 1.5rem;">
+                        <!-- Main content area -->
+                        <div id="main-content">
+                            <!-- Annotation forms -->
+                            <h5 class="mb-3" style="color: var(--secondary-color); font-weight: bold">Annotation:</h5>
+                            <div id="annotation-forms">
+                                {{ TASK_LAYOUT }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end align-items-center" style="margin-left: 2rem; margin-right: 2rem; min-height: 0px;">
+                    <button class="shadcn-button shadcn-button-primary next-button" id="next-btn" name="btn" type="submit" value="next-btn" style="margin-left: auto;">
+                        {% if finished_count == total_count - 1 %}
+                            Finish <i class="fas fa-arrow-right ms-2"></i>
+                        {% else %}
+                            Next  <i class="fas fa-arrow-right ms-2"></i>
+                        {% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+    <!-- Footer -->
+    <hr style="color: var(--footer-border)">
+    <footer class="py-2 text-center" style="font-size: 0.75rem">
+        <a href="https://www.gesis.org/en/institute/about-us/staff/person/Sebastian.Schellhammer/" style="color: var(--primary); text-decoration: none">Contact</a>
+        <span class="mx-2">|</span>
+        <a href="https://github.com/davidjurgens/potato" style="color: var(--primary); text-decoration: none">Powered by POTATO</a>
+    </footer>
+
+    <!-- Annotation Protocol Overlay -->
+    <div id="overlay" class="overlay">
+        <div class="annotation_protocol_modal">
+            <span class="close" onclick="closeModal()">&times;</span>
+
+            <h2 style="color: var(--secondary-color); font-weight: bold; text-align: center;">Annotation Protocol</h2>
+
+            <h4 style="color: var(--secondary-color); font-weight: bold;">Task</h4>
+            <div class="text-box">
+                <div>
+                    Given the reply post and the scientific paper (title + abstract) your task is to classify the reply post into:
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 5rem; color: var(--secondary-color); font-weight: bold; margin-top:1rem;">
+                        <span>🔴 Negative Citation</span>
+                        <span>🟢 Non-negative Citation</span>
+                        <span>🟡 Uncertain</span>
+                    </div>
+                </div>
+            </div>
+
+            <h4 style="color: var(--secondary-color); font-weight: bold;">🔴 What are negative citations?</h4>
+            <div class="text-box">
+                <p>For this task we define negative citations in the following way:</p>
+                <p class="blue-definition">
+                    A negative citation occurs when a social media post encourages readers to partially or
+                    fully question, doubt, or dismiss the conclusions of the referenced study.
+                </p>
+                <br>
+                Please see the following criteria to identify potential negative citations:
+            </div>
+
+            <div>
+                <div class="criteria-box">
+                    <div class="criteria-headline">Post criticizes the study’s data, methodology, or interpretations, etc., and/or proposes better study design choices</div>
+                    <div class="examples-div">
+                        <details class="examples-details">
+                            <summary class="examples-details-summary">
+                                Examples:
+                            </summary>
+                            <div class="examples-details-div">
+                                <div class="example-container">
+                                    <h6 class="criteria-text">
+                                        Post mentions flaws in the study’s design (e.g., sample too small, wrong method, claims too strong)
+                                    </h6>
+                                    <div class="training-instance">
+                                        <h5 class="mb-3 post-heading" >Post:</h5>
+                                        <div id="instance-text" class="post-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                This study relies on only a 35-year velocity record and 6 years of GPS data at a single site ... hardly enough to make broad claims about the ice stream’s behavior.
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <h5 class="mb-3 paper-heading">Paper:</h5>
+                                        <h6>
+                                            Title: Accelerating ice flow at the onset of the Northeast Greenland Ice Stream
+                                        </h6>
+                                        <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                                        <div id="instance-text" class="abstract-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Mass loss near the ice-sheet margin is evident from remote sensing as frontal retreat and increases in ice velocities. Velocities in the ice sheet interior are orders of magnitude smaller, making it challenging to detect velocity change. Here, we analyze a 35-year record of remotely sensed velocities, and a 6-year record of repeated GPS observations, at the East Greenland Ice-core Project (EastGRIP), located in the middle of the Northeast-Greenland Ice Stream (NEGIS)...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="example-container">
+                                    <h6 class="criteria-text">
+                                        Post proposes a more realistic study design instead (e.g., better method, different sample)
+                                    </h6>
+                                    <div class="training-instance">
+                                        <h5 class="mb-3 post-heading" >Post:</h5>
+                                        <div id="instance-text" class="post-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Well, they could get way more realistic results by combining multiple models and local data to really capture how different regions handle sea-level rise.
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <h5 class="mb-3 paper-heading">Paper:</h5>
+                                        <h6>
+                                            Title: Distribution of economic damages due to climate-driven sea-level rise across European regions and sectors
+                                        </h6>
+                                        <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                                        <div id="instance-text" class="abstract-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Economic costs of climate change are conventionally assessed at the aggregated global and national levels, while adaptation is local. When present, regionalised assessments are confined to direct damages, hindered by both data and models’ limitations. This article goes beyond the aggregated analysis to explore direct and indirect economic consequences of sea level rise (SLR) at regional and sectoral levels in Europe. Using a dynamic computable general equilibrium model and novel datasets, we estimate the distribution of losses ...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="example-container">
+                                    <h6 class="criteria-text">
+                                        Post selectively quotes parts of the study to cast doubt (e.g., limitations, disclaimer, ...)
+                                        <br>
+                                        <u>Note</u>: Simply mentioning a limitation while accepting the overall result is not a negative Citation.
+                                    </h6>
+                                    <div class="training-instance">
+                                        <h5 class="mb-3 post-heading" >Post:</h5>
+                                        <div id="instance-text" class="post-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Even the authors admit it:
+                                                <blockquote>This study has some limitations. First, the sample size is limited and the results may not be generalizable.</blockquote>
+                                                Why are we even discussing this?
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <h5 class="mb-3 paper-heading">Paper:</h5>
+                                        <h6>
+                                            Title: Vegans, vegetarians, fish-eaters and meat-eaters in the UK show discrepant environmental impacts
+                                        </h6>
+                                        <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                                        <div id="instance-text" class="abstract-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Modelled dietary scenarios often fail to reflect true dietary practice and do not account for variation in the environmental burden of food due to sourcing and production methods. Here we link dietary data from a sample of 55,504 vegans, vegetarians, fish-eaters and meat-eaters with food-level data on greenhouse gas emissions, land use, water use, eutrophication risk ...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+
+                <div class="criteria-box">
+                    <div class="criteria-headline">Post criticizes the study’s authors or source</div>
+                    <div class="examples-div">
+                        <details class="examples-details">
+                            <summary class="examples-details-summary">
+                                Examples:
+                            </summary>
+                            <div class="examples-details-div">
+                                <div class="example-container">
+                                    <h6 class="criteria-text">
+                                        Post criticizes the study's authors (e.g., mentions conflicts of interest or author’s questionable track of record)
+                                    </h6>
+                                    <div class="training-instance">
+                                        <h5 class="mb-3 post-heading" >Post:</h5>
+                                        <div id="instance-text" class="post-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                I'd take this with a grain of salt ... the authors have a track record of promoting vertical farming pretty aggressively
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <h5 class="mb-3 paper-heading">Paper:</h5>
+                                        <h6>
+                                            Title: Wheat yield potential in controlled-environment vertical farms
+                                        </h6>
+                                        <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                                        <div id="instance-text" class="abstract-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Scaling current cereal production to a growing global population will be a challenge. Wheat supplies approximately one-fifth of the calories and protein for human diets. Vertical farming is a possible promising option for increasing future wheat production. Here we show that wheat grown on a single hectare of land in a 10-layer indoor vertical facility could produce from 700 ± 40 t/ha (measured) to a maximum of 1,940 ± 230 t/ha (estimated) of grain annually under  ...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="example-container">
+                                    <h6 class="criteria-text">
+                                        Post criticizes the study's source (e.g., that it is not peer-reviewed, from a questionable journal/venue)
+                                    </h6>
+                                    <div class="training-instance">
+                                        <h5 class="mb-3 post-heading" >Post:</h5>
+                                        <div id="instance-text" class="post-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Honestly, I wouldnt trust this too much. it's not peer-reviewed and comes from some random online repo.
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <h5 class="mb-3 paper-heading">Paper:</h5>
+                                        <h6>
+                                            Title: Spatially resolved emulated annual temperature projections for overshoot pathways                                    </h6>
+                                        <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                                        <div id="instance-text" class="abstract-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Due to insufficient climate action over the past decade, it is increasingly likely that 1.5 °C of global warming will be exceeded – at least temporarily – in the 21 st century. Such a temporary temperature overshoot carries additional climate risks which are poorly understood. Earth System Model climate projections are only available for a very limited number of overshoot pathways, thereby preventing comprehensive analysis of their impacts. Here, ...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+
+                <div class="criteria-box">
+                    <div class="criteria-headline">Post provides counter-evidence or calls the study outdated to dismiss, question or cast doubt on the study's conclusions</div>
+                    <div class="examples-div">
+                        <details class="examples-details">
+                            <summary class="examples-details-summary">
+                                Examples:
+                            </summary>
+                            <div class="examples-details-div">
+                                <div class="example-container">
+                                    <h6 class="criteria-text">
+                                         Post provides counter-evidence (e.g., studies with contrary findings, anecdotal counter-evidence)
+                                    </h6>
+                                    <div class="training-instance">
+                                        <h5 class="mb-3 post-heading" >Post:</h5>
+                                        <div id="instance-text" class="post-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Not sure I agree with 1.5°C as a hard tipping point. I remember someone shared a recent study suggesting several tipping elements are much less sensitive and might not trigger until closer to 3°C, so things might not be as immediate as this paper implies.
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <h5 class="mb-3 paper-heading">Paper:</h5>
+                                        <h6>
+                                            Title: Exceeding 1.5°C global warming could trigger multiple climate tipping points
+                                        </h6>
+                                        <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                                        <div id="instance-text" class="abstract-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Climate tipping points occur when change in a part of the climate system becomes self-perpetuating beyond a warming threshold, leading to substantial Earth system impacts. Synthesizing paleoclimate, observational, and model-based studies, we provide a revised shortlist of global “core” tipping elements and regional “impact” tipping elements and their temperature thresholds. Current global warming of ~1.1°C above preindustrial temperatures already lies within the lower end of ...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="example-container">
+                                    <h6 class="criteria-text">
+                                        Post calls the study outdated or old, implying findings are invalid, superseded, or no longer reflect reality
+                                    </h6>
+                                    <div class="training-instance">
+                                        <h5 class="mb-3 post-heading" >Post:</h5>
+                                        <div id="instance-text" class="post-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Believe me, in science things can change quickly ... this study is interesting, but it’s already a few years old and there are so many more recent ones.
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <h5 class="mb-3 paper-heading">Paper:</h5>
+                                        <h6>
+                                            Title: Substantial and overlooked greenhouse gas emissions from deep Arctic lake sediment
+                                        </h6>
+                                        <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                                        <div id="instance-text" class="abstract-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Thermokarst lakes cause abrupt and sustained permafrost degradation and have the potential to release large quantities of ancient carbon to the atmosphere. Despite concerns about how lakes will affect the permafrost carbon feedback, the magnitude of carbon dioxide and methane emissions from deep permafrost soils remains poorly understood. Here we incubated a very deep sediment core (20 m) to constrain the potential productivity of thawed Yedoma and underlying Quaternary sand ...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+
+                <div class="criteria-box">
+                    <div class="criteria-headline">Post questions the study’s relevance or applicability</div>
+                    <div class="examples-div">
+                        <details class="examples-details">
+                            <summary class="examples-details-summary">
+                                Examples:
+                            </summary>
+                            <div class="examples-details-div">
+                                <div class="example-container">
+                                    <h6 class="criteria-text">
+                                         Post criticizes the study's generalizability (e.g., findings in basic research might not apply to real-world scenarios or scenarios readers care about)
+                                    </h6>
+                                    <div class="training-instance">
+                                        <h5 class="mb-3 post-heading" >Post:</h5>
+                                        <div id="instance-text" class="post-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Hard to know how much these findings about pre-LGM ice sheets actually apply to modern-day ice dynamics or real-world sea-level predictions
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <h5 class="mb-3 paper-heading">Paper:</h5>
+                                        <h6>
+                                            Title: The configuration of Northern Hemisphere ice sheets through the Quaternary
+                                        </h6>
+                                        <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                                        <div id="instance-text" class="abstract-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Our understanding of how global climatic changes are translated into ice-sheet fluctuations and sea-level change is currently limited by a lack of knowledge of the configuration of ice sheets prior to the Last Glacial Maximum (LGM). Here, we compile a synthesis of empirical data and numerical modelling results related to pre-LGM ice sheets to produce new hypotheses regarding their extent in the Northern Hemisphere (NH) at ...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="example-container">
+                                    <h6 class="criteria-text">
+                                        Post downplays the significance of the study to cast doubt
+                                    </h6>
+                                    <div class="training-instance">
+                                        <h5 class="mb-3 post-heading" >Post:</h5>
+                                        <div id="instance-text" class="post-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Keep cool ... just a small preliminary study, we shouldn’t draw conclusions from it
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <h5 class="mb-3 paper-heading">Paper:</h5>
+                                        <h6>
+                                            Title: The emergence of heat and humidity too severe for human tolerance
+                                        </h6>
+                                        <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                                        <div id="instance-text" class="abstract-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Humans' ability to efficiently shed heat has enabled us to range over every continent, but a wet-bulb temperature (TW) of 35\u00b0C marks our upper physiological limit, and much lower values have serious health and productivity impacts. Climate models project the first 35\u00b0C TW occurrences by the mid-21st century. However, a comprehensive evaluation of weather station ...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+
+                <div class="criteria-box">
+                    <div class="criteria-headline">Post uses sarcasm to dismiss, question or cast doubt on the study's conclusions</div>
+                    <div class="examples-div">
+                        <details class="examples-details">
+                            <summary class="examples-details-summary">
+                                Examples:
+                            </summary>
+                            <div class="examples-details-div">
+                                <div class="example-container">
+                                    <h6 class="criteria-text">
+                                        Post uses sarcasm to criticize the data
+                                        <br>
+                                        <br>
+                                        <u>Note</u>: If the sarcasm is ambiguous and is not clearly used to dismiss, question or doubt the study's conclusions, label the post as Uncertain (see <i>Vague language/tone </i> case)
+                                    </h6>
+                                    <div class="training-instance">
+                                        <h5 class="mb-3 post-heading" >Post:</h5>
+                                        <div id="instance-text" class="post-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                A sample size of 120 people? Yeah, that’s totally 'statistically significant' ...
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <h5 class="mb-3 paper-heading">Paper:</h5>
+                                        <h6>
+                                            Title: Drivers of individual climate actions in Scandinavia
+                                        </h6>
+                                        <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                                        <div id="instance-text" class="abstract-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                We analyze Scandinavian citizens' willingness to take climate mitigation action with data from a survey of 120 people. Responses are explored with an interdisciplinary hybrid choice model that integrates ...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+
+                <div class="criteria-box">
+                    <div class="criteria-headline">Post uses questions to dismiss, question or cast doubt on the study's conclusions</div>
+                    <div class="examples-div">
+                        <details class="examples-details">
+                            <summary class="examples-details-summary">
+                                Examples:
+                            </summary>
+                            <div class="examples-details-div">
+                                <div class="example-container">
+                                    <h6 class="criteria-text">
+                                        Post uses question to criticize the study's authors
+                                        <br>
+                                        <br>
+                                        <u>Note</u>: Honest questions (e.g., "What did they use for identifying the critical threshold?") should be labeled as Non-Negative Citations
+                                    </h6>
+                                    <div class="training-instance">
+                                        <h5 class="mb-3 post-heading" >Post:</h5>
+                                        <div id="instance-text" class="post-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                How can we trust a study whose authors had a similar paper retracted last year?
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <h5 class="mb-3 paper-heading">Paper:</h5>
+                                        <h6>
+                                            Title: The South American monsoon approaches a critical transition in response to deforestation
+                                        </h6>
+                                        <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                                        <div id="instance-text" class="abstract-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                The Amazon rainforest is threatened by land-use change and increasing drought and fire frequency. Studies suggest an abrupt dieback of large parts of the rainforest after partial forest loss, but the critical threshold, underlying mechanisms, ...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+
+            </div>
+
+            <h4 style="color: var(--secondary-color); font-weight: bold;">🟢 What are non-negative citations?</h4>
+            <div class="text-box">
+                <p>For this task we define non-negative citations in the following way:</p>
+                <p class="blue-definition">A non-negative citation occurs when a social media post treats the study as neutral, valid, or acceptable</p>
+                <br>
+                Please see the following criteria to identify potential non-negative citations:
+            </div>
+            <div>
+                <div class="criteria-box">
+                    <div class="criteria-headline">Post reports or summarizes the study or parts of it</div>
+                    <div class="examples-div">
+                        <details class="examples-details">
+                            <summary class="examples-details-summary">
+                                Examples:
+                            </summary>
+                            <div class="examples-details-div">
+                                <div class="example-container">
+                                    <h6 class="criteria-text">
+                                        Post reports parts of the study
+                                    </h6>
+                                    <div class="training-instance">
+                                        <h5 class="mb-3 post-heading" >Post:</h5>
+                                        <div id="instance-text" class="post-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Here's what they did (from the abstract):
+                                                <blockquote>
+                                                    Understanding the change in soil organic carbon (C) stock in a warmer climate and the effect of current land management on that stock is critical for soil and environmental conservation and climate policy. By simulation modeling, we predicted changes in Australia’s soil organic C stock from 2010 to 2100.
+                                                </blockquote>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <h5 class="mb-3 paper-heading">Paper:</h5>
+                                        <h6>
+                                            Title: A warming climate will make Australian soil a net emitter of atmospheric CO2
+                                        </h6>
+                                        <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                                        <div id="instance-text" class="abstract-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Understanding the change in soil organic carbon (C) stock in a warmer climate and the effect of current land management on that stock is critical for soil and environmental conservation and climate policy. By simulation modeling, we predicted changes in Australia’s soil organic C stock from 2010 to 2100. These vary from losses of 0.014–0.077 t C ha−1 year−1 between 2020 and 2045 and 0.013–0.047 t C ha−1 year−1 between 2070 and 2100, under increasing emissions of greenhouse gases and temperature. Thus, Australian soil will be a net emitter of CO2. Depending on the ...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="example-container">
+                                    <h6 class="criteria-text">
+                                        Post summarizes the study
+                                    </h6>
+                                    <div class="training-instance">
+                                        <h5 class="mb-3 post-heading" >Post:</h5>
+                                        <div id="instance-text" class="post-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                This study uses high-resolution Landsat 8 satellite data to analyze sea surface temperature variability near macro tidal flats.
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <h5 class="mb-3 paper-heading">Paper:</h5>
+                                        <h6>
+                                            Title: Immense variability in the sea surface temperature near macro tidal flat revealed by high-resolution satellite data (Landsat 8)
+                                        </h6>
+                                        <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                                        <div id="instance-text" class="abstract-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Sea surface temperature (SST) is crucial for understanding the physical characteristics and ecosystems of coastal seas. SST varies near the tidal flat, where exposure and flood recur according to the tidal cycle. However, the variability of SST near the tidal flat is poorly understood owing to difficulties in making in-situ observations. The high resolution of Landsat 8 enabled us to determine the variability of SST near the macro tidal flat. The spatial distribution of the SST extracted from Landsat 8 changed drastically. The seasonal SST range was higher near the tidal flat than in the open sea. The maximum seasonal range of coastal SST exceeded ...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+
+                <div class="criteria-box">
+                    <div class="criteria-headline">Post agrees with the study or endorses it</div>
+                    <div class="examples-div">
+                        <details class="examples-details">
+                            <summary class="examples-details-summary">
+                                Examples:
+                            </summary>
+                            <div class="examples-details-div">
+                                <div class="example-container">
+                                    <h6 class="criteria-text">
+                                        Post agrees with the study's conclusions
+                                    </h6>
+                                    <div class="training-instance">
+                                        <h5 class="mb-3 post-heading" >Post:</h5>
+                                        <div id="instance-text" class="post-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Good to see research showing that expanding marine protected areas through coordinated global planning can benefit biodiversity, improve fisheries productivity, and help protect carbon storage in the ocean.
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <h5 class="mb-3 paper-heading">Paper:</h5>
+                                        <h6>
+                                            Title: Protecting the global ocean for biodiversity, food and climate
+                                        </h6>
+                                        <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                                        <div id="instance-text" class="abstract-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                The ocean contains unique biodiversity, provides valuable food resources and is a major sink for anthropogenic carbon. Marine protected areas (MPAs) are an effective tool for restoring ocean biodiversity and ecosystem services but at present only 2.7% of the ocean is highly protected. This low level of ocean protection is due largely to conflicts with fisheries and other extractive uses ... Our flexible prioritization framework could help to inform both national marine spatial plans and global targets for marine conservation, food security and climate action. Using a globally coordinated strategic conservation framework to plan an increase in ocean protection through marine protected areas can yield benefits for biodiversity, food provisioning and carbon storage.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="example-container">
+                                    <h6 class="criteria-text">
+                                        Post endorses the study
+                                    </h6>
+                                    <div class="training-instance">
+                                        <h5 class="mb-3 post-heading" >Post:</h5>
+                                        <div id="instance-text" class="post-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Wow! A strong and important climate study using robust attribution methods. Results are highly convincing!!!
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <h5 class="mb-3 paper-heading">Paper:</h5>
+                                        <h6>
+                                            Title: Rapidly increasing likelihood of exceeding 50°C in parts of the Mediterranean and the Middle East due to human influence
+                                        </h6>
+                                        <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                                        <div id="instance-text" class="abstract-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                As the world warms, extremely hot days are becoming more frequent and intense, reaching unprecedented temperatures associated with excess mortality. Here, we assess how anthropogenic forcings affect the likelihood of maximum daily temperatures above 50 °C at 12 selected locations around the Mediterranean and the Middle East. We adopt a risk-based attribution methodology that utilises climate model simulations with and without human ...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="example-container">
+                                    <h6 class="criteria-text">
+                                        Post applies the study's findings
+                                    </h6>
+                                    <div class="training-instance">
+                                        <h5 class="mb-3 post-heading" >Post:</h5>
+                                        <div id="instance-text" class="post-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Given these findings cities should clearly expand heatwave early-warning systems
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <h5 class="mb-3 paper-heading">Paper:</h5>
+                                        <h6>
+                                            Title: Heat-related mortality in Europe during the summer of 2022
+                                        </h6>
+                                        <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                                        <div id="instance-text" class="abstract-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Over 70,000 excess deaths occurred in Europe during the summer of 2003. The resulting societal awareness led to the design and implementation of adaptation strategies to protect at-risk populations. We aimed to quantify heat-related mortality burden during the summer of 2022, the hottest season on record in Europe ...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="example-container">
+                                    <h6 class="criteria-text">
+                                        Post agrees by claiming results are "obvious", "common sense", or "old news"
+                                    </h6>
+                                    <div class="training-instance">
+                                        <h5 class="mb-3 post-heading" >Post:</h5>
+                                        <div id="instance-text" class="post-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                Obviously ... everyone living in this area has known this for years.
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <h5 class="mb-3 paper-heading">Paper:</h5>
+                                        <h6>
+                                            Title: Scattered tree death contributes to substantial forest loss in California
+                                        </h6>
+                                        <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                                        <div id="instance-text" class="abstract-text">
+                                            <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                                In recent years, large-scale tree mortality events linked to global change have occurred around the world ... The widespread mortality of individual trees impacts the carbon budget and sequestration capacity of California forests and can be considered a threat to forest health and a fuel source for future wildfires.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </div>
+
+            <h4 style="color: var(--secondary-color); font-weight: bold;">🟡 When to use Uncertain?</h4>
+            <div class="text-box">
+                <p>Use the Uncertain option</p>
+                <p class="blue-definition">if there is not enough information to determine whether it is a Negative Citation or Non-negative Citation.</p>
+                <br>
+                Please see the following common cases when to use Uncertain:
+            </div>
+            <div>
+                <div class="criteria-box">
+                    <div class="criteria-headline">Common cases when to use Uncertain</div>
+                    <div class="examples-div">
+                        <ul style="padding-bottom: 0.5rem;">
+                            <li>Pure mention <u>without</u> reporting or summarizing the study content: "This paper was already shared in another post yesterday"</li>
+                            <li>Vague language/tone: "Another 'groundbreaking' study…"</li>
+                            <li>Unclear connection to the paper: "Why doesn't the media report about it?"</li>
+                            <li>User-to-User Interaction: "@userABC, why do you think that?"</li>
+                        </ul>
+                        <p></p>
+                    </div>
+                </div>
+            </div>
+
+            <h4 style="color: var(--secondary-color); font-weight: bold;">Step-by-step Decision</h4>
+            <div class="text-box">
+                <p>
+                    To arrive at consistent decisions, always follow these steps:
+                </p>
+                <p style="margin-left: 1rem;">
+                    Check for a 🔴 Negative Citation: Does this post encourage readers to question, doubt, or dismiss all or part of the conclusions of the referenced study? (see criteria above)
+                </p>
+                <p style="margin-left: 4rem;">
+                    If yes, label the post as a 🔴 Negative Citation.
+                </p>
+                <p style="margin-top: 2rem; margin-left: 1rem;">
+                    If no, check for a 🟢 Non-negative Citation: Does this post treat the study as neutral, valid, or acceptable? (see criteria above)
+                </p>
+                <p style="margin-left: 4rem;">
+                    If yes, label the post as a 🟢 Non-negative Citation.
+                </p>
+                <p style="margin-top: 2rem; margin-left: 1rem;">
+                    If no, label as 🟡 Uncertain
+                </p>
+                <p style="margin-top: 2rem;">
+                    <u>Note</u>: posts might combine praise and criticism, so that both Negative Citation criteria and Non-negative Citation criteria are met.
+                    For this task, Negative Citation criteria take precedence if the criticism is used to make readers question the study's conclusions.
+                    As a heuristic, ask "If a reader saw only this comment, would they trust the study's conclusions less?"
+                    <br>
+                    For example:
+                    <br>🔴 Negative Citation: "Great study, but the sample is too small to really trust these results."
+                    <br>🟢 Non-negative Citation: "Great study! Although sample is quite small, it provides a crucial proof-of-concept."
+                </p>
+            </div>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <script>
+          {% for category, message in messages %}
+            alert("{{ message }}");
+          {% endfor %}
+        </script>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      function openModal() {
+        console.log("openModal")
+          document.getElementById("overlay").style.display = "block";
+
+      }
+
+      function closeModal() {
+        document.getElementById("overlay").style.display = "none";
+      }
+
+      // Optional: close when clicking outside the modal
+      window.onclick = function(event) {
+        const overlay = document.getElementById("overlay");
+        if (event.target === overlay) {
+          overlay.style.display = "none";
+        }
+      }
+    </script>
+
+    <!-- Configuration from server -->
+    <script type="text/javascript">
+        window.config = {
+            annotation_task_name: {{ annotation_task_name | tojson }},
+            debug: {{ 'true' if debug_mode else 'false' }},
+            ui_debug: {{ 'true' if ui_debug else 'false' }},
+            server_debug: {{ 'true' if server_debug else 'false' }},
+            debug_phase: {{ debug_phase | tojson if debug_phase else 'null' }},
+            api_key: "test_api_key",
+            username: {{ username | tojson }}
+        };
+
+        // Conditionally enable/disable console logging based on ui_debug setting
+        if (!window.config.ui_debug) {
+            // Store original console methods
+            window._originalConsole = {
+                log: console.log,
+                debug: console.debug,
+                info: console.info,
+                warn: console.warn
+            };
+            // Override with no-ops (keep error for critical issues)
+            console.log = function() {};
+            console.debug = function() {};
+            console.info = function() {};
+            // Keep warn for important warnings
+        }
+
+        // Helper function to enable UI logging at runtime (for debugging in browser console)
+        window.enableUIDebug = function() {
+            if (window._originalConsole) {
+                console.log = window._originalConsole.log;
+                console.debug = window._originalConsole.debug;
+                console.info = window._originalConsole.info;
+                console.warn = window._originalConsole.warn;
+                console.log('UI debug logging enabled');
+            }
+        };
+    </script>
+
+    <!-- Load annotation JavaScript -->
+    <script src="{{ url_for('static', filename='interaction_tracker.js') }}?v=1"></script>
+    <!-- Display Logic Manager (conditional schema branching) - must load before annotation.js -->
+    <script src="{{ url_for('static', filename='display-logic.js') }}?v=1"></script>
+    <script src="{{ url_for('static', filename='annotation.js') }}?v=15"></script>
+
+    <!-- Global keyboard debug (temporary) -->
+    <script>
+        window.addEventListener('keydown', function (e) {
+            console.log('[GLOBAL DEBUG] keydown:', e.key, 'code:', e.code, 'target:', e.target.tagName);
+        }, true);
+    </script>
+
+    <script>
+        const form = document.getElementById("annotation-form");
+        const btn = document.getElementById("next-btn");
+
+        function log(event, data = {}) {
+            console.log("[VALIDATION LOG]", {
+                event,
+                timestamp: new Date().toISOString(),
+                ...data
+            });
+        }
+
+        function checkValid() {
+            const inputs = form.querySelectorAll("input, select, textarea");
+            let valid = false;
+
+            inputs.forEach(el => {
+                if (el.type === "radio" && el.checked) {
+                    valid = true;
+                }
+            });
+
+            const prevState = btn.disabled;
+            const newState = !valid;
+
+            btn.disabled = newState;
+
+            // log only when state changes (avoids spam)
+            if (prevState !== newState) {
+                log("button_state_changed", {
+                    valid,
+                    disabled: newState
+                });
+            }
+        }
+
+        form.addEventListener("change", (e) => {
+            log("form_change", {
+                type: e.target.type,
+                name: e.target.name,
+                value: e.target.value
+            });
+
+            checkValid();
+        });
+
+        window.addEventListener("load", () => {
+            log("page_load_validation");
+            checkValid();
+        });
+    </script>
+</body>
+</html>

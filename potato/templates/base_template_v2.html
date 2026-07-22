@@ -380,7 +380,7 @@
                         <li>A2: Post criticizes the study’s authors, funding, or source</li>
                         <li>A3: Post provides counter-evidence or calls the study outdated</li>
                         <li>A4: Post questions the study’s relevance or applicability</li>
-                        <li>A5: Post uses sarcasm or rhetorical questions</li>
+                        <li>A5: Post uses sarcasm or rhetorical questions against the conclusion</li>
                         <li>A6: Post dismisses the study without engaging with its content</li>
                         <li>A7: Post casts generic doubt without a specific complaint</li>
                     </ul>
@@ -390,30 +390,36 @@
 
                 <h6 style="color: var(--secondary-color); font-weight: bold;">🟢 Non-negative Stance</h6>
                 <div class="text-box" style="margin-bottom: 1rem; padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
-                    <p>if the reply post treats the study's main conclusion as neutral, valid, or acceptable.</p>
+                    <p>if the reply is not negative toward the study's main conclusion: the post treats it as neutral, valid, or acceptable.</p>
+                    <p>This is the default when a post is clearly not negative, even if it expresses no explicit endorsement.</p>
                     <u>Common patterns</u> (not exhaustive):
                     <ul style="padding-left: 1rem; margin-bottom: 0rem;">
-                        <li>B1: Post reports parts of the study or summarizes it without expressing doubt or criticism</li>
-                        <li>B2: Post agrees with the study's conclusion or endorses it</li>
-                        <li>B3: Post defends or supports the conclusion indirectly, e.g., by criticizing those who deny or attack it</li>
+                        <li>Z1: Post reports parts of the study or summarizes it</li>
+                        <li>Z2: Post agrees with the study's conclusion or endorses it</li>
+                        <li>Z3: Post defends or supports the conclusion indirectly, e.g., by criticizing those who deny or attack it</li>
+                        <li>Z4: Post accepts the conclusion as given (e.g., builds on it, presupposes it) or positively/neutrally reacts to it ("nice study")</li>
                     </ul>
                 </div>
 
                 <h6 style="color: var(--secondary-color); font-weight: bold;">🟡 Uncertain</h6>
                 <div class="text-box" style="margin-bottom: 1rem; padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
-                    <p>if there is not enough information to judge the reply post's stance.</p>
+                    <p>if the stance might be negative, but there is not enough information to confirm it. Use this only when the uncertainty is specifically about whether the stance is negative.</p>
+                    <u>Common patterns</u> (not exhaustive):<br>
+                    <ul style="padding-left: 1rem; margin-bottom: 0rem;">
+                        <li>U1: Sarcasm or mockery but unclear what it targets: "oh good, it fixes itself \s"</li>
+                        <li>U2: Vague language/tone that might indicate a negative stance: "This is wild"</li>
+                    </ul>
+                </div>
+
+                <h6 style="color: var(--secondary-color); font-weight: bold;">⚪ No Stance</h6>
+                <div class="text-box" style="margin-bottom: 1rem; padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
+                    <p>if the reply post expresses no stance toward the main conclusion at all.</p>
                     <u>Common patterns</u> (not exhaustive):<br>
                     Post does not engage with the study:
                     <ul style="padding-left: 1rem; margin-bottom: 0rem;">
-                        <li>U1: Unclear connection to the paper: "Why doesn't the media report about it?"</li>
-                        <li>U2: User-to-User Interaction: "@userABC, why do you think that?"</li>
-                        <li>U3: Pure mention: "This paper was already shared yesterday"</li>
-                    </ul>
-                    <br>
-                    Post engages with the study, but direction is unclear:
-                    <ul style="padding-left: 1rem; margin-bottom: 0rem;">
-                        <li>U4: Vague language/tone: "This is wild"</li>
-                        <li>U5: Sarcasm but unclear what it targets: "oh good, it fixes itself \s"</li>
+                        <li>N1: Unclear connection to the paper: "Why doesn't the media report about it?"</li>
+                        <li>N2: User-to-User interaction: "@userABC, why do you think that?"</li>
+                        <li>N3: Mere mention: "This paper was already shared yesterday"</li>
                     </ul>
                 </div>
 
@@ -421,30 +427,23 @@
                 <div class="text-box" style="padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
                     <p>To arrive at consistent decisions, always follow these steps:</p>
                     <p style="margin-left: 0rem; margin-bottom: 0.2rem;">
-                        1. Does this post encourage readers to at least partially doubt, or dismiss the study's main conclusion? (see patterns above) ->  🔴 Negative Stance
+                        <b>1.</b> Does this post encourage readers to at least partially doubt, or dismiss the study's main conclusion? -> 🔴 <b>Negative Stance</b>
                     </p>
                     <p style="margin-left: 1rem;">
                         <u>Note</u>: posts may combine praise and criticism so that patterns from Negative Stance and Non-negative Stance are met. Negative Stance takes precedence if it is not rejected or outweighed within the post itself.
                     </p>
-                    <p style="margin-left: 0rem;">
-                        2. If not, does this post treat the main conclusion as neutral, valid, or acceptable? (see patterns above) ->  🟢 Non-negative Stance
-                    </p>
                     <p style="margin-left: 0rem; margin-bottom: 0.2rem;">
-                        3. Otherwise, if the post takes no stance toward the main conclusion, or the direction of the stance is unclear ->  🟡 Uncertain
+                        <b>2.</b> If not, might it still be negative, but you cannot confirm it? -> 🟡 <b>Uncertain</b>
                     </p>
                     <p style="margin-left: 1rem;">
-                        <u>Note</u>: being unsure is not a reason for Uncertain. Choose one of the two other options if you have a tendency.
+                        <u>Note</u>: only for uncertainty about whether the post is negative. NOT for general unsureness.
                     </p>
-                    <!--<p style="margin-top: 0rem; margin-bottom: 0rem;">
-                        <u>Note</u>: posts might combine praise and criticism, so that both Negative Citation criteria and Non-negative Citation criteria are met.
-                        For this task, Negative Citation criteria take precedence if the criticism is used to make readers question the study's conclusions.
-                        As a heuristic, ask "If a reader saw only this comment, would they trust the study's conclusions less?"
-                        <br>
-                        <br>
-                        For example:
-                        <br>🔴 Negative Citation: "Great study, but the sample is too small to really trust these results."
-                        <br>🟢 Non-negative Citation: "Great study! Although sample is quite small, it provides a crucial proof-of-concept."
-                    </p>-->
+                    <p style="margin-left: 0rem;">
+                        <b>3.</b> If neither of the two, does this post treat the main conclusion as neutral, valid, or acceptable?  -> 🟢 <b>Non-negative Stance</b>
+                    </p>
+                    <p style="margin-left: 0rem; margin-bottom: 0.2rem;">
+                        <b>4.</b> Otherwise, if the post takes no stance toward the main conclusion at all -> ⚪ <b>No Stance</b>
+                    </p>
                 </div>
             </div>
             </div>
