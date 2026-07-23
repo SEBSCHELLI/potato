@@ -368,7 +368,7 @@
             <div class="cheat-sheet-container" style="position: relative; min-height: 100px;">
                 <div class="cheat-sheet">
                 <h2 style="color: var(--secondary-color); font-weight: bold;">Quick Guide</h2>
-                Click <span class="trigger" onclick="openModal()">here</span> to open detailed annotation protocol pop-up.
+                <!--Click <span class="trigger" onclick="openModal()">here</span> to open detailed annotation protocol pop-up. -->
 
                 <h6 style="color: var(--secondary-color); font-weight: bold; margin-top:1rem;">🔴 Negative Stance</h6>
                 <div class="text-box" style="margin-bottom: 1rem; padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
@@ -493,7 +493,7 @@
                             <div id="instance-text" class="p-3 border rounded instance-text-container"
                                  style="background-color: var(--light-bg); min-height: 0px; position: relative;">
                                 <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">
-                                    {{paper_abstract | markdown}}
+                                    {{paper_abstract | markdown | replace('<p>', '<p style="margin-bottom:0rem;">')}}
                                 </div>
 
                             </div>
