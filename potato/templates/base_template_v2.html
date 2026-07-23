@@ -478,7 +478,9 @@
                                 <!-- data-original-text uses plain text (no span HTML) for correct position calculations -->
                                 <!-- DOM content uses rendered HTML with span tags for visual display -->
                                 <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">
-                                    {{instance_text | markdown}}
+                                    <p style="margin-bottom: 0rem;">
+                                        {{instance_text | markdown | replace('<p>', '') | replace('</p>', '')}}
+                                    </p>
                                 </div>
                                 <!-- Span overlays layer for span annotation -->
                                 <div id="span-overlays" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 2;">
