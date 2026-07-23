@@ -21,22 +21,7 @@
                            onclick="onlyOne(this);"
                            validation=""
                            data-key="1">
-                    <label for="stance_Negative_radio" class="shadcn-radio-label" >Negative Citation [1]</label>
-                </div>
-
-                <div class="shadcn-radio-option">
-                    <input class="stance shadcn-radio-input annotation-input"
-                           type="radio"
-                           id="stance_Non-Negative_radio"
-                           name="stance"
-                           value="2"
-                           selection_constraint="single"
-                           schema="stance"
-                           label_name="Non-Negative"
-                           onclick="onlyOne(this);"
-                           validation=""
-                           data-key="2">
-                    <label for="stance_Non-Negative_radio" class="shadcn-radio-label" >Non-Negative Citation [2]</label>
+                    <label for="stance_Negative_radio" class="shadcn-radio-label" >Negative Stance [1]</label>
                 </div>
 
                 <div class="shadcn-radio-option">
@@ -44,14 +29,44 @@
                            type="radio"
                            id="stance_Uncertain"
                            name="stance"
-                           value="3"
+                           value="2"
                            selection_constraint="single"
                            schema="stance"
                            label_name="Uncertain"
                            onclick="onlyOne(this);"
                            validation=""
+                           data-key="2">
+                    <label for="stance_Uncertain" class="shadcn-radio-label" >Uncertain [2]</label>
+                </div>
+
+                <div class="shadcn-radio-option">
+                    <input class="stance shadcn-radio-input annotation-input"
+                           type="radio"
+                           id="stance_Non-Negative_radio"
+                           name="stance"
+                           value="3"
+                           selection_constraint="single"
+                           schema="stance"
+                           label_name="Non-Negative"
+                           onclick="onlyOne(this);"
+                           validation=""
                            data-key="3">
-                    <label for="stance_Uncertain" class="shadcn-radio-label" >Uncertain [3]</label>
+                    <label for="stance_Non-Negative_radio" class="shadcn-radio-label" >Non-Negative Stance [3]</label>
+                </div>
+
+                <div class="shadcn-radio-option">
+                    <input class="stance shadcn-radio-input annotation-input"
+                           type="radio"
+                           id="stance_nostance"
+                           name="stance"
+                           value="4"
+                           selection_constraint="single"
+                           schema="stance"
+                           label_name="No Stance"
+                           onclick="onlyOne(this);"
+                           validation=""
+                           data-key="4">
+                    <label for="stance_nostance" class="shadcn-radio-label" >No Stance [4]</label>
                 </div>
             </div>
         </fieldset>
@@ -65,7 +80,7 @@
                 name="comment"
                 class="comment shadcn-text-input annotation-input"
                 schema="comment"
-                placeholder=""
+                placeholder="Please state which pattern(s) you identified (A1-A7, U1-U2, Z1-Z4, N1-N3). If you did not find any of these patterns, please provide a brief explanation for your decision."
                 label_Name="comment"
                 rows="4"
                 validation=""></textarea>
