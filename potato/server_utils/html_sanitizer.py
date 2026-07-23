@@ -322,10 +322,13 @@ def md(text):
             "sane_lists"    # better list handling
         ]
     )
-    #print(text)
-    #print(Markup(html))
+    print("run md function")
+    print(text)
+    print(Markup(html))
     return Markup(html)
 
+a = md("https://phys.org/news/2022-01-linkage-volcanism-weathering.html\n \nThe Triassic-Jurassic transition (~ 201 Ma) saw one of the most catastrophic volcanic eruptions during the Phanerozoic, namely the Central Atlantic Magmatic Province (CAMP), and it has been suggested to have triggered a series of environmental/climatic perturbations which eventually caused the end-Triassic mass extinction.However, due to the lack of volcanic ash sediments outside its eruption sites, the spatial extent of the impact is not well understood.\n\nRecently, researchers from China University of Geosciences (Wuhan), Nanjing Institute of Geology and Palaeontology of the Chinese Academy of Sciences (NIGPAS), in collaboration with researchers from the U.S., have reported elevated Hg concentrations and isotopes from terrestrial sediments of two sites in the Junggar Basin and the Sichuan Basin in China.\n\nThis study was published in Nature Communications on Jan. 13.\n\nThese two sites are spatially distant from t..")
+str(a)
 
 # Register as Jinja2 filter
 def register_jinja_filters(app):
