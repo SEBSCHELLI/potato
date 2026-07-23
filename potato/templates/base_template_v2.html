@@ -493,7 +493,9 @@
                             <div id="instance-text" class="p-3 border rounded instance-text-container"
                                  style="background-color: var(--light-bg); min-height: 0px; position: relative;">
                                 <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">
-                                    {{paper_abstract | markdown | replace('<p>', '<p style="margin-bottom:0rem;">')}}
+                                    <p style="margin-bottom: 0rem;">
+                                        {{paper_abstract | markdown | replace('<p>', '') | replace('</p>', '')}}
+                                    </p>
                                 </div>
 
                             </div>
