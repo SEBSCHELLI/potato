@@ -314,6 +314,10 @@
             margin-bottom: 0;
         }
 
+        #text-content-abstract p:last-of-type {
+            margin-bottom: 0;
+        }
+
     </style>
 
     <!-- jQuery (required for span annotation) -->
@@ -496,10 +500,8 @@
                             <h6 style="margin-top: 0.5rem;">Abstract:</h6>
                             <div id="instance-text" class="p-3 border rounded instance-text-container"
                                  style="background-color: var(--light-bg); min-height: 0px; position: relative;">
-                                <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">
-                                    <p style="margin-bottom: 0rem;">
-                                        {{paper_abstract | markdown | replace('<p>', '') | replace('</p>', '')}}
-                                    </p>
+                                <div id="text-content-abstract" style="position: relative; z-index: 1; pointer-events: auto;">
+                                    {{paper_abstract | markdown}}
                                 </div>
 
                             </div>
