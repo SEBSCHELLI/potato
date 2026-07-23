@@ -479,7 +479,7 @@
                                 <!-- DOM content uses rendered HTML with span tags for visual display -->
                                 <div id="text-content" style="position: relative; z-index: 1; pointer-events: auto;">
                                     <p style="margin-bottom: 0rem;">
-                                        {{instance_text | markdown | replace('<p>', '') | replace('</p>', '')}}
+                                        {{instance_text | markdown}}
                                     </p>
                                 </div>
                                 <!-- Span overlays layer for span annotation -->
