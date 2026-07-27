@@ -14,8 +14,8 @@
     <!-- Custom Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
-    <!-- Localhost
-    <link rel="stylesheet" href="http://localhost:63342/NewOrder_Intern/potato/static/styles.css">-->
+    <!-- Localhost-->
+    <link rel="stylesheet" href="http://localhost:63342/NewOrder_Intern/potato/static/styles.css">
 
     <style>
         body {
@@ -318,6 +318,11 @@
             margin-bottom: 0;
         }
 
+        .tippy-box[data-theme~='custom-dark'] {
+            background-color: #e6e6e6;
+            color: black;
+        }
+
     </style>
 
     <!-- jQuery (required for span annotation) -->
@@ -372,7 +377,7 @@
 
 <div class="container-fluid">
     <!-- Hidden input for instance_id -->
-    <div style="display: grid; gap: 1rem; grid-template-columns: 30% 70%;">
+    <div style="display: grid; gap: 1rem; grid-template-columns: 35% 65%;">
             <div class="cheat-sheet-container" style="position: relative; min-height: 100px;">
                 <div class="cheat-sheet">
                 <!--<h3 style="color: var(--secondary-color); font-weight: bold;">Quick Guide</h3>
@@ -383,38 +388,36 @@
                     <p style="margin-bottom: 0.2rem;">if the reply post encourages readers to at least partially doubt, or dismiss the study's main conclusion.</p>
                     <p style="margin-bottom: 0.0rem;"><u>Common patterns</u> (not exhaustive):</p>
                         <ul style="padding-left: 1rem; margin-bottom: 0rem;">
-                            <li>A1: Post criticizes the study’s data, methodology, or interpretations</li>
-                            <li>A2: Post criticizes the study’s authors, funding, or source</li>
-                            <li>A3: Post provides counter-evidence or calls the study outdated</li>
-                            <li>A4: Post questions the study’s relevance or applicability</li>
-                            <li>A5: Post uses sarcasm or rhetorical questions against the conclusion</li>
-                            <li>A6: Post dismisses the study without engaging with its content</li>
-                            <li>A7: Post casts generic doubt without a specific complaint</li>
+                            <li id="A1">A1: Post criticizes the study’s data, methodology, or interpretations</li>
+                            <li id="A2">A2: Post criticizes the study’s authors, funding, or source</li>
+                            <li id="A3">A3: Post provides counter-evidence or calls the study outdated</li>
+                            <li id="A4">A4: Post questions the study’s relevance or applicability</li>
+                            <li id="A5">A5: Post uses sarcasm or rhetorical questions against the conclusion</li>
+                            <li id="A6">A6: Post dismisses the study without engaging with its content</li>
+                            <li id="A7">A7: Post casts generic doubt without a specific complaint</li>
                         </ul>
                     <p style="margin-top: 0.5rem; padding-bottom: 0rem; margin-bottom: 0rem;"><u>Note</u>: Check if a pattern actually functions to lower trust in the conclusion. A post that raises one of these points and then explicitly rejects or outweighs it (e.g., "it's old, but still holds up") is NOT negative.</p>
                 </div>
 
-                <h6 style="color: var(--secondary-color); font-weight: bold; margin-bottom: 0.2rem;">🟡 Uncertain</h6>
+                <h6 style="color: var(--secondary-color); font-weight: bold; margin-bottom: 0.2rem;">🟡 Possibly Negative Stance</h6>
                 <div class="text-box" style="margin-bottom: 1rem; padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
-                    <p style="margin-bottom: 0.2rem;">if the stance might be negative, but there is not enough information to confirm it. Use this only when the uncertainty is specifically about whether the stance is negative.</p>
+                    <p style="margin-bottom: 0.2rem;"> if the post can be read as negative but also plausibly as not negative, and nothing in the text settles which. Use this only when the uncertainty is specifically about whether the stance is negative.</p>
                     <u>Common patterns</u> (not exhaustive):<br>
                     <ul style="padding-left: 1rem; margin-bottom: 0rem;">
-                        <li>U1: Sarcasm or mockery but unclear what it targets: "Oh good, it fixes itself \s"</li>
-                        <li>U2: Vague language/tone that might indicate a negative stance: "This is wild"</li>
+                        <li>P1: Post contains sarcasm or mockery but it is unclear what it targets: "Oh good, it fixes itself /s"</li>
+                        <li>P2: Post reacts to the study in a way that could be read as doubting, or as accepting it: "This is wild"</li>
                     </ul>
                 </div>
 
                 <h6 style="color: var(--secondary-color); font-weight: bold; margin-bottom: 0.2rem;">🟢 Non-negative Stance</h6>
                 <div class="text-box" style="margin-bottom: 1rem; padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
-                    <p style="margin-bottom: 0.2rem;">if the reply is not negative toward the study's main conclusion: the post treats it as neutral, valid, or acceptable.</p>
-                    <p style="margin-bottom: 0.2rem;">This is the default when a post is clearly not negative, even if it expresses no explicit endorsement.</p>
+                    <p style="margin-bottom: 0.2rem;">if the reply post expresses a stance toward the main conclusion that is not negative, i.e., it endorses, accepts, reports, or reacts positively to it.</p>
                     <p style="margin-bottom: 0.0rem;"><u>Common patterns</u> (not exhaustive):</p>
                     <ul style="padding-left: 1rem; margin-bottom: 0rem;">
                         <li>Z1: Post reports parts of the study or summarizes it (e.g., displays the paper's abstract)</li>
-                        <li>Z2: Post agrees with the study's conclusion or endorses it</li>
-                        <li>Z3: Post defends or supports the conclusion indirectly, e.g., by criticizing those who deny or attack it</li>
+                        <li>Z2: Post agrees with, endorses, or reacts positively to the study</li>
+                        <li>Z3: Post defends or supports the conclusion indirectly (e.g., by criticizing those who deny or attack it)</li>
                         <li>Z4: Post accepts the conclusion as given (e.g., builds on it, presupposes it)</li>
-                        <li>Z5: Post positively/neutrally reacts to it ("nice study", "thanks for posting")</li>
                     </ul>
                 </div>
 
@@ -423,32 +426,34 @@
                     <p style="margin-bottom: 0.2rem;">if the reply post expresses no stance toward the main conclusion at all.</p>
                     <u>Common patterns</u> (not exhaustive):<br>
                     <ul style="padding-left: 1rem; margin-bottom: 0rem;">
-                        <li>N1: Unclear connection to the paper: "Why doesn't the media report about it?"</li>
-                        <li>N2: User-to-User interaction: "@userABC, why do you think that?"</li>
-                        <li>N3: Mere mention: "This paper was already shared yesterday"</li>
+                        <li>N1: Unclear connection to the paper (e.g., "Why doesn't the media report about it?")</li>
+                        <li>N2: Posts directed at other users or the thread (e.g., "@userABC, why do you think that?")</li>
+                        <li>N3: Mere mention (e.g., "This paper was already shared yesterday")</li>
+                        <li>N4: Honest information-seeking questions (e.g., "What did they use for identifying the critical threshold?")</li>
                     </ul>
+                    <p style="margin-top: 0.5rem; padding-bottom: 0rem; margin-bottom: 0rem;"><u>Note</u>: Only for posts that genuinely take no position on the conclusion, NOT for posts you find hard to read. If you are unsure but a negative reading is plausible annotate Possibly Negative Stance.</p>
                 </div>
 
                 <h6 style="color: var(--secondary-color); font-weight: bold; margin-bottom: 0.2rem;">Step-by-step Decision</h6>
                 <div class="text-box" style="padding: 0.5rem 0.0rem 0.5rem 0.5rem;">
                     <p>To arrive at consistent decisions, always follow these steps:</p>
                     <p style="margin-left: 0rem; margin-bottom: 0.2rem;">
-                        <b>1.</b> Does this post encourage readers to at least partially doubt, or dismiss the study's main conclusion? -> 🔴 <b>Negative Stance</b>
+                        <b>1.</b> Does this post encourage readers to at least partially doubt, or dismiss the study's main conclusion? -&#8205;>&nbsp;🔴&nbsp;<b>Negative&nbsp;Stance</b>
                     </p>
                     <p style="margin-left: 1rem;">
                         <u>Note</u>: posts may combine praise and criticism so that patterns from Negative Stance and Non-negative Stance are met. Negative Stance takes precedence if it is not rejected or outweighed within the post itself.
                     </p>
                     <p style="margin-left: 0rem; margin-bottom: 0.2rem;">
-                        <b>2.</b> If not, might it still be negative, but you cannot confirm it? -> 🟡 <b>Uncertain</b>
+                        <b>2.</b> If not, can the post be read as negative but also plausibly as not negative, with nothing in the text to decide? -&#8205;>&nbsp;🟡&nbsp;<b>Possibly&nbsp;Negative&nbsp;Stance</b>
                     </p>
                     <p style="margin-left: 1rem;">
                         <u>Note</u>: only for uncertainty about whether the post is negative. NOT for general unsureness.
                     </p>
                     <p style="margin-left: 0rem;">
-                        <b>3.</b> If neither of the two, does this post treat the main conclusion as neutral, valid, or acceptable?  -> 🟢 <b>Non-negative Stance</b>
+                        <b>3.</b> If neither of the two, does the post express a stance toward the main conclusion that is not negative, i.e., it endorses, accepts, reports, or reacts positively to it?  -&#8205;>&nbsp;🟢&nbsp;<b>Non-negative&nbsp;Stance</b>
                     </p>
                     <p style="margin-left: 0rem; margin-bottom: 0.2rem;">
-                        <b>4.</b> Otherwise, if the post takes no stance toward the main conclusion at all -> ⚪ <b>No Stance</b>
+                        <b>4.</b> Otherwise, if the post expresses no stance toward the main conclusion at all -&#8205;>&nbsp;⚪&nbsp;<b>No&nbsp;Stance</b>
                     </p>
                 </div>
             </div>
@@ -1179,6 +1184,165 @@
         </script>
       {% endif %}
     {% endwith %}
+
+    <!-- Production -->
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+
+    <script>
+      // With the above scripts loaded, you can call `tippy()` with a CSS
+      // selector and a `content` prop:
+      tippy('#A1', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">Post criticizes the study’s data, methodology, or interpretations</h6>
+                <ul>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post mentions flaws in the study’s design (e.g., sample too small, wrong method, claims too strong)</p>
+                    <p style="margin-left: 0.5rem;">e.g., "This study relies on only a 35-year velocity record and 6 years of GPS data at a single site ... hardly enough to make broad claims about the ice stream’s behavior."</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post proposes a better study design instead (e.g., better method, different sample)</p>
+                    <p style="margin-left: 0.5rem;">e.g., " Well, they could get way more reliable results by combining multiple models and local data to really capture how different regions handle sea-level rise."</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post selectively quotes parts of the study to cast doubt (e.g., limitations, disclaimer, incoherent findings, ...)<br><u>Note</u>: Simply mentioning a limitation while accepting the overall result is not a Negative Stance.</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Even the authors admit it: This study has some limitations. First, the sample size is limited and the results may not be generalizable. Why are we even discussing this? "</p>
+                    </li>
+                </ul>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+
+      tippy('#A2', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">Post criticizes the study’s authors, funding, or source</h6>
+                <ul>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post criticizes the study's authors (e.g., mentions conflicts of interest or author’s questionable track of record)</p>
+                    <p style="margin-left: 0.5rem;">e.g., "I'd take this with a grain of salt ... the authors have a track record of promoting vertical farming pretty aggressively"</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post criticizes the study's source (e.g., that it is not peer-reviewed, from a questionable journal/venue)</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Honestly, I wouldnt trust this too much. it's not peer-reviewed and comes from some random online repo."</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post delegitimizes the field or scientific establishment the study belongs to</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Climate "science" stopped being science a long time ago. It's a funding machine"</p>
+                    </li>
+                </ul>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+
+      tippy('#A3', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">Post provides counter-evidence or calls the study outdated</h6>
+                <ul>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post provides counter-evidence (e.g., studies with contrary findings, anecdotal counter-evidence)</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Not sure I agree with 1.5°C as a hard tipping point. I remember someone shared a recent study suggesting several tipping elements are much less sensitive and might not trigger until closer to 3°C, so things might not be as immediate as this paper implies."</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post calls the study outdated or old, implying findings are invalid, superseded, or no longer reflect reality</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Believe me, in science things can change quickly ... this study is interesting, but it’s already a few years old and there are so many more recent ones."</p>
+                    </li>
+                </ul>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+
+      tippy('#A4', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">Post questions the study’s relevance or applicability</h6>
+                <ul>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post criticizes the study's generalizability (e.g., findings in basic research might not apply to real-world scenarios or scenarios readers care about)</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Hard to know how much these findings about pre-LGM ice sheets actually apply to modern-day ice dynamics or real-world sea-level predictions"</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post downplays the significance of the study to cast doubt</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Keep cool ... just a small preliminary study, we shouldn’t draw conclusions from it"</p>
+                    </li>
+                </ul>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+
+      tippy('#A5', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">Post uses sarcasm or rhetorical questions against the conclusion</h6>
+                <ul>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post uses sarcasm to criticize the data<br><u>Note</u>: If the direction of sarcasm is ambiguous and is not clearly used to dismiss or doubt the study's conclusion, label the post as Possibly Negative Stance (see P1). If the sarcasm is aimed at people who reject the study, label the post as Non-negative Stance (see Z3).</p>
+                    <p style="margin-left: 0.5rem;">e.g., "A sample size of 120 people? Yeah, that’s totally 'statistically significant' ..."</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post uses rhetorical question to criticize the study's authors<br><u>Note</u>: Honest questions (e.g., "What did they use for identifying the critical threshold?") should be labeled as No Stance (see N4)</p>
+                    <p style="margin-left: 0.5rem;">e.g., "How can we trust a study whose authors had a similar paper retracted last year?"</p>
+                    </li>
+                </ul>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+
+      tippy('#A6', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">Post dismisses the study without engaging with its content</h6>
+                <p style="margin-left: 0.5rem;">e.g., "Another day, another pointless study. Can we move on already?"</p>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+
+      tippy('#A7', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">Post casts generic doubt without a specific complaint</h6>
+                <p style="margin-left: 0.5rem;">e.g., "Too early to say!"</p>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+    </script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
