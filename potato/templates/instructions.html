@@ -340,7 +340,6 @@
                 Given the reply post and the scientific paper (title + abstract) your task is to classify the reply post into:
                 <div style="display: flex; justify-content: center; align-items: center; gap: 5rem; color: var(--secondary-color); font-weight: bold; margin-top:1rem;">
                     <span>🔴 Negative Stance</span>
-                    <span>🟡 Possibly Negative Stance</span>
                     <span>🟢 Non-negative Stance</span>
                     <span>⚪ No Stance</span>
                 </div>
@@ -669,7 +668,7 @@
                                     Post uses sarcasm to criticize the data
                                     <br>
                                     <br>
-                                    <u>Note</u>: If the direction of sarcasm is ambiguous and is not clearly used to dismiss or doubt the study's conclusion, label the post as Possibly Negative Stance (see P1). If the sarcasm is aimed at people who reject the study, label the post as Non-negative Stance (see Z3).
+                                    <u>Note</u>: First determine what the sarcasm targets. If it is aimed at people who reject the study, at the sharer, or at corporations and politicians rather than at the study itself, label Non-negative (see Z3).
                                     <br>
                                     <br>
                                 </h6>
@@ -797,6 +796,7 @@
 
         </div>
 
+        <!--
         <h4 style="margin-left: 2rem; color: var(--secondary-color); font-weight: bold;">🟡 Possibly Negative Stance</h4>
         <div class="text-box">
             <p>Annotate</p>
@@ -884,6 +884,7 @@
             </div>
 
         </div>
+        -->
 
         <h4 style="margin-left: 2rem; color: var(--secondary-color); font-weight: bold;">🟢 Non-negative Stance</h4>
         <div class="text-box">
@@ -906,8 +907,7 @@
                                     Post reports parts of the study
                                     <br>
                                     <br>
-                                    <u>Note</u>: If the post quotes parts of the study to cast doubt (e.g., limitations, disclaimer, incoherent findings, ...) annotate as Negative Stance.
-                                    <br>
+                                    <u>Note</u>: If the post quotes parts of the study to cast doubt (e.g., limitations, disclaimer, incoherent findings, ...) annotate as Negative Stance. Conversely, hedging, uncertainty, or limitations that appear inside quoted text from the paper is still a Non-negative Stance.
                                     <br>
                                 </h6>
                                 <div class="training-instance">
@@ -1292,6 +1292,30 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="example-container">
+                                <h6 class="criteria-text">
+                                    Post reacts fatalistically, presupposing the finding
+                                </h6>
+                                <div class="training-instance">
+                                    <h5 class="mb-3 post-heading" >Post:</h5>
+                                    <div id="instance-text" class="post-text">
+                                        <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                            We're dead men walking. There is nothing else left to say.
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <h5 class="mb-3 paper-heading">Paper:</h5>
+                                    <h6>
+                                        Title: Exceeding 1.5 °C global warming could trigger multiple climate tipping points
+                                    </h6>
+                                    <h6 style="margin-top: 0.5rem;">Abstract:</h6>
+                                    <div id="instance-text" class="abstract-text">
+                                        <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
+                                            Climate tipping points occur when change in a part of the climate system becomes self-perpetuating beyond a warming threshold ... Several tipping points may be triggered in the Paris Agreement range of 1.5 to <2 °C global warming ...
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </details>
                 </div>
@@ -1303,7 +1327,7 @@
             <p>Annotate</p>
             <p class="blue-definition">if the reply post expresses no stance toward the main conclusion at all.</p>
             <br>
-            <u>Note</u>: only for posts that genuinely take no position on the conclusion, NOT for posts you find hard to read. If you are unsure but a negative reading is plausible annotate Possibly Negative Stance. If the post accepts or presupposes the finding annotate Non-negative Stance.
+            <u>Note</u>: only for posts that genuinely take no position on the conclusion, NOT for posts you find hard to read.
         </div>
         <div>
             <div class="criteria-box">
@@ -1331,19 +1355,17 @@
             <b>1.</b> Does the post encourage readers to at least partially doubt, or dismiss the study's main conclusion? -> 🔴 <b>Negative Stance</b>
         </p>
         <p style="margin-left: 3rem;">
-            <u>Note</u>: posts may combine praise and criticism so that patterns from Negative Stance and Non-negative Stance are met. Negative Stance takes precedence if it is not rejected or outweighed within the post itself.
-        </p>
-        <p style="margin-left: 1rem; margin-bottom: 0.2rem;">
-            <b>2.</b> If not, can the post be read as negative but also plausibly as not negative, with nothing in the text to decide? -> 🟡 <b>Possibly Negative Stance</b>
-        </p>
-        <p style="margin-left: 3rem;">
-            <u>Note</u>: only for uncertainty about whether the post is negative. NOT for general unsureness.
+            <p style="margin-left: 3rem; margin-bottom: 0rem;"><u>Notes</u>:</p>
+            <ul style="margin-left: 4rem; margin-top: 0rem;">
+                <li> posts may combine praise and criticism so that patterns from Negative Stance and Non-negative Stance are met. Negative Stance takes precedence if it is not rejected or outweighed within the post itself.</li>
+                <li> check that the Negative Stance is aimed at the study and not just at deniers, the sharer, corporations, politicians, or other commenters</li>
+            </ul>
         </p>
         <p style="margin-left: 1rem;">
-            <b>3.</b> If neither of the two, does the post express a stance toward the main conclusion that is not negative, i.e., it endorses, accepts, reports, or reacts positively to it? -> 🟢 <b>Non-negative Stance</b>
+            <b>2.</b> If not, does the post express a stance toward the main conclusion that is not negative, i.e., it endorses, accepts, reports, or reacts positively to it? -> 🟢 <b>Non-negative Stance</b>
         </p>
         <p style="margin-left: 1rem; margin-bottom: 0.2rem;">
-            <b>4.</b> Otherwise, if the post expresses no stance toward the main conclusion at all -> ⚪ <b>No Stance</b>
+            <b>3.</b> Otherwise, if the post expresses no stance toward the main conclusion at all -> ⚪ <b>No Stance</b>
         </p>
 
         <!--- <p style="margin-top: 2rem;">
