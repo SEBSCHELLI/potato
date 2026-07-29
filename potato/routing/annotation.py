@@ -160,12 +160,13 @@ def annotation_page():
                     if input_field:
                         if input_field.get('value') == value:
                             input_field['checked'] = True
-                            logger.error(f'User {username} (Session ID {session_id}) - Reset radio buttons to existing annotation: {value} for instance {instance_id}')
+                            logger.info(f'User {username} (Session ID {session_id}) - Reset radio buttons to existing annotation: {value} for instance {instance_id}')
 
                 text_fields = soup.find_all(["textarea"], {"schema": schema_name})
                 if text_fields:
                     text_field = text_fields[0]
                     text_field.string = value
+                    logger.info(f'User {username} (Session ID {session_id}) - Reset rationale text field to "{value}" for instance {instance_id}')
 
     rendered_html = str(soup)
 
