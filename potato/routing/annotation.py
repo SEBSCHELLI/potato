@@ -154,6 +154,7 @@ def annotation_page():
         # Reset the annotation state
         for schema_name, label_dict in annotations.items():
             for label_name, value in label_dict.items():
+                logger.info(f"{schema_name}, {label_name}, {value}")
 
                 input_fields = soup.find_all(["input"], {"schema": schema_name, "value": value, "type": "radio"})
 
