@@ -2020,5 +2020,44 @@
             checkValid();
         });
     </script>
+    <script>
+    (function () {
+        function initStanceGating() {
+            var textarea = document.getElementById('comment_text');
+            var radios = document.querySelectorAll('#stance input[type="radio"][name="stance"]');
+
+            if (!textarea || radios.length === 0) {
+                // DOM might not be ready yet in some Potato setups; retry shortly.
+                setTimeout(initStanceGating, 200);
+                return;
+            }
+
+            function updateRadioState() {
+                var hasText = textarea.value.trim().length > 0;
+                radios.forEach(function (radio) {
+                    radio.disabled = !hasText;
+                });
+                // If text is cleared, also uncheck any selected radio so an
+                // invalid state can't linger.
+                //if (!hasText) {
+                //    radios.forEach(function (radio) {
+                //        radio.checked = false;
+                //    });
+                //}
+            }
+
+            textarea.addEventListener('input', updateRadioState);
+            // Run once on load in case the textarea is pre-filled (e.g. navigating
+            // back to a previously-annotated instance).
+            updateRadioState();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initStanceGating);
+        } else {
+            initStanceGating();
+        }
+    })();
+    </script>
 </body>
 </html>
