@@ -6,6 +6,21 @@
 
 <div class="annotation_schema" style="width: 100%;">
     <div id="stance" class="annotation-form radio shadcn-radio-container" data-annotation-id="0" data-annotation-type="radio" data-schema-name="stance" data-grid-columns="1" style="background-color: white; width:100%">
+        <fieldset schema="comment" style="width: 100%;">
+            <label for="comment_text" class="shadcn-text-label">
+                Rationale
+            </label>
+
+            <textarea
+                id="comment_text"
+                name="comment"
+                class="comment shadcn-text-input annotation-input"
+                schema="comment"
+                placeholder="Please state which pattern(s) you identified (A1-A7, P1-P2, Z1-Z4, N1-N4). If you did not find any of these patterns, please provide a brief explanation for your decision.&#10;&#10;Use this format: A1 for a single pattern or a list like A1,A3 for multiple patterns."
+                label_Name="comment"
+                rows="4"
+                validation=""></textarea>
+        </fieldset>
         <fieldset schema="stance" style="width: 100%;">
             <!---<legend class="shadcn-radio-title">What is the stance?</legend>--->
             <div class="shadcn-radio-options horizontal">
@@ -27,21 +42,6 @@
                 <div class="shadcn-radio-option">
                     <input class="stance shadcn-radio-input annotation-input"
                            type="radio"
-                           id="stance_Possibly-Negative_radio"
-                           name="stance"
-                           value="2"
-                           selection_constraint="single"
-                           schema="stance"
-                           label_name="Possibly-Negative"
-                           onclick="onlyOne(this);"
-                           validation=""
-                           data-key="2">
-                    <label for="stance_Uncertain" class="shadcn-radio-label" >Possibly Negative Stance [2]</label>
-                </div>
-
-                <div class="shadcn-radio-option">
-                    <input class="stance shadcn-radio-input annotation-input"
-                           type="radio"
                            id="stance_Non-Negative_radio"
                            name="stance"
                            value="3"
@@ -50,8 +50,8 @@
                            label_name="Non-Negative"
                            onclick="onlyOne(this);"
                            validation=""
-                           data-key="3">
-                    <label for="stance_Non-Negative_radio" class="shadcn-radio-label" >Non-Negative Stance [3]</label>
+                           data-key="2">
+                    <label for="stance_Non-Negative_radio" class="shadcn-radio-label" >Non-Negative Stance [2]</label>
                 </div>
 
                 <div class="shadcn-radio-option">
@@ -65,25 +65,10 @@
                            label_name="No Stance"
                            onclick="onlyOne(this);"
                            validation=""
-                           data-key="4">
-                    <label for="stance_nostance" class="shadcn-radio-label" >No Stance [4]</label>
+                           data-key="3">
+                    <label for="stance_nostance" class="shadcn-radio-label" >No Stance [3]</label>
                 </div>
             </div>
-        </fieldset>
-        <fieldset schema="comment" style="width: 100%;">
-            <label for="comment_text" class="shadcn-text-label">
-                Explanation
-            </label>
-
-            <textarea
-                id="comment_text"
-                name="comment"
-                class="comment shadcn-text-input annotation-input"
-                schema="comment"
-                placeholder="Please state which pattern(s) you identified (A1-A7, P1-P2, Z1-Z4, N1-N4). If you did not find any of these patterns, please provide a brief explanation for your decision.&#10;&#10;Use this format: A1 for a single pattern or A1,A3 for multiple patterns."
-                label_Name="comment"
-                rows="4"
-                validation=""></textarea>
         </fieldset>
     </div>
 </div>
