@@ -154,8 +154,6 @@ def annotation_page():
         # Reset the annotation state
         for schema_name, label_dict in annotations.items():
             for label_name, value in label_dict.items():
-                logger.info(f"{schema_name}, {label_name}, {value}")
-
                 input_fields = soup.find_all(["input"], {"schema": schema_name, "value": value, "type": "radio"})
 
                 for input_field in input_fields:
@@ -165,7 +163,6 @@ def annotation_page():
                             logger.error(f'User {username} (Session ID {session_id}) - Reset radio buttons to existing annotation: {value} for instance {instance_id}')
 
                 text_fields = soup.find_all(["textarea"], {"schema": schema_name})
-                logger.info(f"{text_fields}")
                 if text_fields:
                     text_field = text_fields[0]
                     text_field.string = value
