@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
     <!-- Localhost -->
-    <link rel="stylesheet" href="http://localhost:63342/NewOrder_Intern/potato/static/styles.css">
+    <link rel="stylesheet" href="http://localhost:63342/NewOrder_Intern/potato/static/styles.css">-->
 
     <!-- Training-specific styles -->
     <style>
@@ -1587,6 +1587,323 @@
         </script>
       {% endif %}
     {% endwith %}
+
+    <!-- Production -->
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+
+    <script>
+      tippy('#A1', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">A1: Post criticizes the study’s data, methodology, interpretations, or framing</h6>
+                <ul>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post mentions flaws in the study’s design (e.g., sample too small, wrong method, claims too strong)</p>
+                    <p style="margin-left: 0.5rem;">e.g., "This study relies on only a 35-year velocity record and 6 years of GPS data at a single site ... hardly enough to make broad claims about the ice stream’s behavior."</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post proposes a better study design instead (e.g., better method, different sample)</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Well, they could get way more reliable results by combining multiple models and local data to really capture how different regions handle sea-level rise."</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post selectively quotes parts of the study to cast doubt (e.g., limitations, disclaimer, incoherent findings, ...)</p>
+                    <p style="margin-bottom: 0.25rem;"><u>Note</u>: Simply mentioning a limitation while accepting the overall result is not a Negative Stance.</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Even the authors admit it: This study has some limitations. First, the sample size is limited and the results may not be generalizable. Why are we even discussing this? "</p>
+                    </li>
+                </ul>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+
+      tippy('#A2', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">A2: Post criticizes the study’s authors, funding, or source</h6>
+                <ul>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post criticizes the study's authors (e.g., mentions conflicts of interest or author’s questionable track of record)</p>
+                    <p style="margin-left: 0.5rem;">e.g., "I'd take this with a grain of salt ... the authors have a track record of promoting vertical farming pretty aggressively"</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post criticizes the study's source (e.g., that it is not peer-reviewed, from a questionable journal/venue)</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Honestly, I wouldnt trust this too much. it's not peer-reviewed and comes from some random online repo."</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post delegitimizes the field or scientific establishment the study belongs to</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Climate "science" stopped being science a long time ago. It's a funding machine"</p>
+                    </li>
+                </ul>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+
+      tippy('#A3', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">A3: Post provides counter-evidence or calls the study outdated</h6>
+                <ul>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post provides counter-evidence (e.g., studies with contrary findings, anecdotal counter-evidence)</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Not sure I agree with 1.5°C as a hard tipping point. I remember someone shared a recent study suggesting several tipping elements are much less sensitive and might not trigger until closer to 3°C, so things might not be as immediate as this paper implies."</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post calls the study outdated or old, implying findings are invalid, superseded, or no longer reflect reality</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Believe me, in science things can change quickly ... this study is interesting, but it’s already a few years old and there are so many more recent ones."</p>
+                    </li>
+                </ul>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+
+      tippy('#A4', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">A4: Post questions the study’s relevance or applicability</h6>
+                <ul>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post criticizes the study's generalizability (e.g., findings in basic research might not apply to real-world scenarios or scenarios readers care about)</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Hard to know how much these findings about pre-LGM ice sheets actually apply to modern-day ice dynamics or real-world sea-level predictions"</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post downplays the significance of the study to cast doubt</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Keep cool ... just a small preliminary study, we shouldn’t draw conclusions from it"</p>
+                    </li>
+                </ul>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+
+      tippy('#A5', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">A5: Post uses sarcasm or rhetorical questions against the conclusion</h6>
+                <ul>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post uses sarcasm to criticize the data</p>
+                    <p style="margin-bottom: 0.25rem;"><u>Note</u>: First determine what the sarcasm targets. If it is aimed at people who reject the study, at the sharer, or at corporations and politicians rather than at the study itself, label Non-negative (see Z3).</p>
+                    <p style="margin-left: 0.5rem;">e.g., "A sample size of 120 people? Yeah, that’s totally 'statistically significant' ..."</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post uses rhetorical question to criticize the study's authors</p>
+                    <p style="margin-bottom: 0.25rem;"><u>Note</u>: Honest questions (e.g., "What did they use for identifying the critical threshold?") should be labeled as No Stance (see N4)</p>
+                    <p style="margin-left: 0.5rem;">e.g., "How can we trust a study whose authors had a similar paper retracted last year?"</p>
+                    </li>
+                </ul>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+
+      tippy('#A6', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">A6: Post dismisses the study without engaging with its content</h6>
+                <p style="margin-left: 0.5rem;">e.g., "Another day, another pointless study. Can we move on already?"</p>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+
+      tippy('#A7', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">A7: Post casts generic doubt without a specific complaint</h6>
+                <p style="margin-left: 0.5rem;">e.g., "Too early to say!"</p>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+
+      tippy('#P1', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">P1: Post contains sarcasm or mockery but it is unclear what it targets</h6>
+                <ul>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post contains sarcasm or mockery but it is unclear what it targets</p>
+                    <p style="margin-bottom: 0.25rem;"><u>Note</u>: In this example the sarcasm is unmistakable, but its target is not. It may mock the study for offering false reassurance (negative), or mock the reassuring reading others will take from it (not negative). Nothing in the post decides which.</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Oh good, it fixes itself /s"</p>
+                    </li>
+                </ul>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+
+      tippy('#P2', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">P2: Post reacts to the study in a way that could be read as doubting it, but also as accepting it</h6>
+                <p style="margin-left: 0.5rem;">e.g., "This is wild"</p>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+
+      tippy('#Z1', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">Z1: Post reports parts of the study or summarizes it</h6>
+                <ul>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post reports parts of the study</p>
+                    <p style="margin-bottom: 0.25rem;"><u>Note</u>: If the post quotes parts of the study to cast doubt (e.g., limitations, disclaimer, incoherent findings, ...) annotate as Negative Stance. Conversely, hedging, uncertainty, or limitations that appear inside quoted text from the paper is still a Non-negative Stance.</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Here's what they did (from the abstract): Understanding the change in soil organic carbon (C) stock in a warmer climate and the effect of current land management on that stock is critical for soil and environmental conservation and climate policy. By simulation modeling, we predicted changes in Australia’s soil organic C stock from 2010 to 2100."</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post quotes the study's abstract</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Abstract: Understanding the change in soil organic carbon (C) stock in a warmer climate and the effect of current land management on that stock is critical for soil and environmental conservation and climate policy. By simulation modeling, we predicted changes in Australia’s soil organic C stock from 2010 to 2100."</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post summarizes the study</p>
+                    <p style="margin-left: 0.5rem;">e.g., "This study uses high-resolution Landsat 8 satellite data to analyze sea surface temperature variability near macro tidal flats."</p>
+                    </li>
+                </ul>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+
+      tippy('#Z2', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">Z2: Post agrees with, endorses, or reacts positively to the study</h6>
+                <ul>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post agrees with the study's conclusion</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Good to see research showing that expanding marine protected areas through coordinated global planning can benefit biodiversity, improve fisheries productivity, and help protect carbon storage in the ocean."</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post endorses the study</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Wow! A strong and important climate study using robust attribution methods. Results are highly convincing!"</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post agrees by claiming results are "obvious", "common sense", or "old news"</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Obviously ... everyone living in this area has known this for years."</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post includes appraisals and/or positive reactions</p>
+                    <p style="margin-bottom: 0.25rem;"><u>Note</u>: A reaction directed at the sharer (e.g., "thanks for sharing"), another user, the thread, etc. should be annotated as No Stance. However, if any part of the post is directed at the study, that takes precedence.</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Interesting read, hadn't come across this line of work before."</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post welcomes work on the topic without addressing the specific findings</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Always happy to see more work on tidal flat dynamics, this is a really underexplored area."</p>
+                    </li>
+                </ul>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+
+      tippy('#Z3', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">Z3: Post defends or supports the conclusion indirectly</h6>
+                <ul>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post criticizes those who reject the conclusion of the study</p>
+                    <p style="margin-left: 0.5rem;">e.g., "The same people who spent a decade insisting the models were "alarmist" are going to be very quiet about this one."</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post pre-empts an expected objection to the study</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Before someone shows up with "but it was cold in Barcelona last week" ... that's weather, this is a 40-year trend."</p>
+                    </li>
+                </ul>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+
+      tippy('#Z4', {
+          content: `
+            <div style="padding: 10px;">
+                <h6 style="margin: 0 0 5px 0; color: var(--secondary-color);">Z4: Post accepts the conclusion as given (e.g., builds on it, presupposes it)</h6>
+                <ul>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post draws a practical implication from the study</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Which means anyone buying coastal property on a 30-year mortgage right now is making a bet they probably shouldn't be making."</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post presupposes the finding while complaining about inaction</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Meanwhile my city is still approving new developments in the exact flood zones this paper is describing"</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post applies the study's findings</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Given these findings cities should clearly expand heatwave early-warning systems"</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post laments that the findings will not be acted on</p>
+                    <p style="margin-left: 0.5rem;">e.g., "Too bad my city will never plant a single extra tree. We cut down more than we plant every year."</p>
+                    </li>
+                    <li>
+                    <p style="margin-bottom: 0.25rem;">Post reacts fatalistically, presupposing the finding</p>
+                    <p style="margin-left: 0.5rem;">e.g., "We're dead men walking. There is nothing else left to say."</p>
+                    </li>
+                </ul>
+            </div>
+          `,
+          allowHTML: true,
+          interactive: true,
+          maxWidth: 600,
+          theme: 'custom-dark',
+          placement: 'bottom',
+    });
+
+    </script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
