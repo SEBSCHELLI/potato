@@ -225,19 +225,19 @@
             <ol>
                 <li><strong>Familiarization:</strong> Review the Annotation Protocol (<em>10 minutes</em>)</li>
                 <li>
-                    <strong>Training:</strong> Annotate examples with feedback (<em>10 minutes</em>)
+                    <strong>Training:</strong> Annotate examples with feedback (<em>15 minutes</em>)
                     <br>
                     During Training phase you need to annotate {{n_train_items}} posts. After each annotation, you will receive feedback.
                     To pass the Training phase you are not allowed to make more than {{max_mistakes - 1}} mistakes.
                     Otherwise, your participation ends, and you will be paid accordingly.
                 </li>
                 <li>
-                    <strong>Annotation:</strong> Annotate the full dataset (<em>40 minutes</em>)
+                    <strong>Annotation:</strong> Annotate the full dataset (<em>35 minutes</em>)
                     <br>
-                    During Annotation phase you need to annotate up to {{n_items_to_annotate}} posts.
-                    This phase includes {{n_attention_checks}} attention checks (posts with known answers) to track annotator performance.
-                    For each annotation check post that is correctly annotated, you will earn a coin.
-                    For each earned coin, you will be paid an additional {{coin_to_money}}.
+                    During Annotation phase you need to annotate {{n_items_to_annotate}} posts.
+                    <br>
+                    Hidden among these are {{n_attention_checks}} attention checks (posts with known answers). You won't be able to tell which posts these are, so please annotate every post as carefully as you would any other.
+                    For each attention check post you annotate correctly, you earn a coin, worth {{coin_to_money}}.
                 </li>
                 <li>
                     <strong>Finish:</strong> The return link to Prolific will be provided
