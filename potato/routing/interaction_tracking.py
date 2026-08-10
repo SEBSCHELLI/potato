@@ -269,24 +269,25 @@ def track_annotation_change():
 
         # Quality Control
         if phase == UserPhase.ANNOTATION:
-            # Quality control validation (attention checks and gold standards)
-            qc_manager = get_quality_control_manager()
-            #qc_manager = None
-            if qc_manager:
-                is_attention_check = qc_manager.is_attention_check(instance_id)
-                if is_attention_check:
-                    annotation = {schema_name: new_value}
-                    response_time = bd.total_time_ms / 1000
+            if schema_name == "stance":
+                # Quality control validation (attention checks and gold standards)
+                qc_manager = get_quality_control_manager()
+                #qc_manager = None
+                if qc_manager:
+                    is_attention_check = qc_manager.is_attention_check(instance_id)
+                    if is_attention_check:
+                        annotation = {schema_name: new_value}
+                        response_time = bd.total_time_ms / 1000
 
-                    # Check if this is an attention check
-                    attention_result = qc_manager.validate_attention_response(
-                        username, session_id, instance_id, annotation, response_time, client_timestamp
-                    )
-                    user_state.attention_check_state.add_attention_check_result(attention_result)
-                    user_state.attention_check_state.n_items_since_last_check = 0 # reset counter
-                else:
-                    if annotation_action_type == "add_annotation":
-                        user_state.attention_check_state.record_non_attention_check_annotation()
+                        # Check if this is an attention check
+                        attention_result = qc_manager.validate_attention_response(
+                            username, session_id, instance_id, annotation, response_time, client_timestamp
+                        )
+                        user_state.attention_check_state.add_attention_check_result(attention_result)
+                        user_state.attention_check_state.n_items_since_last_check = 0 # reset counter
+                    else:
+                        if annotation_action_type == "add_annotation":
+                            user_state.attention_check_state.record_non_attention_check_annotation()
 
         # Register Annotator
         if phase == UserPhase.TRAINING:
