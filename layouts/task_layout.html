@@ -19,7 +19,9 @@
                 placeholder="Please state which pattern(s) you identified (A1-A7, Z1-Z4, N1-N4). If you did not find any of these patterns, please provide a brief explanation for your decision.&#10;&#10;Use this format: A1 for a single pattern or a list like A1,A3 for multiple patterns."
                 label_Name="comment"
                 rows="4"
-                validation=""></textarea>
+                validation=""
+                required>
+            </textarea>
         </fieldset>
         <fieldset schema="stance" style="width: 100%;">
             <p style="font-weight: 500; color: var(--text-color); margin-bottom: 0.5rem; display: block;">Stance</p>
@@ -36,7 +38,8 @@
                            label_name="Negative"
                            onclick="onlyOne(this);"
                            validation=""
-                           data-key="1">
+                           data-key="1"
+                           required>
                     <label for="stance_Negative_radio" class="shadcn-radio-label" >Negative Stance [1]</label>
                 </div>
 
