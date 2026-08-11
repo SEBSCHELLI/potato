@@ -104,7 +104,7 @@ def training_page():
 
     instance_id = current_instance.get_id()
     instance_data = current_instance.get_data()
-    instance_text = instance_data.get('displayed_text', current_instance.get_data().get('text', ''))
+    instance_text = instance_data.get('text', 'ERROR')
     instance_paper_title = instance_data.get('paper_title', "???")
     instance_paper_abstract = instance_data.get('paper_abstract', "???")
 
