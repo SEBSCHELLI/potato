@@ -2017,6 +2017,8 @@
                 }
             });
 
+
+
             const commentText = document.getElementById("comment_text");
             const textareaFilled = commentText.value.trim() !== "";
 
@@ -2026,6 +2028,13 @@
             const newState = !valid;
 
             btn.disabled = newState;
+
+            log("checkValid", {
+                textareaFilled: textareaFilled,
+                radioChecked: radioChecked,
+                valid: valid,
+                newState: newState
+            });
 
             // log only when state changes (avoids spam)
             if (prevState !== newState) {
