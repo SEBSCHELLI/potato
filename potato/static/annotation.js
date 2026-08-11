@@ -957,9 +957,9 @@ function validateRequiredFields() {
 
     // Update Next button state
     const nextBtn = document.getElementById('next-btn');
-    if (nextBtn) {
-        nextBtn.disabled = !allRequiredFilled;
-    }
+    //if (nextBtn) {
+    //    nextBtn.disabled = !allRequiredFilled;
+    //}
 
     return allRequiredFilled;
 }
