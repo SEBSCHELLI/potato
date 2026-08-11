@@ -1991,13 +1991,18 @@
 
         function checkValid() {
             const inputs = form.querySelectorAll("input, select, textarea");
-            let valid = false;
 
+            let radioChecked = false;
             inputs.forEach(el => {
                 if (el.type === "radio" && el.checked) {
-                    valid = true;
+                    radioChecked = true;
                 }
             });
+
+            const commentText = document.getElementById("comment_text");
+            const textareaFilled = commentText.value.trim() !== "";
+
+            const valid = radioChecked && textareaFilled;
 
             const prevState = btn.disabled;
             const newState = !valid;
