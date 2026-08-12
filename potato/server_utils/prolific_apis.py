@@ -154,6 +154,7 @@ class ProlificBase(object):
         if response.status_code == 200:
             data = response.json()['results']
             print('Successfully fetched %s submissions from study %s' % (len(data), study_id))
+            print(data)
             return data
         else:
             print(f"Error: {response.status_code} - {response.text}")
