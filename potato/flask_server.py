@@ -326,16 +326,17 @@ def load_user_data(config: dict):
     logger.info("Loaded user data for %d users" % len(usm.get_user_ids()))
     logger.info(f"Number of items remaining {len(ism.remaining_item_ids)}")
 
-    tism = get_training_item_state_manager()
-    for user_id, session_ids in usm.get_user_session_ids().items():
-        for session_id in session_ids:
-            user_state = usm.get_user_state(user_id, session_id)
-            if user_state:
-                training_state = user_state.get_training_state()
-                if training_state:
-                    for instance_id in training_state.training_instance_id_to_label_to_value:
-                        if instance_id in tism.training_item_id_to_training_item:
-                            tism.register_annotator(instance_id, user_id)
+    if config['training'].get('enabled', False):
+        tism = get_training_item_state_manager()
+        for user_id, session_ids in usm.get_user_session_ids().items():
+            for session_id in session_ids:
+                user_state = usm.get_user_state(user_id, session_id)
+                if user_state:
+                    training_state = user_state.get_training_state()
+                    if training_state:
+                        for instance_id in training_state.training_instance_id_to_label_to_value:
+                            if instance_id in tism.training_item_id_to_training_item:
+                                tism.register_annotator(instance_id, user_id)
 
     logger.info("Loaded user data for %d users" % len(usm.get_user_ids()))
 
