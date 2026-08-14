@@ -326,7 +326,7 @@ def load_user_data(config: dict):
     logger.info("Loaded user data for %d users" % len(usm.get_user_ids()))
     logger.info(f"Number of items remaining {len(ism.remaining_item_ids)}")
 
-    if config['training'].get('enabled', False):
+    if config.get('training', {}).get('enabled', False):
         tism = get_training_item_state_manager()
         for user_id, session_ids in usm.get_user_session_ids().items():
             for session_id in session_ids:
