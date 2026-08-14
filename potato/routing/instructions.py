@@ -63,12 +63,12 @@ def instructions_page():
                            server_debug=config.get("server_debug", False),
                            debug_phase=config.get("debug_phase"),
                            ui_config=config.get("ui_config", {}),
-                           min_correct=config["training"]["passing_criteria"]["min_correct"],
-                           max_mistakes=config["training"]["passing_criteria"]["max_mistakes"],
-                           n_train_items=config["n_train_items"],
+                           min_correct=config["training"]["passing_criteria"]["min_correct"] if "training" in config else "",
+                           max_mistakes=config["training"]["passing_criteria"]["max_mistakes"] if "training" in config else "",
+                           n_train_items=config.get("n_train_items", 0),
                            n_items_to_annotate=config["n_items_to_annotate"],
-                           coin_to_money=config["coin_to_money"],
-                           n_attention_checks=config["n_attention_checks"])
+                           coin_to_money=config.get("coin_to_money", 0),
+                           n_attention_checks=config.get("n_attention_checks", 0))
 
 # POST: User clicks on continue button
 @instructions_bp.route("/continue_instructions", methods=["POST"])
