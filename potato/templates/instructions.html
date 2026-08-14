@@ -284,11 +284,6 @@
             <p style="margin: 0px; padding: 0px;">
                 This annotation protocol guides you to consistently classify how social media posts refer to scientific studies.
                 You will determine the stance of a post towards the main conclusion of a scientific study.
-                <br>
-                <br>
-                Following this framework ensures your annotations are accurate and comparable with those from others.
-                Spend up to 10 minutes to familiarize with the data, definitions, criteria, and examples.
-                You should understand how to distinguish between the different stance categories before moving on to the training phase.
             </p>
         </div>
 
@@ -1386,20 +1381,14 @@
     <h4 style="margin-left: 2rem; color: var(--secondary-color); font-weight: bold;">Continue</h4>
     <div class="text-box">
         <p>
-            You are now ready to begin the Training Phase, where you will practice annotating.
-            During this phase, you will annotate {{n_train_items}} posts.
-            After each annotation, you will receive immediate feedback to help you improve.
-        </p>
-        <p>
-            To successfully complete the Training Phase, you must complete the {{n_train_items}} training items with no more than {{max_mistakes - 1}} mistakes.
-            If this threshold is not met, your participation will end, and you will not be paid.
+            You are now ready to begin the annotation.
         </p>
     </div>
 
     <div style="display: flex; justify-content: flex-end;">
         <form action="/continue_instructions" method="POST">
             <button type="submit" class="button_on_bg" id="finish-instructions-btn" style="height: 50px; width: 300px; margin-right: 2rem;">
-                <i class="fa-solid fa-forward"></i> Move to Training
+                <i class="fa-solid fa-forward"></i> Move to Annotation
             </button>
         </form>
     </div>
