@@ -260,7 +260,7 @@ def navigate_to_next():
 
     current_instance_id = current_instance.get_id()
     if instance_id != current_instance_id:
-        logger.error(f'User {username} (Session ID {session_id}) - Instance ID provided by browser and ID in user state are not equal.')
+        logger.error(f'User {username} (Session ID {session_id}) - Instance ID provided by browser ({instance_id}) and ID in user state ({current_instance_id}) are not equal.')
         return render_template("error.html", message="Instance ID provided by browser and ID in user state are not equal.")
 
     instance_has_annotations = user_state.has_annotated(instance_id)
