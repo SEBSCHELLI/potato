@@ -123,7 +123,6 @@ def done():
                 if url_argument in ['PROLIFIC_PID', 'prolific_pid']:
                     prolific_redirect_url = f"https://app.prolific.com/submissions/complete?cc={training_failed_completion_code}"
 
-
             return render_template("training_failed.html",
                                    message=training_state.failed_message,
                                    total_mistakes=training_state.get_total_mistakes(),
@@ -157,6 +156,8 @@ def done():
     auto_redirect_delay = config.get('auto_redirect_delay', 5000)  # milliseconds
 
     # Show the completion page
+    session.clear()
+
     return render_template("done.html",
                            title=config.get("annotation_task_name", "Annotation Platform"),
                            completion_code=completion_code,
