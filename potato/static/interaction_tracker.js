@@ -59,7 +59,8 @@ class InteractionTracker {
         window.addEventListener('pagehide', () => this.flush(true));
 
         this.initCopyTracking();
-
+        this.initFocusTracking();
+        
         // Periodic flush
         this.flushTimer = setInterval(() => this.flush(false), this.flushInterval);
 
@@ -106,6 +107,24 @@ class InteractionTracker {
                     target: (e.target && (e.target.name || e.target.tagName)) || null,
                 });
             }, true);
+        });
+    }
+
+    initFocusTracking() {
+        this._blurStart = null;
+
+        window.addEventListener('blur', () => {
+            if (this._blurStart !== null) return;      // guard duplicate blurs
+            this._blurStart = Date.now();
+            this.addEvent('focus', 'window_blur', {
+                tab_visible: !document.hidden,          // true => another window, not a tab switch
+            });
+        });
+
+        window.addEventListener('focus', () => {
+            const away_ms = this._blurStart ? Date.now() - this._blurStart : null;
+            this._blurStart = null;
+            this.addEvent('focus', 'window_focus', { away_ms });
         });
     }
 
