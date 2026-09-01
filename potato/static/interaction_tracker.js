@@ -95,6 +95,7 @@ class InteractionTracker {
     }
 
     initCopyTracking() {
+        console.log(`[InteractionTracker] initCopyTracking()`)
         ['copy', 'cut'].forEach(type => {
             document.addEventListener(type, (e) => {
                 const sel = (document.getSelection() || '').toString();
