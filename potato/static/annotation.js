@@ -545,7 +545,6 @@ function setupEventListeners() {
 
     // Keyboard shortcuts for checkboxes and radio buttons (matches base_template.html behavior)
     document.addEventListener('keyup', function (e) {
-        console.log("keyup")
         // Don't handle when in text input fields (but allow radio/checkbox)
         const activeElement = document.activeElement;
         const activeId = activeElement.id;
@@ -559,7 +558,7 @@ function setupEventListeners() {
         }
 
         const key = e.key.toLowerCase();
-        console.log("key:", key)
+        debugLog("key:", key)
 
         // Check checkboxes first
         const checkboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -611,7 +610,7 @@ function setupEventListeners() {
         }
     });
 
-    console.log("added keyup eventlistener")
+    debugLog("added keyup eventlistener")
 
 }
 
