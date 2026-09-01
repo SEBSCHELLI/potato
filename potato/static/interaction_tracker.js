@@ -105,7 +105,7 @@ class InteractionTracker {
                     full_page: sel.length > 2000,
                     target: (e.target && (e.target.name || e.target.tagName)) || null,
                 });
-                console.log(`[InteractionTracker] Copy Event: ${lines}`)
+                console.log(`[InteractionTracker] Copy Event: ${sel.slice(0, 20)}... (Length: ${sel.length})`)
             }, true);
         });
     }
