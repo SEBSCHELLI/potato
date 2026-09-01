@@ -58,7 +58,7 @@ class InteractionTracker {
         window.addEventListener('beforeunload', () => this.flush(true));
         window.addEventListener('pagehide', () => this.flush(true));
 
-        initCopyTracking();
+        this.initCopyTracking();
 
         // Periodic flush
         this.flushTimer = setInterval(() => this.flush(false), this.flushInterval);
