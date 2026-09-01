@@ -286,27 +286,23 @@
                 You will determine the stance of a post towards the main conclusion of a scientific study.
                 <br>
                 <br>
-                <b><u>Note</u>: The protocol did NOT change from last time. However, the papers and posts during annotation are now related to COVID-19 instead of Climate Change. </b>
+                <b><u>Note</u>: The protocol did NOT change from last time. However, the posts are now from X (Twitter) and the papers are now related to COVID-19</b>
             </p>
         </div>
 
         <h4 style="margin-left: 2rem; color: var(--secondary-color); font-weight: bold;">Data</h4>
         <div class="text-box">
-            You are given a reply post and the scientific paper (title + abstract) that was referenced in the initial Reddit submission post.
+            You are given an X post and the scientific paper (title + abstract) that was referenced in the post.
             <br>
-            <br>
-            The reply post is always a direct reply to the submission post and the submission post does not contain any text apart from the title and the link of the paper.
-            <br>
-            <br>
-            <p>See this example to understand how posts and papers are display for this task compared to how they are displayed on Reddit:</p>
+            <p>See this example to understand how posts and papers are display for this task compared to how they are displayed on X (Twitter):</p>
             <div style="display: flex; gap: 2rem; margin-top:0.5rem;">
                 <div style="flex:1; margin-left: 2rem; margin-right: 0rem;">
-                    <p>Reply Post and Paper (Title + Abstract) as provided for this task</p>
+                    <p>X Post and Paper (Title + Abstract) as provided for this task</p>
                     <div class="training-instance" style="margin-top: 0.5rem;">
                         <h5 class="mb-3 post-heading" >Post:</h5>
                         <div id="instance-text" class="post-text">
                             <div id="text-content">
-                                This study relies on only a 35-year velocity record and 6 years of GPS data at a single site ... hardly enough to make broad claims about the ice stream’s behavior.
+                                Prof. Siew Ng @Siew_C_Ng from @CUHKGI @CUHKMedicine gave a fantastic presentation on impact of gut microbiome in respiratory tract infections and Covid-19, more details: https://t.co/YRB1U5NEe9 #ChinaGut #Covid #guthealth #LongCovid
                             </div>
                         </div>
                         <br>
@@ -323,9 +319,9 @@
                     </div>
                 </div>
                 <div style="flex:1; margin-left: 0rem; margin-right: 2rem;">
-                    <p>The actual Reply Post and Paper (Title) on Reddit</p>
+                    <p>The actual Post and Paper (Title) on X</p>
                     <div class="training-instance" style="margin-top: 0.5rem; display: flex; justify-content: center; align-items: center;">
-                        <img class="task-image" width="100%" height="auto" style="margin: 0px; padding: 0px; max-width: 600px; border:none;" src="static/img/Reddit_reply_post.png" alt="NegativStanceReddit.png">
+                        <img class="task-image" width="100%" height="auto" style="margin: 0px; padding: 0px; max-width: 600px; border:none;" src="static/img/ExampleTwitter.png" alt="ExampleTwitter.png">
                     </div>
                 </div>
 
@@ -335,7 +331,7 @@
         <h4 style="margin-left: 2rem; color: var(--secondary-color); font-weight: bold;">Task</h4>
         <div class="text-box">
             <div>
-                Given the reply post and the scientific paper (title + abstract) your task is to classify the reply post into:
+                Given the post and the scientific paper (title + abstract) your task is to classify the post into:
                 <div style="display: flex; justify-content: center; align-items: center; gap: 5rem; color: var(--secondary-color); font-weight: bold; margin-top:1rem;margin-bottom: 2rem;">
                     <span>🔴 Negative Stance</span>
                     <span>🟢 Non-negative Stance</span>
@@ -354,7 +350,7 @@
         <div class="text-box">
             <p>Annotate</p>
             <p class="blue-definition">
-                if the reply post encourages readers to at least partially doubt, or dismiss the study's main conclusion.
+                if the post encourages readers to at least partially doubt, or dismiss the study's main conclusion.
             </p>
             <p style="margin-top: 1rem;">Please see the following common patterns (not exhaustive):</p>
             <p style="margin-top: 0.5rem; padding-bottom: 0rem; margin-bottom: 0rem;"><u>Note</u>: Check if a pattern actually functions to lower trust in the conclusion. A post that raises one of these points and then explicitly rejects or outweighs it (e.g., "it's old, but still holds up") is NOT negative.</p>
@@ -377,7 +373,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            This study relies on only a 35-year velocity record and 6 years of GPS data at a single site ... hardly enough to make broad claims about the ice stream’s behavior.
+                                            A 35-year velocity record and 6 years of GPS from a single site is a thin basis for claims about how the whole ice stream behaves [link]
                                         </div>
                                     </div>
                                     <br>
@@ -401,7 +397,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Well, they could get way more reliable results by combining multiple models and local data to really capture how different regions handle sea-level rise.
+                                            They could get way more reliable results by combining multiple models and local data to really capture how different regions handle sea-level rise.
                                         </div>
                                     </div>
                                     <br>
@@ -432,7 +428,6 @@
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
                                             Even the authors admit it:
                                             <blockquote>This study has some limitations. First, the sample size is limited and the results may not be generalizable.</blockquote>
-                                            Why are we even discussing this?
                                         </div>
                                     </div>
                                     <br>
@@ -469,7 +464,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            I'd take this with a grain of salt ... the authors have a track record of promoting vertical farming pretty aggressively
+                                            Before anyone gets excited: these authors have been pushing vertical farming hard for years. I'd take this with a grain of salt [link]
                                         </div>
                                     </div>
                                     <br>
@@ -493,7 +488,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Honestly, I wouldnt trust this too much. it's not peer-reviewed and comes from some random online repo.
+                                            Not peer reviewed, posted on some random repository. Wouldn't put much weight on it [link]
                                         </div>
                                     </div>
                                     <br>
@@ -516,7 +511,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Climate "science" stopped being science a long time ago. It's a funding machine
+                                            Climate "science" stopped being science a long time ago. It's a funding machine [link]
                                         </div>
                                     </div>
                                     <br>
@@ -553,7 +548,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Not sure I agree with 1.5°C as a hard tipping point. I remember someone shared a recent study suggesting several tipping elements are much less sensitive and might not trigger until closer to 3°C, so things might not be as immediate as this paper implies.
+                                            Not sure I agree with 1.5°C as a hard tipping point. I remember someone shared a recent study suggesting several tipping elements are much less sensitive and might not trigger until closer to 3°C, so things might not be as immediate as this paper implies [link].
                                         </div>
                                     </div>
                                     <br>
@@ -577,7 +572,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Believe me, in science things can change quickly ... this study is interesting, but it’s already a few years old and there are so many more recent ones.
+                                            Interesting, but this is a few years old and the field has moved quickly since. Plenty of newer work on Arctic lake sediments [link]
                                         </div>
                                     </div>
                                     <br>
@@ -614,7 +609,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Hard to know how much these findings about pre-LGM ice sheets actually apply to modern-day ice dynamics or real-world sea-level predictions
+                                            This paper is about pre-LGM ice sheets. How much it tells us about modern ice dynamics or actual sea-level projections is a separate question [link]
                                         </div>
                                     </div>
                                     <br>
@@ -638,7 +633,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Keep cool ... just a small preliminary study, we shouldn’t draw conclusions from it
+                                            Everyone calm down. This is just a small preliminary study, not something to draw conclusions from [link]
                                         </div>
                                     </div>
                                     <br>
@@ -680,7 +675,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            A sample size of 120 people? Yeah, that’s totally 'statistically significant' ...
+                                            A sample size of 120 people? Yeah, that’s totally 'statistically significant' [link]
                                         </div>
                                     </div>
                                     <br>
@@ -709,7 +704,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            How can we trust a study whose authors had a similar paper retracted last year?
+                                            How can we trust a study whose authors had a similar paper retracted last year [link]?
                                         </div>
                                     </div>
                                     <br>
@@ -743,7 +738,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Another day, another pointless study. Can we move on already?
+                                            Another day, another pointless study. Can we move on already? [link]
                                         </div>
                                     </div>
                                     <br>
@@ -777,7 +772,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Too early to say!
+                                            I saw this paper today: My take: Way too early to say! [link]
                                         </div>
                                     </div>
                                     <br>
@@ -893,7 +888,7 @@
         <h4 style="margin-left: 2rem; color: var(--secondary-color); font-weight: bold;">🟢 Non-negative Stance</h4>
         <div class="text-box">
             <p>Annotate</p>
-            <p class="blue-definition">if the reply post expresses a stance toward the main conclusion that is not negative, i.e., it endorses, accepts, reports, or reacts positively to it.</p>
+            <p class="blue-definition">if the post expresses a stance toward the main conclusion that is not negative, i.e., it endorses, accepts, reports, or reacts positively to it.</p>
             <br>
             Please see the following common patterns (not exhaustive):
         </div>
@@ -918,7 +913,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Here's what they did (from the abstract):
+                                            New study on Australian soil. Here's what they did (from the abstract):
                                             <blockquote>
                                                 Understanding the change in soil organic carbon (C) stock in a warmer climate and the effect of current land management on that stock is critical for soil and environmental conservation and climate policy. By simulation modeling, we predicted changes in Australia’s soil organic C stock from 2010 to 2100.
                                             </blockquote>
@@ -972,7 +967,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            This study uses high-resolution Landsat 8 satellite data to analyze sea surface temperature variability near macro tidal flats.
+                                            This new study uses high-resolution Landsat 8 satellite data to analyze sea surface temperature variability near macro tidal flats [link].
                                         </div>
                                     </div>
                                     <br>
@@ -1009,7 +1004,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Good to see research showing that expanding marine protected areas through coordinated global planning can benefit biodiversity, improve fisheries productivity, and help protect carbon storage in the ocean.
+                                            Good to see research [link] showing that expanding marine protected areas through coordinated global planning can benefit biodiversity, improve fisheries productivity, and help protect carbon storage in the ocean.
                                         </div>
                                     </div>
                                     <br>
@@ -1033,7 +1028,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Wow! A strong and important climate study using robust attribution methods. Results are highly convincing!!!
+                                            Wow! A strong and important climate study [link] using robust attribution methods. Results are highly convincing!!!
                                         </div>
                                     </div>
                                     <br>
@@ -1057,7 +1052,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Obviously ... everyone living in this area has known this for years.
+                                            Obviously ... everyone living in this area has known this for years [link]
                                         </div>
                                     </div>
                                     <br>
@@ -1086,7 +1081,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Interesting read, hadn't come across this line of work before.
+                                            Interesting read, hadn't come across this line of work before. See paper here [link]
                                         </div>
                                     </div>
                                     <br>
@@ -1110,7 +1105,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Always happy to see more work on tidal flat dynamics, this is a really underexplored area.
+                                            New study: [link]. Always happy to see more work on tidal flat dynamics, this is a really underexplored area.
                                         </div>
                                     </div>
                                     <br>
@@ -1147,7 +1142,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            The same people who spent a decade insisting the models were "alarmist" are going to be very quiet about this one.
+                                            The same people who spent a decade insisting the models were "alarmist" are going to be very quiet about this one [link].
                                         </div>
                                     </div>
                                     <br>
@@ -1171,7 +1166,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Before someone shows up with "but it was cold in Barcelona last week" ... that's weather, this is a 40-year trend.
+                                            Before someone shows up in the comments with "but it was cold in Barcelona last week" ... that's weather, what this study [link] finds is a 40-year trend.
                                         </div>
                                     </div>
                                     <br>
@@ -1208,7 +1203,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Which means anyone buying coastal property on a 30-year mortgage right now is making a bet they probably shouldn't be making.
+                                            New study [link]: anyone buying coastal property on a 30-year mortgage right now is making a bet they probably shouldn't be making.
                                         </div>
                                     </div>
                                     <br>
@@ -1232,7 +1227,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Meanwhile my city is still approving new developments in the exact flood zones this paper is describing
+                                            Meanwhile my city is still approving new developments in the exact flood zones this paper is describing [link]
                                         </div>
                                     </div>
                                     <br>
@@ -1256,7 +1251,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Given these findings cities should clearly expand heatwave early-warning systems
+                                            Given the findings from this paper [link] cities should clearly expand heatwave early-warning systems
                                         </div>
                                     </div>
                                     <br>
@@ -1280,7 +1275,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            Too bad my city will never plant a single extra tree. We cut down more than we plant every year.
+                                            Paper [link]: Cooling cities through urban green infrastructure. My city: will never plant a single extra tree. We cut down more than we plant every year.
                                         </div>
                                     </div>
                                     <br>
@@ -1304,7 +1299,7 @@
                                     <h5 class="mb-3 post-heading" >Post:</h5>
                                     <div id="instance-text" class="post-text">
                                         <div id="text-content" style="/*! position: relative; */ /*! z-index: 1; */ /*! pointer-events: auto; */">
-                                            We're dead men walking. There is nothing else left to say.
+                                            We're dead men walking. There is nothing else left to say. Paper: [link]
                                         </div>
                                     </div>
                                     <br>
@@ -1329,7 +1324,7 @@
         <h4 style="margin-left: 2rem; color: var(--secondary-color); font-weight: bold;">⚪ No Stance</h4>
         <div class="text-box">
             <p>Annotate</p>
-            <p class="blue-definition">if the reply post expresses no stance toward the main conclusion at all.</p>
+            <p class="blue-definition">if the post expresses no stance toward the main conclusion at all.</p>
             <br>
             <u>Note</u>: only for posts that genuinely take no position on the conclusion, NOT for posts you find hard to read.
         </div>
@@ -1338,10 +1333,10 @@
                 <div class="criteria-headline">Common patterns (not exhaustive)</div>
                 <div class="examples-div">
                     <ul>
-                        <li>N1: Unclear connection to the paper: "Why doesn't the media report about it?"</li>
-                        <li>N2: Posts directed at other users or the thread: e.g., "@userABC, why do you think that?" or "Thanks for posting"</li>
-                        <li>N3: Mere mention or link provision: e.g., "This paper was already shared yesterday" or "Paywalled, preprint is here: [link]"</li>
-                        <li>N4: Honest information-seeking questions: e.g., "What did they use for identifying the critical threshold?"</li>
+                        <li>N1: Unclear connection to the paper: "Why doesn't the media report about this study [link]?"</li>
+                        <li>N2: Posts directed at other users or the thread: e.g., "@userABC, are you presenting this paper [link] next week?</li>
+                        <li>N3: Mere mention or link provision: e.g., "This paper [link] was already shared so many times last week" or "See preprint here: [link]"</li>
+                        <li>N4: Honest information-seeking questions: e.g., "What did they use for identifying the critical threshold? [link]"</li>
                     </ul>
                     <p></p>
                 </div>
