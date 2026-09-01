@@ -105,6 +105,7 @@ class InteractionTracker {
                     full_page: sel.length > 2000,
                     target: (e.target && (e.target.name || e.target.tagName)) || null,
                 });
+                console.log(`[InteractionTracker] Copy Event: ${lines}`)
             }, true);
         });
     }
