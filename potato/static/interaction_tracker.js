@@ -58,6 +58,8 @@ class InteractionTracker {
         window.addEventListener('beforeunload', () => this.flush(true));
         window.addEventListener('pagehide', () => this.flush(true));
 
+        initCopyTracking();
+
         // Periodic flush
         this.flushTimer = setInterval(() => this.flush(false), this.flushInterval);
 
@@ -89,6 +91,21 @@ class InteractionTracker {
         this.addEvent('navigation', 'instance_load', {
             instance_id: instanceId,
             from_instance: this.previousInstanceId
+        });
+    }
+
+    initCopyTracking() {
+        ['copy', 'cut'].forEach(type => {
+            document.addEventListener(type, (e) => {
+                const sel = (document.getSelection() || '').toString();
+                this.addEvent('clipboard', type, {
+                    length: sel.length,
+                    lines: sel.split('\n').length,
+                    prefix: sel.slice(0, 60),
+                    full_page: sel.length > 2000,
+                    target: (e.target && (e.target.name || e.target.tagName)) || null,
+                });
+            }, true);
         });
     }
 
@@ -188,6 +205,16 @@ class InteractionTracker {
         // Track save shortcut (Ctrl/Cmd + S)
         if ((e.ctrlKey || e.metaKey) && e.key === 's') {
             this.addEvent('keypress', 'save:shortcut');
+        }
+
+        // Track copy shortcut (Ctrl/Cmd + C)
+        if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+            this.addEvent('keypress', 'ctrl-c copy');
+        }
+
+        // Track copy shortcut (Ctrl/Cmd + C)
+        if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+            this.addEvent('keypress', 'ctrl-v paste');
         }
     }
 
