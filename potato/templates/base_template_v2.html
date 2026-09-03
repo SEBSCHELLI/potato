@@ -14,8 +14,8 @@
     <!-- Custom Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
-    <!-- Localhost
-    <link rel="stylesheet" href="http://localhost:63342/NewOrder_Intern/potato/static/styles.css">-->
+    <!-- Localhost -->
+    <link rel="stylesheet" href="..\static\styles.css">
 
     <style>
         body {
@@ -421,7 +421,7 @@
                     <ul style="padding-left: 1rem; margin-bottom: 0rem;">
                         <li id="N1">N1: Unclear connection to the paper (e.g., "Why doesn't the media report about it?")</li>
                         <li id="N2">N2: Posts directed at other users or the thread (e.g., "@userABC, why do you think that?")</li>
-                        <li id="N3">N3: Mere mention or link provision (e.g., "This paper was already shared yesterday")</li>
+                        <li id="N3">N3: Mere mention or title mention and/or link provision (e.g., "This paper was already shared yesterday")</li>
                         <li id="N4">N4: Honest information-seeking questions (e.g., "What did they use for identifying the critical threshold?")</li>
                     </ul>
                     <p style="margin-top: 0.5rem; padding-bottom: 0rem; margin-bottom: 0rem;"><u>Note</u>: Only for posts that genuinely take no position on the conclusion, NOT for posts you find hard to read.</p>
@@ -562,6 +562,24 @@
                         <span>⚪ No Stance</span>
                     </div>
                 </div>
+            </div>
+
+            <h1 style="margin-left: 0rem; color: red; font-weight: bold;">Changes</h1>
+            <div class="text-box">
+                <p style="margin: 0px; padding: 0px;">
+                    N3 in the ⚪ <b>No Stance</b> category has been slightly extended and clarified to include posts that consist only of the paper title with or without a link: 
+                    <li style="margin-left: 20px; padding: 0px;">N3: Mere mention or link provision: e.g.
+                        <br>
+                        <ul>
+                            <li>"This paper [link] was already shared so many times last week"</li>
+                            <li>"See preprint here: [link]"</li>
+                            <li>Posts consisting only of the paper title with or without a link <br><u>Note</u>:
+                                Evaluative additions such as "Must-read:" makes it Z2 instead</li>
+                        </ul>
+                    </li>
+
+                    Apart from that, the protocol did NOT change from last time. 
+                </p>
             </div>
 
             <h4 style="margin-left: 0rem; color: var(--secondary-color); font-weight: bold;">🔴 Negative Stance</h4>
@@ -1554,7 +1572,15 @@
                         <ul>
                             <li>N1: Unclear connection to the paper: "Why doesn't the media report about it?"</li>
                             <li>N2: Posts directed at other users or the thread: e.g., "@userABC, why do you think that?" or "Thanks for posting"</li>
-                            <li>N3: Mere mention or link provision: e.g., "This paper was already shared yesterday" or "Paywalled, preprint is here: [link]"</li>
+                            <li>N3: Mere mention or link provision: e.g.
+                                <br>
+                                <ul>
+                                    <li>"This paper [link] was already shared so many times last week"</li>
+                                    <li>"See preprint here: [link]"</li>
+                                    <li>Posts consisting only of the paper title with or without a link <br><u>Note</u>:
+                                        Evaluative additions such as "Must-read:" makes it Z2 instead</li>
+                                </ul>
+                            </li>
                             <li>N4: Honest information-seeking questions: e.g., "What did they use for identifying the critical threshold?"</li>
                         </ul>
                         <p></p>
