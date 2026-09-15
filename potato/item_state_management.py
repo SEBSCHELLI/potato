@@ -478,7 +478,30 @@ class ItemStateManager:
 
             if self.assignment_strategy == AssignmentStrategy.RANDOM:
                 #to_assign = self.random.sample(unlabeled_items, min(num_items_to_assign, len(unlabeled_items)))
-                to_assign = random.sample(unlabeled_items, min(num_items_to_assign, len(unlabeled_items)))
+                
+                #to_assign = random.sample(unlabeled_items, min(num_items_to_assign, len(unlabeled_items))) #normal method
+
+                # new method that prioritizes items with fewer annotations
+                zero_annotation_items = []
+                one_annotation_items = []
+                other_annotation_items = []
+                for iid in unlabeled_items:
+                    annotation_count = len(self.item_annotators[iid])
+                    if annotation_count == 0:
+                        zero_annotation_items.append(iid)
+                    elif annotation_count == 1:
+                        one_annotation_items.append(iid)
+                    else:
+                        other_annotation_items.append(iid)
+
+                to_assign = random.sample(zero_annotation_items, min(num_items_to_assign, len(zero_annotation_items)))
+                remaining_num_items_to_assign = num_items_to_assign - len(to_assign)
+                if remaining_num_items_to_assign > 0:
+                    to_assign.extend(random.sample(one_annotation_items, min(remaining_num_items_to_assign, len(one_annotation_items))))
+
+                remaining_num_items_to_assign = num_items_to_assign - len(to_assign)
+                if remaining_num_items_to_assign > 0:
+                    to_assign.extend(random.sample(other_annotation_items, min(remaining_num_items_to_assign, len(other_annotation_items))))
 
             else:
                 to_assign = unlabeled_items[:min(num_items_to_assign, len(unlabeled_items))]
