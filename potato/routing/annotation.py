@@ -186,11 +186,10 @@ def _2vs1_adjudicate(username, session_id, user_state, all_user_states_for_cur_u
         
         all_user_states = get_user_state_manager().get_all_users()
         for us in all_user_states:
-            print(us)
-            if us.get_user_id() != username:
-                for iid, a in us.instance_id_to_label_to_value.items():
-                    print(a)
-                    iid2annotations[iid].append(a["stance"])
+            for _, us_state in us.items():
+                if us_state.get_user_id() != username:
+                    for iid, a in us_state.instance_id_to_label_to_value.items():
+                        iid2annotations[iid].append(a["stance"])
     
         item_ids_2vs1 = []
         for iid, annotations in iid2annotations.items():
