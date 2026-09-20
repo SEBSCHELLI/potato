@@ -189,10 +189,8 @@ def _2vs1_adjudicate(username, session_id, user_state, all_user_states_for_cur_u
             for _, us_state in us.items():
                 if us_state.get_user_id() != username:
                     for iid, annotations in us_state.instance_id_to_label_to_value.items():
-                        print(annotations, type(annotations))
                         for label, value in annotations.items():
                             if label.schema == "stance":
-                                print(value)
                                 iid2annotations[iid].append(value)
     
         item_ids_2vs1 = []
@@ -222,10 +220,8 @@ def _2vs1_adjudicate(username, session_id, user_state, all_user_states_for_cur_u
                 for _, us_state in us.items():
                     if us_state.get_user_id() != username:
                         for iid, annotations in us_state.instance_id_to_label_to_value.items():
-                            print(annotations, type(annotations))
                             for label, value in annotations.items():
                                 if label.schema == "stance":
-                                    print(value)
                                     iid2annotations[iid].append(value)
         
             item_ids_2vs1 = []
@@ -257,10 +253,6 @@ def _2vs1_adjudicate(username, session_id, user_state, all_user_states_for_cur_u
 
         return redirect(url_for("home"))
 
-    # See if this user has finished annotating
-    total_num_items_assignable_to_user = get_item_state_manager().get_total_assignable_items_for_user(all_user_states_for_cur_user)
-    logger.debug(f"User {username} (Session ID {session_id}) - Number of items that can still be annotated: {total_num_items_assignable_to_user}")
-
     # Get current annotation instance
     current_instance = user_state.get_current_instance()
     if not current_instance:
@@ -281,7 +273,6 @@ def _2vs1_adjudicate(username, session_id, user_state, all_user_states_for_cur_u
             annotations = us.instance_id_to_label_to_value.get(instance_id, None)
             if annotations is not None:
                 annotator_instance_label = []
-                print(annotations, type(annotations))
                 for label, value in annotations.items():
                     if label.schema == "stance":
                         annotator_instance_label = [value] + annotator_instance_label
@@ -290,7 +281,6 @@ def _2vs1_adjudicate(username, session_id, user_state, all_user_states_for_cur_u
 
                 annotator_instance_label = " - ".join(annotator_instance_label)
                 instance_labels.append(annotator_instance_label)
-                logger.debug(f"Found annotation {annotator_instance_label} from User {us.user_id}")
                 continue
 
     instance_labels = "; ".join(instance_labels)
@@ -300,10 +290,8 @@ def _2vs1_adjudicate(username, session_id, user_state, all_user_states_for_cur_u
     finished_count = user_state.get_annotation_count()
 
     # Total = finished + remaining (so counter shows "X / Total" not "X / Remaining")
-    total_count = finished_count + total_num_items_assignable_to_user
-
-    max_assignments = user_state.get_max_assignments()
-    total_count = min(total_count, max_assignments)
+    user_state = get_user_state_manager().get_user_state(username, session_id)
+    total_count = len(user_state.assigned_instance_ids)
 
     # Check if the current instance has been annotated (for status indicator)
     instance_has_annotations = user_state.has_annotated(instance_id)
