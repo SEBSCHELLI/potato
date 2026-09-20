@@ -1,6 +1,7 @@
 from flask import session, render_template, request, redirect, url_for, jsonify, Blueprint, flash
 from functools import wraps
 from bs4 import BeautifulSoup
+from collections import defaultdict
 
 from potato.flask_server import config
 from potato.phase import UserPhase
@@ -61,6 +62,9 @@ def annotation_page():
     # Get all existing user states for current user
     all_user_states_for_cur_user = get_user_state_manager().get_all_user_states(username)
     #logger.debug(f"User {username} (Session ID {session_id}) - All sessions: {all_user_states_for_cur_user.keys()}")
+
+    if session_id.endswith("_adjudicate2vs1"):
+        return _2vs1_adjudicate(username, session_id, user_state, all_user_states_for_cur_user)
 
     # See if this user does not have assignments yet
     if not user_state.has_assignments():
@@ -171,6 +175,158 @@ def annotation_page():
     rendered_html = str(soup)
 
     return rendered_html
+
+def _2vs1_adjudicate(username, session_id, user_state, all_user_states_for_cur_user):
+    logger.debug(f"User {username} (Session ID {session_id}) in 2vs1 Adjudication Mode!")
+        
+    if not user_state.has_assignments():
+        logger.debug(f"User {username} (Session ID {session_id}) - 2vs 1 Adjudication Mode: No assignments, assigning instances")
+
+        iid2annotations = defaultdict(list)
+        
+        all_user_states = get_user_state_manager().get_all_users()
+        for us in all_user_states:
+            if us.user_id != username:
+                for iid, a in us.instance_id_to_label_to_value.items():
+                    print(a)
+                    iid2annotations[iid].append(a["stance"])
+    
+        item_ids_2vs1 = []
+        for iid, annotations in iid2annotations.items():
+            if len(annotations) == 3:
+                if len(set(annotations)) == 2:
+                    item_ids_2vs1.append(iid) 
+
+        logger.debug(f"User {username} (Session ID {session_id}) - 2vs 1 Adjudication Mode: {len(item_ids_2vs1)} items to adjudicate")
+
+        n_assigned = get_item_state_manager().assign_items_to_user(user_state, all_user_states_for_cur_user, item_ids_2vs1)
+        logger.debug(f"User {username} (Session ID {session_id}) - 2vs 1 Adjudication Mode: {n_assigned} items assigned")
+
+    # User does not have open assignments
+    user_is_finished = False
+    if not user_state.has_open_assignments():
+        if user_state.is_allowed_remaining_assignments(): # User is allowed more assignments
+            # Try assigning new instances
+            all_user_states_for_cur_user = get_user_state_manager().get_all_user_states(username)
+
+            logger.debug(f"User {username} (Session ID {session_id}) - 2vs 1 Adjudication Mode: Assigning instances")
+            
+            iid2annotations = defaultdict(list)
+            
+            all_user_states = get_user_state_manager().get_all_users()
+            for us in all_user_states:
+                if us.user_id != username:
+                    for iid, a in us.instance_id_to_label_to_value.items():
+                        print(a)
+                        iid2annotations[iid].append(a["stance"])
+        
+            item_ids_2vs1 = []
+            for iid, annotations in iid2annotations.items():
+                if len(annotations) == 3:
+                    if len(set(annotations)) == 2:
+                        item_ids_2vs1.append(iid) 
+    
+            logger.debug(f"User {username} (Session ID {session_id}) - 2vs 1 Adjudication Mode: {len(item_ids_2vs1)} items to adjudicate")
+
+            n_assigned = get_item_state_manager().assign_items_to_user(user_state, all_user_states_for_cur_user)
+            logger.debug(f"User {username} (Session ID {session_id}) - 2vs 1 Adjudication Mode: {n_assigned} items assigned")
+
+            if n_assigned == 0:
+                user_is_finished = True
+                logger.debug(f"User {username} (Session ID {session_id}) - User annotated all remaining instances")
+        else:
+            user_is_finished = True
+            logger.debug(f"User {username} (Session ID {session_id}) - User reached maximum number of annotations")
+
+    if user_is_finished:
+        # If the user is done annotating, advance to the next phase
+        get_user_state_manager().advance_phase(username, session_id)
+
+        # Save state
+        user_state = get_user_state_manager().get_user_state(username, session_id)
+        get_user_state_manager().save_user_state(user_state)
+        logger.debug(f"User {username} (Session ID {session_id}) - State saved")
+
+        return redirect(url_for("home"))
+
+    # See if this user has finished annotating
+    total_num_items_assignable_to_user = get_item_state_manager().get_total_assignable_items_for_user(all_user_states_for_cur_user)
+    logger.debug(f"User {username} (Session ID {session_id}) - Number of items that can still be annotated: {total_num_items_assignable_to_user}")
+
+    # Get current annotation instance
+    current_instance = user_state.get_current_instance()
+    if not current_instance:
+        logger.error(f'User {username} (Session ID {session_id}) - No annotation instance available')
+        return render_template("error.html", message="No annotation instance available")
+
+    instance_id = current_instance.get_id()
+    instance_data = current_instance.get_data()
+    instance_text = instance_data.get('displayed_text', instance_data.get('text', '???'))
+    instance_paper_title = instance_data.get('paper_title', "???")
+    instance_paper_abstract = instance_data.get('paper_abstract', "???")
+
+    # Calculate progress counter values
+    # Get the number of completed annotations and remaining assignable items
+    finished_count = user_state.get_annotation_count()
+
+    # Total = finished + remaining (so counter shows "X / Total" not "X / Remaining")
+    total_count = finished_count + total_num_items_assignable_to_user
+
+    max_assignments = user_state.get_max_assignments()
+    total_count = min(total_count, max_assignments)
+
+    # Check if the current instance has been annotated (for status indicator)
+    instance_has_annotations = user_state.has_annotated(instance_id)
+
+    totals_acs_passed = user_state.attention_check_state.passed_checks
+
+    rendered_html = render_template(
+        annotation_html_file,
+        # Pass current instance info
+        instance_text=instance_text,
+        instance_id=instance_id,
+        paper_title=instance_paper_title,
+        paper_abstract=instance_paper_abstract,
+        # Pass annotation schemes to the template
+        annotation_schemes=config["annotation_schemes"],
+        # Information for Page Header Bar
+        annotation_task_name=config["annotation_task_name"],
+        instance_has_annotations=instance_has_annotations,
+        totals_acs_passed=totals_acs_passed,
+        finished_count=finished_count,
+        total_count=total_count,
+        username=username,
+        # Pass debug info
+        debug=config.get("debug", False),
+    )
+
+    # Parse the page so we can programmatically reset the annotation state to what it was before
+    soup = BeautifulSoup(rendered_html, "html.parser")
+
+    # If the user has annotated this before, walk the DOM and fill out what they did
+    annotations = get_annotations_for_user_on(username, instance_id)
+    if annotations is not None:
+        # Reset the annotation state
+        for schema_name, label_dict in annotations.items():
+            for label_name, value in label_dict.items():
+                input_fields = soup.find_all(["input"], {"schema": schema_name, "value": value, "type": "radio"})
+
+                for input_field in input_fields:
+                    if input_field:
+                        if input_field.get('value') == value:
+                            input_field['checked'] = True
+                            logger.info(f'User {username} (Session ID {session_id}) - Reset radio buttons to existing annotation: {value} for instance {instance_id}')
+
+                text_fields = soup.find_all(["textarea"], {"schema": schema_name})
+                if text_fields:
+                    text_field = text_fields[0]
+                    text_field.string = value
+                    logger.info(f'User {username} (Session ID {session_id}) - Reset rationale text field to "{value}" for instance {instance_id}')
+
+    rendered_html = str(soup)
+
+    return rendered_html
+
 
 @annotation_bp.route("/old_navigate_to_next", methods=["POST"])
 @phase_required(UserPhase.ANNOTATION)

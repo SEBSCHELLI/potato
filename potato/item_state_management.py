@@ -388,7 +388,7 @@ class ItemStateManager:
     # Assignment Methods
     # =========================================================================
 
-    def assign_items_to_user(self, user_state: UserState, user_states: list(UserState)) -> int:
+    def assign_items_to_user(self, user_state: UserState, user_states: list(UserState), requested_item_ids: list(str)=None) -> int:
         """
         Assigns a set of items to a user based on the current state of the system
         and returns the number of items assigned.
@@ -447,7 +447,32 @@ class ItemStateManager:
             # No maximum, assign one at a time
             num_items_to_assign = 1
 
-        if self.assignment_strategy == AssignmentStrategy.RANDOM or self.assignment_strategy == AssignmentStrategy.FIXED_ORDER:
+        if requested_item_ids is not None :
+            unlabeled_items = []
+            for iid in requested_item_ids:
+                already_labeled = False
+                for iter_session_id, iter_user_state in user_states.items():
+                    if iter_user_state.has_annotated(iid):
+                        already_labeled = True
+                        #self.logger.debug(f"User {user_state.user_id} (Session ID {iter_session_id}) - Instance {iid} already annotated, skipping.")
+                        break
+
+                if not already_labeled:
+                    unlabeled_items.append(iid)
+
+            self.logger.debug(f"User {user_state.user_id} (Session ID {user_state.session_id}) - Number unlabeled items: {len(unlabeled_items)}")
+            if not unlabeled_items:
+                self.logger.info(f"User {user_state.user_id} (Session ID {user_state.session_id}) - No unlabeled items available")
+                return 0
+
+            to_assign = unlabeled_items[:min(remaining_capacity, len(unlabeled_items))]
+
+            for item_id in to_assign:
+                user_state.assign_instance(self.item_id_to_item[item_id])
+            return len(to_assign)
+
+
+        elif self.assignment_strategy == AssignmentStrategy.RANDOM or self.assignment_strategy == AssignmentStrategy.FIXED_ORDER:
             # Random assignment strategy
             unlabeled_items = []
             for iid in self.remaining_item_ids:
