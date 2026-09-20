@@ -297,7 +297,7 @@ def load_user_data(config: dict):
     logger.info(f"Load user data for the following users: {user_dirs}")
     for user_dir in user_dirs:
         for fn in os.listdir(f"{user_data_dir}{user_dir}"):
-            session_id = fn.split("_")[0]
+            session_id = fn.split("_user_state.json")[0]
             try:
                 usm.load_user_state(user_dir, session_id)
             except ValueError as e:
