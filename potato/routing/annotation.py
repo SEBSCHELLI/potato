@@ -110,6 +110,31 @@ def annotation_page():
     instance_paper_title = instance_data.get('paper_title', "???")
     instance_paper_abstract = instance_data.get('paper_abstract', "???")
 
+
+    if username == "Sebastian":
+        instance_annotators = get_item_state_manager().get_annotators_for_item(instance_id)
+        instance_labels = []
+        for annotator_id in instance_annotators:
+            annotator_us = get_user_state_manager().get_all_user_states(annotator_id)
+            for _, us in annotator_us.items():
+                annotations = us.instance_id_to_label_to_value.get(instance_id, None)
+                if annotations is not None:
+                    annotator_instance_label = []
+                    print(annotations, type(annotations))
+                    for label, value in annotations.items():
+                        if label.schema == "stance":
+                            annotator_instance_label = [value] + annotator_instance_label
+                        elif label.schema == "comment":
+                            annotator_instance_label = annotator_instance_label + [value]
+
+                    annotator_instance_label = " - ".join(annotator_instance_label)
+                    instance_labels.append(annotator_instance_label)
+                    logger.debug(f"Found annotation {annotator_instance_label} from User {us.user_id}")
+                    continue
+
+        instance_labels = "; ".join(instance_labels)
+        instance_text = instance_text + "\n\n" + instance_labels
+
     # Calculate progress counter values
     # Get the number of completed annotations and remaining assignable items
     finished_count = user_state.get_annotation_count()
