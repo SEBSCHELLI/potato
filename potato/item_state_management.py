@@ -484,6 +484,7 @@ class ItemStateManager:
                 # new method that prioritizes items with fewer annotations
                 zero_annotation_items = []
                 one_annotation_items = []
+                two_annotation_items = []
                 other_annotation_items = []
                 for iid in unlabeled_items:
                     annotation_count = len(self.item_annotators[iid])
@@ -491,6 +492,8 @@ class ItemStateManager:
                         zero_annotation_items.append(iid)
                     elif annotation_count == 1:
                         one_annotation_items.append(iid)
+                    elif annotation_count == 2:
+                        two_annotation_items.append(iid)
                     else:
                         other_annotation_items.append(iid)
 
@@ -498,6 +501,10 @@ class ItemStateManager:
                 remaining_num_items_to_assign = num_items_to_assign - len(to_assign)
                 if remaining_num_items_to_assign > 0:
                     to_assign.extend(random.sample(one_annotation_items, min(remaining_num_items_to_assign, len(one_annotation_items))))
+
+                remaining_num_items_to_assign = num_items_to_assign - len(to_assign)
+                if remaining_num_items_to_assign > 0:
+                    to_assign.extend(random.sample(two_annotation_items, min(remaining_num_items_to_assign, len(two_annotation_items))))
 
                 remaining_num_items_to_assign = num_items_to_assign - len(to_assign)
                 if remaining_num_items_to_assign > 0:
